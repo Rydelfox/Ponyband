@@ -13,15 +13,17 @@
 #
 
 # Executable name and default target
-EXE = faangband.exe
+EXE = ponyband.exe
 all: ../$(EXE)
 
 ifneq (,$(findstring \system32,$(PATH)))
   CP = copy
   RM = del
+  BAR = "\"
 else
   CP = -cp
   RM = -rm
+  BAR = "/"
 endif
 
 
@@ -100,10 +102,12 @@ endif
 # Targets
 #
 
+# Change this command for Windows systems that copy the dll's contents instead of the DLL is / is used
+
 ../$(EXE): $(EXE)
 	$(CP) $(EXE) ..
-	$(CP) win/dll/libpng12.dll ..
-	$(CP) win/dll/zlib1.dll ..
+	$(CP) win$(BAR)dll$(BAR)libpng12.dll ..$(BAR)libpng12.dll
+	$(CP) win$(BAR)dll$(BAR)zlib1.dll ..$(BAR)zlib1.dll
 
 $(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -o $(EXE) $(OBJS) $(LIBS)
