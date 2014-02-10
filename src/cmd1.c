@@ -201,7 +201,7 @@ static void py_pickup_gold(void)
 
 		/* Build a message */
 		(void) strnfmt(buf, sizeof(buf),
-					   "You have found %ld gold pieces worth of ",
+					   "You have found %ld bits worth of ",
 					   (long) total_gold);
 
 		/* Count the types of treasure present */

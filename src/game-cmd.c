@@ -646,7 +646,16 @@ void process_command(cmd_context ctx, bool no_request)
 						if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 							return;
 					}
-
+					
+					if((o_ptr->tval == TV_BOOTS) && player_has(PF_QUADRUPED)) {
+						const char *q = "Replace which boots? ";
+						const char *s =
+						    "Error in obj_wield with boots, please report";
+						item_tester_hook = obj_is_boot;
+						if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
+						    return;
+		            }
+					
 					if ((is_missile(o_ptr) ||
 						 (of_has(o_ptr->flags_obj, OF_THROWING)
 						  && (slot != INVEN_WIELD)))
@@ -748,3 +757,4 @@ void cmd_disable_repeat(void)
 {
 	repeat_prev_allowed = FALSE;
 }
+

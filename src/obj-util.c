@@ -416,7 +416,6 @@ bool wearable_p(const object_type * o_ptr)
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_BOOTS:
-	case TV_GLOVES:
 	case TV_HELM:
 	case TV_CROWN:
 	case TV_SHIELD:
@@ -428,6 +427,10 @@ bool wearable_p(const object_type * o_ptr)
 	case TV_AMULET:
 	case TV_RING:
 		return (TRUE);
+	case TV_GLOVES:
+	    if(player_has(PF_QUADRUPED))
+	        return (FALSE);
+        return (TRUE);
 	}
 
 	/* Nope */
@@ -533,10 +536,16 @@ s16b wield_slot(const object_type * o_ptr)
 		return (INVEN_HEAD);
 
 	case TV_GLOVES:
-		return (INVEN_HANDS);
+	    /* Quadrupeds don't get to wear gloves at all */
+		if(player_has(PF_QUADRUPED))
+            return (-1);
+        return (INVEN_HANDS);
 
 	case TV_BOOTS:
-		return (INVEN_FEET);
+        /* Quadrapeds have access to both feet slots */
+        if(player_has(PF_QUADRUPED))
+            return p_ptr->inventory[INVEN_HIND].k_idx ? INVEN_FORE : INVEN_HIND;
+        return (INVEN_FORE);
 
 	case TV_BOLT:
 	case TV_ARROW:
@@ -554,7 +563,9 @@ s16b wield_slot(const object_type * o_ptr)
  */
 bool slot_can_wield_item(int slot, const object_type * o_ptr)
 {
-	if (o_ptr->tval == TV_RING)
+	if ((o_ptr->tval == TV_BOOTS) && player_has(PF_QUADRUPED))
+	    return (slot == INVEN_FORE || slot == INVEN_HIND) ? TRUE : FALSE;
+    else if (o_ptr->tval == TV_RING)
 		return (slot == INVEN_LEFT || slot == INVEN_RIGHT) ? TRUE : FALSE;
 	else if (obj_is_ammo(o_ptr))
 		return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
@@ -611,13 +622,19 @@ const char *mention_use(int slot)
 	case INVEN_OUTER:
 		return "About body";
 	case INVEN_ARM:
+	    if (player_has(PF_QUADRUPED))
+	        return "On foreleg";
 		return "On arm";
 	case INVEN_HEAD:
 		return "On head";
 	case INVEN_HANDS:
-		return "On hands";
-	case INVEN_FEET:
-		return "On feet";
+        return "On hands";
+	case INVEN_FORE:
+		if(player_has(PF_QUADRUPED))
+		    return "On forehooves";
+        return "On feet";
+    case INVEN_HIND:
+        return "On hindhooves";
 
 
 	case QUIVER_START + 0:
@@ -673,7 +690,9 @@ const char *describe_use(int i)
 	case INVEN_ARM:{
 			if (p_ptr->state.shield_on_back)
 				p = "carrying on your back";
-			else
+			else if (player_has(PF_QUADRUPED))
+			    p = "wearing on your foreleg";
+            else
 				p = "wearing on your arm";
 			break;
 		}
@@ -683,9 +702,15 @@ const char *describe_use(int i)
 	case INVEN_HANDS:
 		p = "wearing on your hands";
 		break;
-	case INVEN_FEET:
-		p = "wearing on your feet";
+	case INVEN_FORE:
+		if(player_has(PF_QUADRUPED))
+		    p = "wearing on your forehooves";
+        else
+            p = "wearing on your feet";
 		break;
+	case INVEN_HIND:
+	    p = "wearing on your hindhooves";
+	    break;
 	case QUIVER_START + 0:
 	case QUIVER_START + 1:
 	case QUIVER_START + 2:
@@ -2746,8 +2771,9 @@ void acquirement(int y1, int x1, int num, bool great)
 		/* Make a good (or great) object (if possible) */
 		if (!make_object(i_ptr, TRUE, great, FALSE))
 			continue;
-		i_ptr->origin = ORIGIN_ACQUIRE;
+        i_ptr->origin = ORIGIN_ACQUIRE;
 		i_ptr->origin_stage = p_ptr->stage;
+
 
 		/* Drop the object */
 		drop_near(i_ptr, 0, y1, x1, TRUE);
@@ -4555,6 +4581,11 @@ bool obj_is_ring(const object_type * o_ptr)
 	return o_ptr->tval == TV_RING;
 }
 
+bool obj_is_boot(const object_type * o_ptr)
+{
+    return o_ptr->tval == TV_BOOTS;
+}
+
 
 /**
  * Determine whether an object is ammo
@@ -4690,9 +4721,12 @@ bool obj_think_can_takeoff(const object_type * o_ptr)
 }
 
 /* Can only put on wieldable items */
+/* Quadrupeds cannot put on gloves */
 bool obj_can_wear(const object_type * o_ptr)
 {
-	return (wield_slot(o_ptr) >= INVEN_WIELD);
+	if((player_has(PF_QUADRUPED)) && (wield_slot(o_ptr) == INVEN_HANDS))
+	    return (FALSE);
+    return (wield_slot(o_ptr) >= INVEN_WIELD);
 }
 
 /* Can only fire an item with the right tval */
@@ -4935,7 +4969,7 @@ bool check_set(byte set_idx)
 	byte i;
 	set_type *set_ptr = &set_info[set_idx];;
 
-	for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
+	for (i = INVEN_WIELD; i <= INVEN_HIND; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 		if (o_ptr->name1) {
 			artifact_type *a_ptr = &a_info[o_ptr->name1];
@@ -4959,7 +4993,7 @@ void apply_set(int set_idx)
 
 	byte i, j, k;
 
-	for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
+	for (i = INVEN_WIELD; i <= INVEN_HIND; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 
 		/* Is it an artifact? */
@@ -5030,7 +5064,7 @@ void remove_set(int set_idx)
 
 	byte i, j, k;
 
-	for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
+	for (i = INVEN_WIELD; i <= INVEN_HIND; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 
 		/* Is it an artifact? */

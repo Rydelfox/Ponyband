@@ -1326,7 +1326,12 @@ bool py_attack(int y, int x, bool can_push)
 				|| (p_ptr->special_attack & (ATTACK_DRUID_CONFU))) {
 				/* Message */
 				if (!(p_ptr->special_attack & (ATTACK_DRUID_CONFU)))
-					msgt(MSG_HIT, "Your hands stop glowing.");
+					{
+						if(player_has(PF_QUADRUPED))
+						    msgt(MSG_HIT, "Your hooves stop glowing.");
+						else
+						    msgt(MSG_HIT, "Your hands stop glowing.");	
+					}
 
 				/* Cancel special confusion attack */
 				p_ptr->special_attack &= ~(ATTACK_CONFUSE);
@@ -1363,7 +1368,10 @@ bool py_attack(int y, int x, bool can_push)
 				p_ptr->special_attack &= ~(ATTACK_BLKBRTH);
 
 				/* Message */
-				msg("Your hands stop radiating Night.");
+				if(player_has(PF_QUADRUPED))
+					msg("Your hooves stop radiating Night.");
+				else
+				    msg("Your hands stop radiating Night.");
 
 				/* Redraw the state */
 				p_ptr->redraw |= (PR_STATUS);

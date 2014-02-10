@@ -322,6 +322,8 @@ static enum birth_stage get_map_command(void)
 	menu_type *m;
 
 	m = map_menu_new();
+	// Hack -- remove map choice
+	/*
 	if (m) {
 		int map = map_menu_select(m);
 		if (map == -1) {
@@ -337,9 +339,12 @@ static enum birth_stage get_map_command(void)
 	} else {
 		next = BIRTH_BACK;
 	}
+	*/
+	cmd_insert(CMD_SET_MAP);
+	cmd_set_arg_choice(cmd_get_top(), 0, MAP_FANILLA);
 	map_menu_destroy(m);
 
-	return next;
+	return BIRTH_MODE_CHOICE;
 }
 
 /* ------------------------------------------------------------------------

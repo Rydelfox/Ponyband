@@ -1347,7 +1347,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_MONSTER_CONFU:
 		{
 			if (!(p_ptr->special_attack & (ATTACK_CONFUSE))) {
-				msg("Your hands begin to glow.");
+				if(player_has(PF_QUADRUPED))
+				    msg("Your hooves begin to glow.");
+				else
+				    msg("Your hands begin to glow.");
 				p_ptr->special_attack |= (ATTACK_CONFUSE);
 				*ident = TRUE;
 				p_ptr->redraw |= PR_STATUS;
@@ -2640,13 +2643,16 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		}
 	case EF_RAND_FIRE2:
 		{
-			msg("You feel a sphere of fire form between your hands.");
+			if(player_has(PF_QUADRUPED))
+			    msg("You feel a phere of fire form between your hooves.");
+			else
+			    msg("You feel a sphere of fire form between your hands.");
 			fire_sphere(GF_FIRE, dir, 90, 1, 20);
 			return TRUE;
 		}
 	case EF_RAND_FIRE3:
 		{
-			msg("The fires of Anor rise in wrath!");
+			msg("You bring forth the flames of a volcano!");
 			fire_sphere(GF_FIRE, 0, 150, 5, 20);
 			return TRUE;
 		}
@@ -2676,7 +2682,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		}
 	case EF_RAND_ACID2:
 		{
-			msg("A sphere of deadly acid forms upon your hand.");
+			if(player_has(PF_QUADRUPED))
+			    msg("A sphere of deadly acid forms in front of your hoof.");
+			else
+			    msg("A sphere of deadly acid forms upon your hand.");
 			fire_sphere(GF_ACID, dir, 90, 1, 20);
 			return TRUE;
 		}
@@ -2997,7 +3006,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			if (o_ptr->sval == SV_SLING)
 				missile_name = "shot";
 
-			msg("The %s you have ready to hand gleams with deadly power.",
+			msg("The %s you have ready gleams with deadly power.",
 				missile_name);
 			p_ptr->special_attack |= (ATTACK_SUPERSHOT);
 
@@ -3048,7 +3057,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		}
 	case EF_RAND_SLEEP_FOE:
 		{
-			msg("A fine dust appears in your hand, and you throw it...");
+			msg("A fine dust appears, and you throw it...");
 			if (sleep_monster(dir, 5 * plev / 3))
 				msg("...sending a foe to the realm of dreams!");
 			return TRUE;
@@ -3129,7 +3138,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			int flag = PROJECT_STOP | PROJECT_KILL;
 			int avail_mon[100], avail_mon_num;
 
-			msg("The lightning of Manwe leaps from your hands!");
+			if(player_has(PF_QUADRUPED))
+			    msg("A bolt of lightning leaps from your mouth!");
+			else
+			    msg("A bolt of lightning leaps from your hands!");
 
 			/* Initialise */
 			for (k = 0; k < 100; k++)
@@ -3358,7 +3370,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			int y, x;
 			int py = p_ptr->py, px = p_ptr->px;
 
-			msg("The light of the Valar shines from above!");
+			msg("The light of the Celestia shines from above!");
 
 			/* Everything in range */
 			for (y = py - 10; y <= py + 10; y++)

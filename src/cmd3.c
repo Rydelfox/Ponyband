@@ -145,6 +145,25 @@ void wield_item(object_type * o_ptr, int item, int slot)
 		combine_quiver = object_similar(o_ptr, &p_ptr->inventory[slot],
 										OSTACK_QUIVER);
 	}
+	
+	/* Quadrupeds can't use 2-handed items or gloves. Abort without
+	   using any energy */
+	if(player_has(PF_QUADRUPED))
+	{
+		if(slot == INVEN_WIELD)
+		    if(needs_two_hands(o_ptr))
+		    {
+		    	fmt = "This is too heavy to wield in your mouth.";
+		    	msgt(MSG_WIELD, fmt, o_name, index_to_label(slot));
+		    	return;
+		    }
+		if(slot == INVEN_HANDS)
+		{
+			fmt = "You do not have any hands on which to wear this.";
+			msgt(MSG_WIELD, fmt, o_name, index_to_label(slot));
+			return;
+		}
+	}
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -694,7 +713,7 @@ static const char *ident_info[] = {
 	"!:A potion (or oil)",
 	"\":An amulet (or necklace)",
 	"#:A wall (or secret door)",
-	"$:Treasure (gold or gems)",
+	"$:Treasure (bits or gems)",
 	"%:A vein (magma or quartz)",
 	/* "&:unused", */
 	"':An open door",
@@ -723,9 +742,9 @@ static const char *ident_info[] = {
 	">:A down staircase",
 	"?:A scroll",
 	"@:You",
-	/* "A:unused", */
+	"A:Alicorn",
 	"B:Bird",
-	"C:Canine",
+	"C:Constellation",
 	"D:Flying Dragon",
 	"E:Elemental",
 	"F:Dragon Fly",
@@ -736,17 +755,17 @@ static const char *ident_info[] = {
 	"K:Killer Beetle",
 	"L:Lich",
 	"M:Mummy",
-	/* "N:unused", */
-	"O:Ogre",
-	"P:Giant Humanoid",
+	"N:Nautical",
+	"O:Spell Orb",
+	"P:Centaur",
 	"Q:Quylthulg (Pulsing Flesh Mound)",
 	"R:Reptile/Amphibian",
 	"S:Spider/Scorpion/Tick",
-	"T:Troll",
-	"U:Major Demon",
+	/* "T:unused", */
+	"U:Demon",
 	"V:Vampire",
 	"W:Wight/Wraith/etc",
-	"X:Xorn/Xaren/etc",
+	/* "X:unused", */
 	"Y:Yeti",
 	"Z:Zephyr Hound",
 	"[:Hard armor",
@@ -757,30 +776,30 @@ static const char *ident_info[] = {
 	"`:A tool or junk",
 	"a:Ant",
 	"b:Bat",
-	"c:Centipede",
+	"c:Canine",
 	"d:Dragon",
 	"e:Floating Eye",
 	"f:Feline",
 	"g:Golem",
-	"h:Hobbit/Elf/Dwarf",
+	"h:Humanoid",
 	"i:Icky Thing",
 	"j:Jelly",
-	"k:Kobold",
+	/*"k:unused",  */
 	"l:Louse",
 	"m:Mold",
-	"n:Naga",
-	"o:Orc",
-	"p:Person/Human",
+	"n:Nagapon",
+	"o:Parasprite",
+	"p:Pony",
 	"q:Quadruped",
 	"r:Rodent",
 	"s:Skeleton",
-	"t:Townsperson",
-	"u:Minor Demon",
+	"t:Townspony",
+	"u:Tribesman",
 	"v:Vortex",
 	"w:Worm/Worm-Mass",
 	/* "x:unused", */
-	"y:Yeek",
-	"z:Zombie/Mummy",
+	"y:Hydra",
+	"z:Zombie",
 	"{:A missile (arrow/bolt/shot)",
 	"|:An edged weapon (sword/dagger/etc)",
 	"}:A launcher (bow/crossbow/sling)",

@@ -282,6 +282,8 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 	char tmp_val[80];
 
 	bool in_term;
+	
+	int inven_feet = player_has(PF_QUADRUPED) ? INVEN_HIND : INVEN_FORE;
 
 	in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
@@ -330,7 +332,7 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 
 		/* Display each line */
 		show_obj(i + sp, max_len, items[i].label, o_ptr, FALSE, mode);
-		if ((i == (INVEN_FEET - INVEN_WIELD)) && need_spacer) {
+		if ((i == (inven_feet - INVEN_WIELD)) && need_spacer) {
 			sp = 1;
 			prt("", i + sp + 1, MAX(col - 2, 0));
 		}

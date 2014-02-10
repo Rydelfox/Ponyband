@@ -1300,7 +1300,8 @@ static void calc_mana(void)
 	cur_wgt += p_ptr->inventory[INVEN_ARM].weight;
 	cur_wgt += p_ptr->inventory[INVEN_OUTER].weight;
 	cur_wgt += p_ptr->inventory[INVEN_HANDS].weight;
-	cur_wgt += p_ptr->inventory[INVEN_FEET].weight;
+	cur_wgt += p_ptr->inventory[INVEN_FORE].weight;
+	cur_wgt += p_ptr->inventory[INVEN_HIND].weight;
 
 	/* Determine the weight allowance */
 	max_wgt = mp_ptr->spell_weight1;
@@ -1325,7 +1326,7 @@ static void calc_mana(void)
 		}
 	}
 
-	/* Any non-humaniod shape penalizes mana, unless prevented by specialty
+	/* Any non-humaniod/non-pony shape penalizes mana, unless prevented by specialty
 	 * ability */
 	if (p_ptr->schange) {
 		/* Chop mana to 2/3. */
@@ -2671,7 +2672,8 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		cur_wgt += p_ptr->inventory[INVEN_ARM].weight;
 		cur_wgt += p_ptr->inventory[INVEN_OUTER].weight;
 		cur_wgt += p_ptr->inventory[INVEN_HANDS].weight;
-		cur_wgt += p_ptr->inventory[INVEN_FEET].weight;
+		cur_wgt += p_ptr->inventory[INVEN_FORE].weight;
+		cur_wgt += p_ptr->inventory[INVEN_HIND].weight;
 
 		/* Highest weight to get any bonus */
 		evasion_wgt = 150 + (3 * p_ptr->lev);
@@ -3437,7 +3439,10 @@ static void update_bonuses(void)
 		if (state->shield_on_back) {
 			msg("You are carrying your shield on your back.");
 		} else if (p_ptr->inventory[INVEN_ARM].k_idx) {
-			msg("You are carrying your shield in your hand.");
+			if(player_has(PF_QUADRUPED))
+			   msg("Your shield is now stapped to your foreleg.");
+            else
+               msg("You are carrying your shield in your hand.");
 		}
 
 		/* No message for players no longer carrying a shield. */

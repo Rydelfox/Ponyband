@@ -470,7 +470,7 @@ void notice_curse(int curse_flag, int item)
 		return;
 	}
 
-	for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
+	for (i = INVEN_WIELD; i <= INVEN_HIND; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
 		already_ego = has_ego_properties(o_ptr);
@@ -524,7 +524,7 @@ void notice_obj(int obj_flag, int item)
 		return;
 	}
 
-	for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
+	for (i = INVEN_WIELD; i <= INVEN_HIND; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
 		already_ego = has_ego_properties(o_ptr);
@@ -611,7 +611,7 @@ void notice_other(int other_flag, int item)
 		return;
 	}
 
-	for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
+	for (i = INVEN_WIELD; i <= INVEN_HIND; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
 		already_ego = has_ego_properties(o_ptr);

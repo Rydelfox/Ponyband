@@ -98,22 +98,23 @@
 #define INVEN_LEFT      26
 #define INVEN_RIGHT     27
 #define INVEN_NECK      28
-#define INVEN_LIGHT      29
+#define INVEN_LIGHT     29
 #define INVEN_BODY      30
 #define INVEN_OUTER     31
 #define INVEN_ARM       32
 #define INVEN_HEAD      33
 #define INVEN_HANDS     34
-#define INVEN_FEET      35
+#define INVEN_FORE      35
+#define INVEN_HIND      36
 
-#define INVEN_TOTAL	36
+#define INVEN_TOTAL	37
 
 /**
  *Quiver
  */
-#define QUIVER_START 37
+#define QUIVER_START 38
 #define QUIVER_SIZE  10
-#define QUIVER_END   47
+#define QUIVER_END   48
 
 /**
  * Each throwing weapon in the "quiver" takes up the space of this
@@ -129,7 +130,7 @@
 /**
  * Total number of inventory slots (hard-coded to be <= 47).
  */
-#define ALL_INVEN_TOTAL	47
+#define ALL_INVEN_TOTAL	48
 
 /**
  * Special 'Item' Identifier corresponding to all Squelched items.

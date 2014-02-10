@@ -88,3 +88,4 @@ PF(PSEUDO_ID_HEAVY, "Detailed Object Sensing", "You obtain relatively specific p
 PF(TRAP, "Trap Setting", "You can set monster traps."),
 PF(WOODSMAN, "Woodsmanship", "You are attuned to nature.  You easily move and hide in trees."),
 PF(XTRA_SPECIALTY, "Specialization [1]", "You can learn an extra specialty abilty at level 1."),
+PF(QUADRUPED, "Quadruped", "You have four legs, but no hands.  You can't wear gloves, but get an extra set of boots."),

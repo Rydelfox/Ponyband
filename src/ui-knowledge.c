@@ -146,12 +146,14 @@ static struct {
 } monster_group[] = {
 	{
 	(const wchar_t *) -1, "Uniques"}, {
-	L"a", "Ants"}, {
+	L"A", "Alicorns"}, {
+    L"a", "Ants"}, {
 	L"b", "Bats"}, {
 	L"B", "Birds"}, {
-	L"C", "Canines"}, {
-	L"c", "Centipedes"}, {
-	L"uU", "Demons"}, {
+	L"c", "Canines"}, {
+    L"P", "Centaur"}, {
+	L"C", "Constellations"}, {
+	L"U", "Demons"}, {
 	L"dD", "Dragons"}, {
 	L"vE", "Elementals/Vortices"}, {
 	L"e", "Eyes/Beholders"}, {
@@ -160,20 +162,21 @@ static struct {
 	L"OP", "Giants/Ogres"}, {
 	L"g", "Golems"}, {
 	L"H", "Harpies/Hybrids"}, {
-	L"h", "Hominids (Elves, Dwarves)"}, {
+	L"h", "Humanoids"}, {
+    L"y", "Hydras"}, {
 	L"i", "Icky Things"}, {
 	L"lFI", "Insects"}, {
 	L"j", "Jellies"}, {
 	L"K", "Killer Beetles"}, {
-	L"k", "Kobolds"}, {
 	L"L", "Lichs"}, {
-	L".$!?=~|_*-", "Mimics"}, {
+	L".$!?=~|_*-:", "Mimics"}, {
 	L"m", "Molds"}, {
 	L"M", "Mummies"}, {
 	L",", "Mushroom Patches"}, {
-	L"n", "Nagas"}, {
-	L"o", "Orcs"}, {
-	L"tp", "People"}, {
+	L"n", "Nagapons"}, {
+    L"N", "Nautical Monsters"}, {
+    L"o", "Parasprites"}, {
+	L"tp", "Ponies"}, {
 	L"q", "Quadrupeds"}, {
 	L"Q", "Quylthulgs"}, {
 	L"R", "Reptiles/Amphibians"}, {
@@ -181,12 +184,13 @@ static struct {
 	L"S", "Scorpions/Spiders"}, {
 	L"s", "Skeletons/Drujs"}, {
 	L"J", "Snakes"}, {
-	L"T", "Trolls"}, {
+    L"O", "Spell Orbs"}, {
+    L"#", "Trees"}, {
+    L"u", "Tribal Monsters"}, {
 	L"V", "Vampires"}, {
 	L"W", "Wights/Wraiths"}, {
+    L"*", "Will o Wisp"}, {
 	L"w", "Worms/Worm Masses"}, {
-	L"X", "Xorns/Xarens"}, {
-	L"y", "Yeeks"}, {
 	L"Y", "Yeti"}, {
 	L"Z", "Zephyr Hounds"}, {
 	L"z", "Zombies"}, {

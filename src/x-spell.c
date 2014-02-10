@@ -2382,7 +2382,10 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 				p_ptr->special_attack &= ~ATTACK_HOLY;
 
 			if (!(p_ptr->special_attack & ATTACK_BLKBRTH))
-				msg("Your hands start to radiate Night.");
+				if(player_has(PF_QUADRUPED))
+                    msg("Your hooves start to radiate Night.");
+                else
+                    msg("Your hands start to radiate Night.");
 			p_ptr->special_attack |= (ATTACK_BLKBRTH);
 
 			/* Redraw the state */

@@ -2001,7 +2001,7 @@ static int minus_ac(int dam)
 	}
 
 	/* Pick a (possibly empty) equipment slot */
-	switch (randint1(6)) {
+	switch (randint1(7)) {
 	case 1:
 		o_ptr = &p_ptr->inventory[INVEN_BODY];
 		break;
@@ -2018,8 +2018,11 @@ static int minus_ac(int dam)
 		o_ptr = &p_ptr->inventory[INVEN_HEAD];
 		break;
 	case 6:
-		o_ptr = &p_ptr->inventory[INVEN_FEET];
+		o_ptr = &p_ptr->inventory[INVEN_FORE];
 		break;
+	case 7:
+	    o_ptr = &p_ptr->inventory[INVEN_HIND];
+	    break;
 	}
 
 	/* Nothing to damage */
@@ -2631,12 +2634,18 @@ int apply_dispel(int power)
 	}
 	if ((p_ptr->special_attack & (ATTACK_CONFUSE)) && (!check_save(power))) {
 		p_ptr->special_attack &= ~(ATTACK_CONFUSE);
-		msg("Your hands stop glowing.");
+		if(player_has(PF_QUADRUPED))
+            msg("Your hooves stop glowing.");
+        else
+            msg("Your hands stop glowing.");
 		num_effects += 1;
 	}
 	if ((p_ptr->special_attack & (ATTACK_BLKBRTH)) && (!check_save(power))) {
 		p_ptr->special_attack &= ~(ATTACK_BLKBRTH);
-		msg("Your hands stop radiating Night.");
+		if(player_has(PF_QUADRUPED))
+            msg("Your hooves stop radiating Night.");
+        else
+            msg("Your hands stop radiating Night.");
 		num_effects += 1;
 	}
 	if ((p_ptr->special_attack & (ATTACK_FLEE)) && (!check_save(power))) {
@@ -2697,7 +2706,7 @@ bool apply_disenchant(int dam)
 	}
 
 	/* Pick a random slot */
-	switch (randint1(8)) {
+	switch (randint1(9)) {
 	case 1:
 		t = INVEN_WIELD;
 		break;
@@ -2720,8 +2729,11 @@ bool apply_disenchant(int dam)
 		t = INVEN_HANDS;
 		break;
 	case 8:
-		t = INVEN_FEET;
+		t = INVEN_FORE;
 		break;
+	case 9:
+	    t = INVEN_HIND;
+	    break;
 	}
 
 	/* Get the item */
