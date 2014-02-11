@@ -5,10 +5,10 @@
 # across a range of different makefiles, to cut down on maintenance.
 #
 
-NAME = FAangband
-VERSION = 1.4.4
-COPYRIGHT = (c) 2005-2013 Nick McConnell and contributors
-PROG = faangband
+NAME = My Little Angband: Dungeons are Magic
+VERSION = 0.0.1
+COPYRIGHT = (c) 2014 Michael Norhtington
+PROG = ponyband
 
 HEADERS = \
 	angband.h \

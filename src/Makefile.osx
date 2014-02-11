@@ -118,7 +118,7 @@ APPRES = $(APPCONT)/Resources
 # the lib/xtra/graf directory and rebuild.
 PLIST = cocoa/FAangband-Cocoa.xml
 
-ICONFILES = cocoa/FAangband_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
+ICONFILES = cocoa/ponyband_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
 
 LIBFILES = \
   ../lib/edit/*.txt \
