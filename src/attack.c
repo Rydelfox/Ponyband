@@ -404,8 +404,8 @@ void get_slay_info(monster_type * m_ptr, int *slay, int *mul, int item,
 			if (notice_launcher)
 				notice_other(slays[i].notice_slay, INVEN_BOW + 1);
 			if (notice_ring) {
-				notice_other(slays[i].notice_slay, INVEN_RIGHT + 1);
-				notice_other(slays[i].notice_slay, INVEN_LEFT + 1);
+                notice_other(slays[i].notice_slay, INVEN_RIGHT + 1);
+                notice_other(slays[i].notice_slay, INVEN_LEFT + 1);
 			}
 		}
 	}
@@ -441,8 +441,8 @@ void get_brand_info(monster_type * m_ptr, int *brand, int *mul, int item,
 				if (notice_launcher)
 					notice_other(brands[i].notice_brand, INVEN_BOW + 1);
 				if (notice_ring) {
-					notice_other(brands[i].notice_brand, INVEN_RIGHT + 1);
-					notice_other(brands[i].notice_brand, INVEN_LEFT + 1);
+                    notice_other(brands[i].notice_brand, INVEN_RIGHT + 1);
+                    notice_other(brands[i].notice_brand, INVEN_LEFT + 1);
 				}
 			}
 		}

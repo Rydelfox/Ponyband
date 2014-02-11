@@ -2509,6 +2509,9 @@ static enum parser_error parse_p_e(struct parser *p)
 	r->re_skde = parser_getint(p, "skde");
 	r->re_ac = parser_getint(p, "ac");
 	r->re_bonus = parser_getint(p, "bonus");
+	r->num_rings = parser_getint(p, "rings");
+	/* Prevent out of bounds rings */
+	if(r->num_rings > 2) r->num_rings = 2;
 	return PARSE_ERROR_NONE;
 }
 
@@ -2659,7 +2662,7 @@ struct parser *init_parse_p(void)
 	parser_reg(p,
 			   "M int xdis int xdev int xsav int xstl int xsrh int xfos int xthn int xthb",
 			   parse_p_m);
-	parser_reg(p, "E int id int mint int maxt int skde int ac int bonus",
+	parser_reg(p, "E int id int mint int maxt int skde int ac int bonus int rings",
 			   parse_p_e);
 	parser_reg(p,
 			   "X int mhp int diff int infra int start_lev int hometown",

@@ -346,8 +346,12 @@ char index_to_label(int i)
 	if (i < INVEN_WIELD)
 		return (I2A(i));
 
-	/* Indexes for "equip" are offset */
-	return (I2A(i - INVEN_WIELD));
+	/* Indexes before the Rings are easy */
+    if (i < INVEN_LEFT )
+        return (I2A(i - INVEN_WIELD));
+    
+    /* Indexes after the rings are offset by the number of ring slots */
+    return (I2A(i - INVEN_WIELD - 2 + rp_ptr->num_rings));
 }
 
 /*
@@ -386,6 +390,10 @@ s16b label_to_equip(int c)
 
 	/* Convert */
 	i = (islower((unsigned char) c) ? A2I(c) : -1) + INVEN_WIELD;
+	
+	/* Convert for items past the rings */
+	if (i >= (INVEN_LEFT + rp_ptr->num_rings))
+		i += (2 - rp_ptr->num_rings);
 
 	/* Verify the index */
 	if ((i < INVEN_WIELD) || (i >= ALL_INVEN_TOTAL) || (i == INVEN_TOTAL))
@@ -425,8 +433,10 @@ bool wearable_p(const object_type * o_ptr)
 	case TV_DRAG_ARMOR:
 	case TV_LIGHT:
 	case TV_AMULET:
-	case TV_RING:
 		return (TRUE);
+	
+	case TV_RING:
+	    return (rp_ptr->num_rings >= 1);
 	case TV_GLOVES:
 	    if(player_has(PF_QUADRUPED))
 	        return (FALSE);
@@ -511,8 +521,16 @@ s16b wield_slot(const object_type * o_ptr)
 		return (INVEN_BOW);
 
 	case TV_RING:
-		return p_ptr->inventory[INVEN_RIGHT].
-			k_idx ? INVEN_LEFT : INVEN_RIGHT;
+		/* Fail if there are no ring slots */
+        if(rp_ptr->num_rings <= 0)
+		    return(-1);
+        /* If there's only 1 ring slot, use the left slot */
+        else if(rp_ptr->num_rings == 1)
+            return INVEN_LEFT;
+        /* Otherwise, check for an empty slot */
+        else
+            return p_ptr->inventory[INVEN_RIGHT].
+			    k_idx ? INVEN_LEFT : INVEN_RIGHT;
 
 	case TV_AMULET:
 		return (INVEN_NECK);
@@ -565,6 +583,8 @@ bool slot_can_wield_item(int slot, const object_type * o_ptr)
 {
 	if ((o_ptr->tval == TV_BOOTS) && player_has(PF_QUADRUPED))
 	    return (slot == INVEN_FORE || slot == INVEN_HIND) ? TRUE : FALSE;
+    else if ((o_ptr->tval == TV_RING) && (rp_ptr->num_rings <= 0))
+        return FALSE;
     else if (o_ptr->tval == TV_RING)
 		return (slot == INVEN_LEFT || slot == INVEN_RIGHT) ? TRUE : FALSE;
 	else if (obj_is_ammo(o_ptr))
@@ -610,7 +630,12 @@ const char *mention_use(int slot)
 		}
 
 	case INVEN_LEFT:
-		return "On left hand";
+	    if (rp_ptr->num_rings <= 0)
+	        return "";
+        if (rp_ptr->num_rings == 1)
+	        return "On horn";
+        else
+		    return "On left hand";
 	case INVEN_RIGHT:
 		return "On right hand";
 	case INVEN_NECK:
@@ -670,10 +695,21 @@ const char *describe_use(int i)
 		p = "shooting missiles with";
 		break;
 	case INVEN_LEFT:
-		p = "wearing on your left hand";
-		break;
+	    if (rp_ptr->num_rings == 1) {
+	        p = "wearing on your horn";
+	        break;
+	    } else if (rp_ptr->num_rings >= 2) {
+	        p = "wearing on your left hand";
+		    break;
+	    }
+	    else
+	        p = "";
+            break;
 	case INVEN_RIGHT:
-		p = "wearing on your right hand";
+		if (rp_ptr->num_rings < 2)
+            p = "";
+         else
+            p = "wearing on your right hand";
 		break;
 	case INVEN_NECK:
 		p = "wearing around your neck";
@@ -4089,7 +4125,7 @@ static const grouper tval_names[] = {
 	{TV_PRAYER_BOOK, "prayer book"},
 	{TV_DRUID_BOOK, "stone of lore"},
 	{TV_NECRO_BOOK, "necromantic tome"},
-	{TV_GOLD, "gold"},
+	{TV_GOLD, "bits"},
 
 };
 

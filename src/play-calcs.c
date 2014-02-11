@@ -1274,8 +1274,11 @@ static void calc_mana(void)
 		/* Assume player is not encumbered by gloves */
 		p_ptr->cumber_glove = FALSE;
 
-		/* Get the gloves */
-		o_ptr = &p_ptr->inventory[INVEN_HANDS];
+		/* Get the gloves or ring for Unicorns and Alicorns*/
+		if(rp_ptr->num_rings == 1)
+		    o_ptr = &p_ptr->inventory[INVEN_LEFT];
+        else
+            o_ptr = &p_ptr->inventory[INVEN_HANDS];
 
 		/* Normal gloves hurt mage or necro-type spells.  Now, only Free Action 
 		 * or magic mastery stops this effect. */
@@ -1355,13 +1358,19 @@ static void calc_mana(void)
 	}
 
 
-	/* Take note when "glove state" changes */
+	/* Take note when "glove/ring state" changes */
 	if (old_cumber_glove != p_ptr->cumber_glove) {
 		/* Message */
 		if (p_ptr->cumber_glove) {
-			msg("Your covered hands feel unsuitable for spellcasting.");
+		    if(rp_ptr->num_rings == 1)
+		        msg("Your encircles horn feels unsuitable for spellcasting.");
+            else
+			    msg("Your covered hands feel unsuitable for spellcasting.");
 		} else {
-			msg("Your hands feel more suitable for spellcasting.");
+			if(rp_ptr->num_rings == 1)
+                msg("Your horn feels more suitable for spellcasting.");
+           else
+                msg("Your hands feel more suitable for spellcasting.");
 		}
 	}
 

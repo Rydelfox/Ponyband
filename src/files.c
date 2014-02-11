@@ -796,7 +796,7 @@ void display_player_sml(void)
 	prt_lnum("Exp to Adv.  ", (s32b) (player_exp[p_ptr->lev - 1]), 19, 26,
 			 TERM_L_GREEN);
 
-	prt_lnum("Gold         ", p_ptr->au, 20, 26, TERM_L_GREEN);
+	prt_lnum("Bits         ", p_ptr->au, 20, 26, TERM_L_GREEN);
 
 	prt_num("Max Hit Points   ", p_ptr->mhp, 11, 1, TERM_L_GREEN);
 
@@ -928,7 +928,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	/* Hack - skip all this for mode 1 */
 	if (mode != 1) {
 		/* Begin dump */
-		sprintf(buf, "[FAangband %s Character Dump]", VERSION_STRING);
+		sprintf(buf, "[My Little Angband %s Character Dump]", VERSION_STRING);
 		dump_put_str(TERM_WHITE, buf, 2);
 		current_line++;
 
@@ -1125,7 +1125,7 @@ extern int make_dump(char_attr_line * line, int mode)
 		dump_ptr = (char_attr *) & line[current_line];
 		dump_num("Blows/Round      ", p_ptr->state.num_blow, 1,
 				 TERM_L_BLUE);
-		dump_lnum("Gold          ", p_ptr->au, 27, TERM_L_GREEN);
+		dump_lnum("Bits          ", p_ptr->au, 27, TERM_L_GREEN);
 		dump_deci("Shots/Round    ", p_ptr->state.num_fire / 10,
 				  p_ptr->state.num_fire % 10, 53, TERM_L_BLUE);
 		current_line++;
@@ -1429,7 +1429,17 @@ extern int make_dump(char_attr_line * line, int mode)
 				of_wipe(objflags);
 				of_copy(objflags, o_ptr->flags_obj);
 				of_inter(objflags, o_ptr->id_obj);
+				
+				/* Make sure slot is a valid equipment slot */
+				if(((i == INVEN_RIGHT) && (rp_ptr->num_rings <= 1)) ||
+                    ((i == INVEN_LEFT) && (rp_ptr->num_rings <= 0)) ||
+                    ((i == INVEN_HANDS) && (player_has(PF_QUADRUPED))) ||
+                    ((i == INVEN_HIND) && (!player_has(PF_QUADRUPED)))) {
+                    dump_put_str((o_ptr->k_idx ? TERM_L_WHITE : TERM_SLATE),
+				         ".", n);
+                }
 
+				
 				/* Check flags */
 				if ((o_ptr->k_idx) && of_has(objflags, flag)) {
 					dump_put_str(TERM_WHITE, "+", n);
@@ -1480,6 +1490,15 @@ extern int make_dump(char_attr_line * line, int mode)
 
 				/* Object */
 				o_ptr = &p_ptr->inventory[i];
+				
+				/* Make sure slot is a valid equipment slot */
+				if(((i == INVEN_RIGHT) && (rp_ptr->num_rings <= 1)) ||
+                    ((i == INVEN_LEFT) && (rp_ptr->num_rings <= 0)) ||
+                    ((i == INVEN_HANDS) && (player_has(PF_QUADRUPED))) ||
+                    ((i == INVEN_HIND) && (!player_has(PF_QUADRUPED)))) {
+                    dump_put_str((o_ptr->k_idx ? TERM_L_WHITE : TERM_SLATE),
+				         ".", n);
+                }
 
 				/* Check flags */
 				if (o_ptr->bonus_other[y] != BONUS_BASE) {
@@ -1646,7 +1665,7 @@ extern int make_dump(char_attr_line * line, int mode)
 			/* Initialize color based of sign of bonus. */
 			a = TERM_SLATE;
 			c = '.';
-
+			
 			/* Boost */
 			if (o_ptr->bonus_stat[i] != 0) {
 				/* Default */
@@ -2323,7 +2342,7 @@ bool show_file(const char *name, const char *what, int line, int mode)
 
 		/* Show a general "title" */
 		prt(format
-			("[FAangband %d.%d.%d, %s, Line %d/%d]", VERSION_MAJOR,
+			("[My Little Angband %d.%d.%d, %s, Line %d/%d]", VERSION_MAJOR,
 			 VERSION_MINOR, VERSION_PATCH, caption, line, size), 0, 0);
 
 

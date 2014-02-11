@@ -638,14 +638,17 @@ void process_command(cmd_context ctx, bool no_request)
 				 * the slot, but in some cases we need to ask the user which 
 				 * slot they actually want to replace */
 				if (p_ptr->inventory[slot].k_idx) {
-					if (o_ptr->tval == TV_RING) {
+                    if (o_ptr->tval == TV_RING && rp_ptr->num_rings >= 2) {
 						const char *q = "Replace which ring? ";
 						const char *s =
 							"Error in obj_wield, please report";
 						item_tester_hook = obj_is_ring;
 						if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 							return;
-					}
+					} else if (o_ptr->tval == TV_RING && rp_ptr->num_rings == 1)
+					    slot = INVEN_LEFT;
+	                else if (o_ptr->tval == TV_RING)
+	                    return;
 					
 					if((o_ptr->tval == TV_BOOTS) && player_has(PF_QUADRUPED)) {
 						const char *q = "Replace which boots? ";

@@ -225,7 +225,7 @@ char *obj_class_info[101] = {
 	"",
 	"", "", "", "", "",
 
-	"Footwear protects the feet only, but some rare items of this type have magics to render them fleet, light, or steady.",
+	"Footwear protects the feet or hooves only, but some rare items of this type have magics to render them fleet, light, or steady.",
 	"Your hands would benefit from protection too, but most magic users need to keep their fingers unencumbered or magically supple.",
 	"Many a blow will be struck upon your head, and protection here will certainly be helpful.  Some rare items may protect and enhance your mind.",
 	"Many a blow will be struck upon your head, and protection here will certainly be helpful.  Some rare items may protect and enhance your mind.",
@@ -238,7 +238,7 @@ char *obj_class_info[101] = {
 
 	"Amulets slip around your neck, and almost all have magics wondrous or perilous bound inside.",
 	"", "", "", "",
-	"You may wear a ring upon each of your two ring fingers, and benefit or suffer from the magics it contains.",
+	"You may wear a ring upon each of your two ring fingers, or a your horn, and benefit or suffer from the magics it contains.  Some races do not have any place to wear a ring.",
 	"", "", "", "",
 
 	"", "", "", "", "",
@@ -959,7 +959,7 @@ static bool describe_weapon_damage(textblock * tb,
 			? o_ptr->multiple_brand[j] : MULTIPLE_BASE;
 
 	/* Check rings for additional brands (slays) */
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < rp_ptr->num_rings; i++) {
 		i_ptr = &p_ptr->inventory[INVEN_LEFT + i];
 
 		/* If wearing a ring */

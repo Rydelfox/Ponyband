@@ -667,6 +667,8 @@ struct player_race {
 
     s16b r_skills[SKILL_MAX];	/* racial skills */
     s16b rx_skills[SKILL_MAX];	/* racial extra skills */
+    
+    byte num_rings;  /**< max number of rings */
 
     s16b re_id;		/**< ego-item index */
     s16b re_mint;	/**< min tval */

@@ -429,6 +429,11 @@ void textui_obj_cast(void)
 		msg("You cannot read books!");
 		return;
 	}
+	
+	if((!rp_ptr->num_rings) && p_ptr->cumber_glove) {
+	    msg("You cannot use arcane spells without a horn or fingers!");
+	    return;
+	}
 
 	strnfmt(q, sizeof(q), "Use which %s?",
 			magic_desc[mp_ptr->spell_realm][BOOK_NOUN]);

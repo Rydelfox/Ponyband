@@ -57,7 +57,13 @@ s16b modify_stat_value(int value, int amount)
 /* Is the player capable of casting a spell? */
 bool player_can_cast(void)
 {
-	if (player_has(PF_PROBE)) {
+	/* Races without Horns or Hands cannot cast arcane spells */
+	if((!rp_ptr->num_rings) && p_ptr->cumber_glove) {
+	    msg("You need a horn or hands to cast arcane spells.");
+	    return FALSE;
+	}
+	
+    if (player_has(PF_PROBE)) {
 		if (p_ptr->lev < 35) {
 			msg("You do not know how to probe monsters yet.");
 			return FALSE;
