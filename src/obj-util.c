@@ -637,7 +637,10 @@ const char *mention_use(int slot)
         else
 		    return "On left hand";
 	case INVEN_RIGHT:
-		return "On right hand";
+		if (rp_ptr->num_rings >= 2)
+            return "On right hand";
+        else
+            return "";
 	case INVEN_NECK:
 		return "Around neck";
 	case INVEN_LIGHT:
@@ -653,7 +656,10 @@ const char *mention_use(int slot)
 	case INVEN_HEAD:
 		return "On head";
 	case INVEN_HANDS:
-        return "On hands";
+        if(player_has(PF_QUADRUPED))
+            return "";
+        else
+            return "On hands";
 	case INVEN_FORE:
 		if(player_has(PF_QUADRUPED))
 		    return "On forehooves";
@@ -736,7 +742,10 @@ const char *describe_use(int i)
 		p = "wearing on your head";
 		break;
 	case INVEN_HANDS:
-		p = "wearing on your hands";
+		if(player_has(PF_QUADRUPED)) 
+		    p = "";
+        else
+            p = "wearing on your hands";
 		break;
 	case INVEN_FORE:
 		if(player_has(PF_QUADRUPED))
@@ -745,7 +754,10 @@ const char *describe_use(int i)
             p = "wearing on your feet";
 		break;
 	case INVEN_HIND:
-	    p = "wearing on your hindhooves";
+	    if(player_has(PF_QUADRUPED))
+            p = "wearing on your hindhooves";
+        else
+            p ="";
 	    break;
 	case QUIVER_START + 0:
 	case QUIVER_START + 1:

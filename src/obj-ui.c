@@ -108,7 +108,7 @@ static void show_obj(int onum, size_t max_len, char label[80],
 	/* Clear the line */
 	prt("", row + onum, MAX(col - 2, 0));
 
-	/* Print the label */
+    /* Print the label */
 	put_str(label, row + onum, col);
 
 	/* Print the object */
@@ -167,6 +167,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	int i;
 	object_type *o_ptr;
 	bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
+	bool invalid = FALSE;
 
 	need_spacer = FALSE;
 	offset = 0;
@@ -185,10 +186,18 @@ static void build_obj_list(int first, int last, const int *floor_list,
 		offset = 1;
 
 	for (i = first; i <= last; i++) {
-		if (floor_list)
+        
+        if (((i == INVEN_HANDS) && player_has(PF_QUADRUPED)) ||
+            ((i == INVEN_HIND) && !player_has(PF_QUADRUPED)) ||
+            ((i == INVEN_RIGHT) && (rp_ptr->num_rings <= 1)) ||
+            ((i == INVEN_LEFT) && (rp_ptr->num_rings <= 0)))
+                // Skip slots this race doesn't have
+                continue;
+        
+        if (floor_list)
 			o_ptr = &o_list[floor_list[i]];
-		else
-			o_ptr = &p_ptr->inventory[i];
+		else 
+            o_ptr = &p_ptr->inventory[i];
 
 		/* May need a blank line to separate equipment and quiver */
 		if ((i == INVEN_TOTAL) && (first)) {
@@ -225,10 +234,11 @@ static void build_obj_list(int first, int last, const int *floor_list,
 		if (first) {
 			char tmp_val[80];
 
-			/* Show full slot labels */
+			
+            /* Show full slot labels */
 			strnfmt(tmp_val, sizeof(tmp_val), "%-14s: ", mention_use(i));
 			my_strcat(items[num_obj].label, tmp_val,
-					  sizeof(items[num_obj].label));
+			  	  sizeof(items[num_obj].label));
 		}
 
 		/* Save the object */

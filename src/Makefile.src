@@ -73,7 +73,7 @@ MAINFILES = main.o main-crb.o main-gcu.o main-leo.o \
             main-sdl.o main-x11.o snd-sdl.o
 
 WINMAINFILES = \
-        win/faangband.res \
+        win/ponyband.res \
         main-win.o \
         win/readdib.o \
         win/readpng.o \
