@@ -12,7 +12,7 @@ SPECIAL, FALSE)
 OP(rogue_like_commands,   "Rogue-like commands",
 INTERFACE, FALSE)
 OP(center_player,         "Keep the player centered (slow)",
-INTERFACE, FALSE)
+INTERFACE, TRUE)
 OP(show_lists,            "Automatically show lists for commands",
 INTERFACE, TRUE)
 OP(show_menus,            "Enter key brings up command menu",
@@ -24,11 +24,11 @@ INTERFACE, TRUE)
 OP(show_detect,           "Show detection region",
 INTERFACE, TRUE)
 OP(view_yellow_light,     "Use special colors for torch light",
-INTERFACE, FALSE)
+INTERFACE, TRUE)
 OP(animate_flicker,       "Animate multi-colored monsters and items",
-INTERFACE, FALSE)
+INTERFACE, TRUE)
 OP(solid_walls,           "Show walls as solid blocks",
-INTERFACE, FALSE)
+INTERFACE, TRUE)
 OP(hybrid_walls,          "Show walls with shaded background",
 INTERFACE, FALSE)
 OP(ring_bell,             "Audible bell (on errors, etc)",
@@ -46,13 +46,13 @@ GAMEPLAY, FALSE)
 OP(use_old_target,        "Use old target by default",
 GAMEPLAY, FALSE)
 OP(pickup_always,         "Pick things up by default",
-GAMEPLAY, TRUE)
+GAMEPLAY, FALSE)
 OP(pickup_inven,          "Always pickup items matching inventory",
 GAMEPLAY, TRUE)
 OP(easy_open,             "Open/close/disarm without direction",
 GAMEPLAY, TRUE)
 OP(easy_alter,            "Open/close/disarm on movement",
-GAMEPLAY, FALSE)
+GAMEPLAY, TRUE)
 OP(hide_squelchable,      "Hide items set as squelchable",
 GAMEPLAY, TRUE)
 OP(run_ignore_stairs,     "When running, ignore stairs",

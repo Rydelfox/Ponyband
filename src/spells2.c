@@ -5138,7 +5138,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				if (t < water * 150) {
 					/* Monster OK in water */
 					if ((rf_has(r_ptr->flags, RF_FLYING))
-						|| !((rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
+						|| !((rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE))
 							 || (strchr("uU", r_ptr->d_char))
 							 || ((strchr("E", r_ptr->d_char))
 								 && ((r_ptr->d_attr == TERM_RED)
