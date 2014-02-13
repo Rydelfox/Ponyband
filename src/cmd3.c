@@ -167,6 +167,8 @@ void wield_item(object_type * o_ptr, int item, int slot)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	update_action(ACTION_MISC);
 
 	/* Obtain local object */
 	object_copy(i_ptr, o_ptr);

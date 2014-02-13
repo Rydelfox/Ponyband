@@ -518,6 +518,8 @@ typedef struct player {
 
     s16b timed[TMD_MAX];/**< Timed effects */
     s16b ele_attack;	/**< Timed -- Temporary Elemental attacks -LM- */
+    
+    byte previous_action[ACTION_MAX]; /**< Array of actions of the last several turns */
 
     bool black_breath;
 			/**< Major experience draining */

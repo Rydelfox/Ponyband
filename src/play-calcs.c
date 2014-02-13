@@ -2244,7 +2244,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		state->sustain_chr = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SLOW_DIGEST))
 		state->slow_digest = TRUE;
-	if (of_has(rp_ptr->flags_obj, OF_FEATHER))
+	if ((of_has(rp_ptr->flags_obj, OF_FEATHER)) || player_has(PF_WINGED) || player_has(PF_WINGED_CHARGE))
 		state->ffall = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_LIGHT))
 		state->light = TRUE;
@@ -2432,7 +2432,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 			state->sustain_chr = TRUE;
 		if (of_has(o_ptr->flags_obj, OF_SLOW_DIGEST))
 			state->slow_digest = TRUE;
-		if (of_has(o_ptr->flags_obj, OF_FEATHER))
+		if ((of_has(o_ptr->flags_obj, OF_FEATHER)) || player_has(PF_WINGED) || player_has(PF_WINGED_CHARGE))
 			state->ffall = TRUE;
 		if (of_has(o_ptr->flags_obj, OF_LIGHT))
 			state->light = TRUE;
@@ -2615,6 +2615,17 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	/* Speed boost for rune of speed */
 	if (cave_trap_specific(p_ptr->py, p_ptr->px, RUNE_SPEED))
 		state->pspeed += 10;
+	
+	/* Speed boost for winged */
+	if(player_has(PF_WINGED))
+	    state->pspeed += (p_ptr->lev / 10);
+	    
+    /* Stat boosts for charging */
+    if(charging()) {
+        state->pspeed += (p_ptr->lev / 10);
+        state->stat_add[A_STR] += 3;
+        state->stat_add[A_DEX] += 3;
+    }
 
 	/* Dwarves are good miners */
 	if (player_has(PF_DWARVEN))

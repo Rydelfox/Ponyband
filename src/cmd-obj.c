@@ -183,6 +183,8 @@ void do_cmd_takeoff(cmd_code code, cmd_arg args[])
 	(void) inven_takeoff(item, 255);
 	pack_overflow();
 	p_ptr->energy_use = 50;
+	
+	update_action(ACTION_MISC);
 }
 
 /* Wield or wear an item */
@@ -299,6 +301,8 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
 
 	/* Take a partial turn */
 	p_ptr->energy_use = 50;
+	
+	update_action(ACTION_MISC);
 
 	/* Drop (some of) the item */
 	inven_drop(item, amt);
@@ -444,6 +448,8 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 
 	/* Use the turn */
 	p_ptr->energy_use = 100;
+	
+	update_action(ACTION_MISC);
 
 	/* Mark as tried and redisplay */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -631,6 +637,8 @@ void do_cmd_refill(cmd_code code, cmd_arg args[])
 	}
 
 	p_ptr->energy_use = 50;
+	
+	update_action(ACTION_MISC);
 }
 
 
@@ -812,6 +820,8 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 
 		/* Take a turn */
 		p_ptr->energy_use = 100;
+		
+		update_action(ACTION_MISC);
 		return;
 	}
 
@@ -848,6 +858,8 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 				if (spell_cast(spell, dir)) {
 					/* Take a turn */
 					p_ptr->energy_use = 100;
+					
+					update_action(ACTION_MISC);
 
 					/* Reduced for fast casters */
 					if (player_has(PF_FAST_CAST)) {
@@ -940,6 +952,8 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	update_action(ACTION_MISC);
 
 	/* Forget the item_tester_hook */
 	item_tester_hook = NULL;

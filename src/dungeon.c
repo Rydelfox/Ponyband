@@ -1527,6 +1527,10 @@ static void process_player(void)
 		/* Redraw stuff (if needed) */
 		if (p_ptr->redraw)
 			redraw_stuff(p_ptr);
+		
+		/* HACK - Griffons need to update bonuses every turn due to charge */
+		if (player_has(PF_WINGED_CHARGE))
+		    p_ptr->update |= (PU_BONUS);
 
 		/* Place the cursor on the player */
 		place_cursor();
@@ -1547,6 +1551,7 @@ static void process_player(void)
 			|| (p_ptr->timed[TMD_STUN] >= 100)) {
 			/* Take a turn */
 			p_ptr->energy_use = 100;
+			update_action(ACTION_MISC);
 		}
 
 		/* Picking up objects */
@@ -1556,6 +1561,7 @@ static void process_player(void)
 			if (p_ptr->energy_use > 100)
 				p_ptr->energy_use = 100;
 			p_ptr->notice &= ~(PN_PICKUP);
+			update_action(ACTION_MISC);
 		}
 
 		/* Resting */
@@ -1571,6 +1577,7 @@ static void process_player(void)
 
 			/* Take a turn */
 			p_ptr->energy_use = 100;
+			update_action(ACTION_MISC);
 		}
 
 		/* Running */

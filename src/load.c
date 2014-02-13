@@ -1084,6 +1084,12 @@ int rd_player_1(void)
 	rd_s16b(&p_ptr->age);
 	rd_s16b(&p_ptr->ht);
 	rd_s16b(&p_ptr->wt);
+	
+	/* Read the last few turns' movement */
+	for (i = 0; i < ACTION_MAX; ++i) 
+	{
+		rd_byte(&(p_ptr->previous_action[i]));
+	}
 
 	/* Read the stat info */
 	for (i = 0; i < a_max; i++)

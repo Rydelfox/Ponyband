@@ -69,9 +69,9 @@
 /*
  * Current FAangband version numbers.
  */
-#define VERSION_MAJOR	1
-#define VERSION_MINOR	4
-#define VERSION_PATCH	4
+#define VERSION_MAJOR	0
+#define VERSION_MINOR	1
+#define VERSION_PATCH	0
 #define VERSION_EXTRA	0
 
 /**
@@ -751,5 +751,15 @@ enum
 
 /** Max number of items in the itemlist */
 #define MAX_ITEMLIST 256
+
+/*
+ * Action types (for remembering what the player did)
+ * A system horribly stolen from Sil
+ */
+#define ACTION_MAX		6	// number of actions stored
+
+#define ACTION_NOTHING	0	// the default, showing that no action has yet been written
+
+#define ACTION_MISC		10  // Currently accounts only for movement, as that's the only thing we care about. 1 for each direction.
 
 #endif /* !INCLUDED_DEFINES_H */

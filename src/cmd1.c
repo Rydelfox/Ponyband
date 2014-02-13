@@ -658,6 +658,9 @@ void fall_off_cliff(void)
 	int i = 0, dam;
 
 	msg("You fall into the darkness!");
+	
+	/* Clear last move */
+	p_ptr->previous_action[0] = ACTION_NOTHING;
 
 	/* Where we fell from */
 	p_ptr->last_stage = p_ptr->stage;
@@ -755,7 +758,7 @@ void move_player(int dir)
 	bool trapped = TRUE;
 
 	int temp;
-	int y, x;
+	int y, x, i;
 
 	feature_type *f_ptr;
 
@@ -783,6 +786,8 @@ void move_player(int dir)
 			if (str_escape + 3 < randint1(16)) {
 				/* Failure costs a turn. */
 				msg("You remain stuck in the pit.");
+				/* Failure clears movement */
+				p_ptr->previous_action[0] = ACTION_NOTHING;
 				return;
 			} else
 				msg("You clamber out of the pit.");
@@ -848,7 +853,9 @@ void move_player(int dir)
 					/* Cancel repeat unless we may continue */
 					if (!more)
 						disturb(0, 0);
-					return;
+					/* Clear action list */
+					p_ptr->previous_action[0] = ACTION_NOTHING;
+                    return;
 				}
 
 				/* Otherwise, a message. */
@@ -1033,6 +1040,7 @@ void move_player(int dir)
 		y = py = p_ptr->py;
 		x = px = p_ptr->px;
 		f_ptr = &f_info[cave_feat[y][x]];
+		    
 
 		/* Fall off a cliff */
 		if (falling)

@@ -30,6 +30,7 @@
 #include "spells.h"
 #include "squelch.h"
 #include "target.h"
+#include "externs.h"
 
 /* Private function that is shared by verify_panel() and center_panel() */
 void verify_panel_int(bool centered);
@@ -823,3 +824,71 @@ bool confuse_dir(int *dp)
 	/* Not confused */
 	return (FALSE);
 }
+
+/**
+ * Track Griffon charging
+ * Based on Sil's Sprinting, combined with Sil's Charge
+ */
+bool charging(void)
+{
+   /* Always false if the player isn't a griffon */
+   if (!player_has(PF_WINGED_CHARGE))
+        return FALSE;
+    
+   return (similar_direction(p_ptr->previous_action[0], p_ptr->previous_action[1]) &&
+           similar_direction(p_ptr->previous_action[1], p_ptr->previous_action[2]) &&
+           similar_direction(p_ptr->previous_action[2], p_ptr->previous_action[3]));
+    
+}
+
+/*
+ * Update previous action
+ */
+void update_action(int dir)
+{
+    int i;
+    
+    /* Shift all previous actions back */
+	for (i = ACTION_MAX; i >= 0 ; i--) {
+	    p_ptr->previous_action[i] = p_ptr->previous_action[i-1];
+    }
+    
+    /* Set the direction as the new previous action */
+    p_ptr->previous_action[0] = dir;
+}
+    
+/*
+ * Check if two directions are similar (within 45 degrees of each other)
+ * Despite the labels, this is communative
+ */
+bool similar_direction(byte old_dir, byte new_dir)
+{
+    /* Going the same direction is always similar */
+    if (old_dir == new_dir)
+        return TRUE;
+        
+    /* Otherwise, check for adjacent directions */
+    switch(old_dir)
+    {
+    case 1:
+        return ((new_dir == 2) || (new_dir == 4));
+    case 2:
+        return ((new_dir == 1) || (new_dir == 3));
+    case 3:
+        return ((new_dir == 2) || (new_dir == 6));
+    case 4:
+        return ((new_dir == 1) || (new_dir == 7));
+    case 6:
+        return ((new_dir == 3) || (new_dir == 9));
+    case 7:
+        return ((new_dir == 4) || (new_dir == 8));
+    case 8:
+        return ((new_dir == 7) || (new_dir == 9));
+    case 9:
+        return ((new_dir == 6) || (new_dir == 8));
+    default:
+        return FALSE;
+    };
+}
+        
+

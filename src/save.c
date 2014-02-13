@@ -561,7 +561,12 @@ void wr_player(void)
 	wr_s16b(p_ptr->age);
 	wr_s16b(p_ptr->ht);
 	wr_s16b(p_ptr->wt);
-
+	
+	/* Dump the last few turns' movement */
+	for (i = 0; i < ACTION_MAX; ++i) 
+	{
+		wr_byte(p_ptr->previous_action[i]);
+	}
 
 	/* Dump the stats (maximum and current) */
 	for (i = 0; i < A_MAX; ++i)

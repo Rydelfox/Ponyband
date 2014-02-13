@@ -1095,6 +1095,8 @@ void run_step(int dir)
 
 	/* Take time */
 	p_ptr->energy_use = 100;
+	
+	update_action(dir);
 
 	/* Move the player */
 	move_player(p_ptr->run_cur_dir);

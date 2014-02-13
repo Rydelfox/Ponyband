@@ -335,6 +335,9 @@ extern bool change_panel(int dir);
 extern void verify_panel(void);
 bool modify_panel(term *t, int wy, int wx);
 void town_adjust(int *dungeon_hgt, int *dungeon_wid);
+extern bool charging(void);
+extern void update_action(int dir);
+extern bool similar_direction(byte old_dir, byte new_dir);
 
 /* xtra3.c */
 void cnv_stat(int val, char *out_val, size_t out_len);

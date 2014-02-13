@@ -211,6 +211,9 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
+			
+			/* Set last action */
+			update_action(ACTION_MISC);
 
 			return;
 		}
@@ -240,6 +243,9 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
+			
+			/* Set last action */
+			update_action(ACTION_MISC);
 
 			return;
 		}
@@ -292,6 +298,9 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
+	
+	/* Set last action */
+	update_action(ACTION_MISC);
 }
 
 
@@ -378,6 +387,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
+			
+			/* Set last action */
+			update_action(ACTION_MISC);
 
 			return;
 		}
@@ -400,6 +412,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
+			
+			/* Set last action */
+			update_action(ACTION_MISC);
 
 			return;
 		}
@@ -432,6 +447,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
+			
+			/* Set last action */
+			update_action(ACTION_MISC);
 
 			return;
 		}
@@ -504,6 +522,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
+	
+	/* Set last action */
+	update_action(ACTION_MISC);
 
 }
 
@@ -516,6 +537,9 @@ void do_cmd_search(cmd_code code, cmd_arg args[])
 	/* Only take a turn if attempted */
 	if (search(TRUE))
 		p_ptr->energy_use = 100;
+		
+	/* Set last action */
+	update_action(ACTION_MISC);
 }
 
 
@@ -1380,6 +1404,9 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 		/* Redraw chest, to be on the safe side (it may have been squelched) */
 		light_spot(y, x);
 	}
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Result */
 	return (more);
@@ -1453,6 +1480,9 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 		msg("You set off a trap!");
 		chest_trap(y, x, o_idx);
 	}
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Result */
 	return (more);
@@ -1763,6 +1793,9 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Apply confusion */
 	if (confuse_dir(&dir)) {
@@ -1905,6 +1938,9 @@ void do_cmd_close(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Apply confusion */
 	if (confuse_dir(&dir)) {
@@ -2177,6 +2213,9 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Apply confusion */
 	if (confuse_dir(&dir)) {
@@ -2346,6 +2385,9 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Apply confusion */
 	if (confuse_dir(&dir)) {
@@ -2536,6 +2578,9 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Apply confusion */
 	if (confuse_dir(&dir)) {
@@ -2680,6 +2725,9 @@ void do_cmd_alter_aux(int dir)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Cancel repetition unless we can continue */
 	if (!more)
@@ -2788,6 +2836,9 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
 
 	/* Take a partial turn.  Now jamming is more useful. */
 	p_ptr->energy_use = 40;
+	
+	/* Set last action */
+    update_action(ACTION_MISC);
 
 	/* Confuse direction */
 	if (confuse_dir(&dir)) {
@@ -2920,6 +2971,8 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	update_action(dir);
 
 	/* Confuse direction */
 	if (confuse_dir(&dir)) {
@@ -2927,7 +2980,8 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 	}
-
+	
+    update_action(dir);
 
 	/* Verify legality */
 	if (!do_cmd_walk_test(y, x))
@@ -3031,6 +3085,8 @@ static void do_cmd_hold_or_stay(int pickup)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
+	
+	update_action(ACTION_MISC);
 
 	/* Spontaneous Searching */
 	if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] >= 50) {
@@ -3088,6 +3144,8 @@ void do_cmd_pickup(cmd_code code, cmd_arg args[])
 
 	/* Charge this amount of energy. */
 	p_ptr->energy_use = energy_cost;
+	
+	update_action(ACTION_MISC);
 }
 
 
@@ -3116,6 +3174,8 @@ void do_cmd_rest(cmd_code code, cmd_arg args[])
 
 	/* Take a turn XXX XXX XXX (?) */
 	p_ptr->energy_use = 100;
+	
+	update_action(ACTION_MISC);
 
 	/* Cancel searching */
 	p_ptr->searching = FALSE;

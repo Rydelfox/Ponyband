@@ -810,6 +810,8 @@ void unchange(void)
 
 	/* Use some energy */
 	p_ptr->energy_use = 100;
+	
+	update_action(ACTION_MISC);
 }
 
 
