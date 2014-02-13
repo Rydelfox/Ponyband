@@ -1277,7 +1277,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 	if (flags_test(mon_spells, RSF_SIZE, RSF_SUMMON_MASK, FLAG_END)) {
 		/* Summons */
 		if (rsf_has(mon_spells, RSF_S_KIN)) {
-			if (rf_has(r_ptr->spell_flags, RF_UNIQUE))
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
 				vp[vn++] = "its minions";
 			else
 				vp[vn++] = "similar monsters";
