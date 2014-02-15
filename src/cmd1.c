@@ -898,7 +898,7 @@ void move_player(int dir)
 		if (tf_has(f_ptr->flags, TF_TREE)) {
 			/* Druids, rangers, elves and ents (SJGU) slip easily under
 			 * trees */
-			if (((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))
+			if (((player_has(PF_WOODSMAN)) || (player_has(PF_PLANT_FRIEND)))
 				|| (player_has(PF_WOODEN)))
 				can_move = TRUE;
 
@@ -1015,8 +1015,8 @@ void move_player(int dir)
 		if (player_has(PF_UNLIGHT))
 			p_ptr->update |= PU_BONUS;
 
-		/* Update speed for elven woodspersons */
-		if (player_has(PF_WOODSMAN) && player_has(PF_ELVEN))
+		/* Update speed for Plant cutie mark woodspersons */
+		if (player_has(PF_WOODSMAN) && player_has(PF_PLANT_FRIEND))
 			p_ptr->update |= PU_BONUS;
 
 		/* Superstealth for ents in trees SJGU */

@@ -300,6 +300,7 @@ static void view_abilities_aux(char *desc)
 	char buf[10] = "";
 
 	of_copy(flags, rp_ptr->flags_obj);
+	of_copy(flags, cmp_ptr->flags_obj);
 
 	/* Sustain stats. */
 	if ((of_has(flags, OF_SUSTAIN_STR)) || (of_has(flags, OF_SUSTAIN_INT))
@@ -432,9 +433,10 @@ static void view_abilities_aux(char *desc)
 
 	/* Check for resists and vulnerabilities */
 	for (j = 0; j < MAX_P_RES; j++) {
-		if ((rp_ptr->percent_res[j] < 100) && (rp_ptr->percent_res[j] > 0))
+		if (((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) < 100) && 
+            ((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) > 0))
 			res = TRUE;
-		else if (rp_ptr->percent_res[j] > 100)
+		else if ((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) > 100)
 			vul = TRUE;
 	}
 
@@ -446,8 +448,8 @@ static void view_abilities_aux(char *desc)
 		attr_listed = 0;
 
 		for (j = 0; j < MAX_P_RES; j++) {
-			if ((rp_ptr->percent_res[j] < 100)
-				&& (rp_ptr->percent_res[j] > 0))
+			if (((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) < 100)
+				&& ((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) > 0))
 				attr_num++;
 		}
 
@@ -458,8 +460,8 @@ static void view_abilities_aux(char *desc)
 		for (j = 0; j < MAX_P_RES; j++) {
 			bool list_ok = FALSE;
 
-			if ((rp_ptr->percent_res[j] < 100)
-				&& (rp_ptr->percent_res[j] > 0))
+			if (((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) < 100)
+				&& ((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) > 0))
 				list_ok = TRUE;
 			if (!list_ok)
 				continue;
@@ -523,7 +525,7 @@ static void view_abilities_aux(char *desc)
 		attr_listed = 0;
 
 		for (j = 0; j < MAX_P_RES; j++) {
-			if (rp_ptr->percent_res[j] > 100)
+			if ((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) > 100)
 				attr_num++;
 		}
 
@@ -533,7 +535,7 @@ static void view_abilities_aux(char *desc)
 		for (j = 0; j < MAX_P_RES; j++) {
 			bool list_ok = FALSE;
 
-			if (rp_ptr->percent_res[j] > 100)
+			if ((rp_ptr->percent_res[j] + cmp_ptr->percent_res[j]) > 100)
 				list_ok = TRUE;
 
 			if (!list_ok)
@@ -580,7 +582,7 @@ static void view_abilities_aux(char *desc)
 			if (j == P_RES_DISEN)
 				my_strcat(desc, " disenchantment", max);
 
-			sprintf(buf, "(%d%%)", rp_ptr->percent_res[j] - 100);
+			sprintf(buf, "(%d%%)", rp_ptr->percent_res[j] + cmp_ptr->percent_res[j] - 100);
 			my_strcat(desc, buf, max);
 		}
 
@@ -740,6 +742,12 @@ void view_spec_display(menu_type * menu, int oid, bool cursor, int row,
 			color = TERM_ORANGE;
 			break;
 		}
+	case PLAYER_FLAG_CUTIEMARK:
+	    {
+	        sprintf(buf, "Cutie Mark: %s", choices[oid].name);
+	        color = TERM_ORANGE;
+	        break;
+	    }
 	default:
 		{
 			sprintf(buf, "Racial: Other");
@@ -847,9 +855,17 @@ void view_specialties(void)
 			spec_list[spec_known++].type = PLAYER_FLAG_RACE;
 		}
 	}
+	
+	/* Count the number of cutie mark powers we have */
+	for (i = 0; i < PF_MAX; i++) {
+	    if(player_mark_has(i)) {
+	        spec_list[spec_known] = abilities[i];
+	        spec_list[spec_known++].type = PLAYER_FLAG_CUTIEMARK;
+	    }
+	}
 
 	/* Standard racial flags */
-	if (!of_is_empty(rp_ptr->flags_obj)
+	if ((!of_is_empty(rp_ptr->flags_obj) && !of_is_empty(cmp_ptr->flags_obj))
 		|| !cf_is_empty(rp_ptr->flags_curse)) {
 		spec_list[spec_known].index = PF_MAX;
 		spec_list[spec_known].name = "";

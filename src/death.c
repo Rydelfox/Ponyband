@@ -287,7 +287,7 @@ static void print_tomb(void)
 
 	time_t ct = time((time_t) 0);
 
-	bool boat = ((p_ptr->total_winner) && (player_has(PF_ELVEN)));
+	bool boat = FALSE;
 	bool tree = ((p_ptr->total_winner)
 				 && (player_has(PF_WOODEN) || player_has(PF_DIVINE)));
 

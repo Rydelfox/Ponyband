@@ -868,3 +868,28 @@ extern void do_cmd_unknown(void)
 {
 	prt("Type '?' for help.", 0, 0);
 }
+
+void logbug(const char *s1)
+{
+    #ifdef DEBUG
+    ang_file *debuglog = NULL;
+    char debugfile[1024];
+    path_build(debugfile, 1024, ANGBAND_DIR_INFO, "debug.txt");
+    debuglog = file_open(debugfile, MODE_APPEND, FTYPE_TEXT);
+    file_putf(debuglog, s1);
+    file_close(debuglog);
+    #endif
+}
+
+extern void logbugf(const char *s1, ...)
+{
+       #ifdef DEBUG
+       va_list vp;
+       char* format;
+       
+       va_start(vp, s1);
+       vsprintf(format, s1, vp);
+       logbug(format);
+       va_end(vp);
+       #endif
+}

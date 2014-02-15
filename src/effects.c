@@ -728,7 +728,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_FOOD_BEORNING:
 		{
-			msg("The cakes of the Beornings are tasty.");
+			msg("The cakes from Sugarcube Corner are tasty.");
 			(void) hp_player(damroll(5, 8));
 			*ident = TRUE;
 			return TRUE;

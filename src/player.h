@@ -305,7 +305,8 @@ enum
     PLAYER_FLAG_NONE,
     PLAYER_FLAG_SPECIAL,
     PLAYER_FLAG_RACE,
-    PLAYER_FLAG_CLASS
+    PLAYER_FLAG_CLASS,
+    PLAYER_FLAG_CUTIEMARK
 };
 
 #define PF_NO_SPECIALTY		255
@@ -331,9 +332,10 @@ enum
 
 #define player_race_has(flag)        (pf_has(rp_ptr->pflags, (flag)))
 #define player_class_has(flag)       (pf_has(cp_ptr->pflags, (flag)))
+#define player_mark_has(flag)        (pf_has(cmp_ptr->pflags, (flag)))
 #define player_class_avail(flag)     (pf_has(cp_ptr->specialties, (flag)))
 #define player_chose(flag)           (pf_has(p_ptr->pflags, (flag)))
-#define player_has(flag)       (pf_has(rp_ptr->pflags, (flag)) || pf_has(cp_ptr->pflags, (flag)) || pf_has(p_ptr->pflags, (flag)))
+#define player_has(flag)       (pf_has(rp_ptr->pflags, (flag)) || pf_has(cp_ptr->pflags, (flag)) || pf_has(p_ptr->pflags, (flag)) || pf_has(cmp_ptr->pflags, (flag)))
 
 
 /*** Structures ***/
@@ -471,11 +473,13 @@ typedef struct player {
     byte psex;		/**< Sex index */
     byte prace;		/**< Race index */
     byte pclass;	/**< Class index */
+    byte pmark;     /**< Cutie Mark index */
     byte oops;		/**< Unused */
 
     const struct player_sex *sex;
     const struct player_race *race;
     const struct player_class *class;
+    const struct player_cutiemark *cutiemark;
 
     byte hitdie;	/**< Hit dice (sides) */
 
@@ -712,6 +716,26 @@ struct player_race {
 
 };
 
+/*
+ * Player Cutie Mark info
+ */
+struct player_cutiemark {
+
+    struct player_cutiemark *next;
+    const char *name;
+    const char *desc;
+    
+    unsigned int cmidx;
+    
+    s16b cm_adj[A_MAX];	/**< Cutie Mark stat modifiers */
+    
+    s16b hist; /**< History index */
+    
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+
+    bitflag flags_obj[OF_MAX];		/**< New object flags -NRM-*/
+	bitflag pflags[PF_SIZE];	/* Cutie Mark (player) flags */
+};
 
 /**
  * Starting equipment entry

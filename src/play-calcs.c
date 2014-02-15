@@ -2232,41 +2232,79 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	/* Object flags */
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_STR))
 		state->sustain_str = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_STR))
+		state->sustain_str = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_INT))
+		state->sustain_int = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_INT))
 		state->sustain_int = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_WIS))
 		state->sustain_wis = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_WIS))
+		state->sustain_wis = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_DEX))
+		state->sustain_dex = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_DEX))
 		state->sustain_dex = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CON))
 		state->sustain_con = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_CON))
+		state->sustain_con = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CHR))
+		state->sustain_chr = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_CHR))
 		state->sustain_chr = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SLOW_DIGEST))
 		state->slow_digest = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SLOW_DIGEST))
+		state->slow_digest = TRUE;
 	if ((of_has(rp_ptr->flags_obj, OF_FEATHER)) || player_has(PF_WINGED) || player_has(PF_WINGED_CHARGE))
+		state->ffall = TRUE;
+	if (of_has(rp_ptr->flags_obj, OF_FEATHER))
 		state->ffall = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_LIGHT))
 		state->light = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_LIGHT))
+		state->light = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_REGEN))
+		state->regenerate = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_REGEN))
 		state->regenerate = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_TELEPATHY))
 		state->telepathy = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_TELEPATHY))
+		state->telepathy = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SEE_INVIS))
+		state->see_inv = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SEE_INVIS))
 		state->see_inv = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_FREE_ACT))
 		state->free_act = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_FREE_ACT))
+		state->free_act = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_HOLD_LIFE))
+		state->hold_life = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_HOLD_LIFE))
 		state->hold_life = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_BLESSED))
 		state->bless_blade = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_BLESSED))
+		state->bless_blade = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_IMPACT))
+		state->impact = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_IMPACT))
 		state->impact = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_FEARLESS))
 		state->no_fear = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_FEARLESS))
+		state->no_fear = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SEEING))
 		state->no_blind = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_SEEING))
+		state->no_blind = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_DARKNESS))
+		state->darkness = TRUE;
+	if (of_has(cmp_ptr->flags_obj, OF_DARKNESS))
 		state->darkness = TRUE;
 
 
@@ -2313,11 +2351,14 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		state->drain_stat = TRUE;
 	if (cf_has(rp_ptr->flags_curse, CF_DRAIN_CHARGE))
 		state->drain_charge = TRUE;
+	
 
 	/* Resistances */
 	for (i = 0; i < MAX_P_RES; i++) {
 		state->res_list[i] = rp_ptr->percent_res[i];
+		apply_resist(&state->res_list[i], cmp_ptr->percent_res[i]);
 		state->dis_res_list[i] = rp_ptr->percent_res[i];
+		apply_resist(&state->res_list[i], cmp_ptr->percent_res[i]);
 	}
 
 	/* Ent */
@@ -2607,8 +2648,8 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		state->pspeed += (p_ptr->speed_boost + 5) / 10;
 	}
 
-	/* Speed boost in trees for elven druids and rangers */
-	if ((player_has(PF_WOODSMAN)) && (player_has(PF_ELVEN))
+	/* Speed boost in trees for plant friend druids and rangers */
+	if ((player_has(PF_WOODSMAN)) && (player_has(PF_PLANT_FRIEND))
 		&& tf_has(f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))
 		state->pspeed += 3;
 
@@ -2618,7 +2659,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	
 	/* Speed boost for winged */
 	if(player_has(PF_WINGED))
-	    state->pspeed += (p_ptr->lev / 10);
+	    state->pspeed += (p_ptr->lev / 7) + 3;
 	    
     /* Stat boosts for charging */
     if(charging()) {
@@ -2909,7 +2950,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	}
 
 	/* Bloating slows the player down (a little) */
-	if (p_ptr->food >= PY_FOOD_MAX)
+	if ((p_ptr->food >= PY_FOOD_MAX) && !player_has(PF_EXTRA_FOOD))
 		state->pspeed -= 10;
 
 	/* Searching slows the player down */

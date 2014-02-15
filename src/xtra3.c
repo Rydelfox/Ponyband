@@ -1010,7 +1010,11 @@ static size_t prt_stun(int row, int col)
  */
 static size_t prt_hunger(int row, int col)
 {
-	PRINT_STATE(<, hunger_data, p_ptr->food, row, col);
+	if(player_has(PF_EXTRA_FOOD) && (p_ptr->food > PY_FOOD_FULL)) {
+	    PRINT_STATE(<, hunger_data, PY_FOOD_FULL, row, col);
+	}
+    else
+        PRINT_STATE(<, hunger_data, p_ptr->food, row, col);
 	return 0;
 }
 

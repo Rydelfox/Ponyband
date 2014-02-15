@@ -497,6 +497,9 @@ static bool make_artifact_special(object_type * o_ptr)
 		if (a_ptr->level > p_ptr->depth) {
 			/* Acquire the "out-of-depth factor" */
 			int d = (a_ptr->level - p_ptr->depth) * 2;
+			
+			/* More common for lucky players */
+			d -= player_has(PF_LUCK_AURA);
 
 			/* Roll for out-of-depth creation */
 			if (randint0(d) != 0)
@@ -798,13 +801,13 @@ static void a_m_aux_4(object_type * o_ptr, int level, int power)
 			/* Hack -- Torches -- random fuel */
 			if (o_ptr->sval == SV_LIGHT_TORCH) {
 				if (o_ptr->pval > 0)
-					o_ptr->pval = randint1(o_ptr->pval);
+					o_ptr->pval = randint1(o_ptr->pval + (100 * player_has(PF_LUCK_AURA)));
 			}
 
 			/* Hack -- Lanterns -- random fuel */
 			if (o_ptr->sval == SV_LIGHT_LANTERN) {
 				if (o_ptr->pval > 0)
-					o_ptr->pval = randint1(o_ptr->pval);
+					o_ptr->pval = randint1(o_ptr->pval + (100 * player_has(PF_LUCK_AURA)));
 			}
 
 			break;
@@ -816,7 +819,7 @@ static void a_m_aux_4(object_type * o_ptr, int level, int power)
 			int temp_pval = randcalc(k_ptr->pval, level, RANDOMISE);
 			/* The wand or staff gets a number of initial charges equal to
 			 * between 1/2 (+1) and the full object kind's pval. */
-			o_ptr->pval = temp_pval / 2 + randint1((temp_pval + 1) / 2);
+			o_ptr->pval = temp_pval / 2 + randint1((temp_pval + 1 + (3 * player_has(PF_LUCK_AURA))) / 2);
 			break;
 		}
 
@@ -1026,14 +1029,14 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good,
 		lev = MAX_DEPTH - 1;
 
 	/* Base chance of being "good".  Reduced in Oangband. */
-	good_percent = 4 * lev / 5 + 10;
+	good_percent = 4 * lev / 5 + 10 + player_has(PF_LUCK_AURA);
 
 	/* Maximal chance of being "good".  Reduced in Oangband. */
 	if (good_percent > 65)
 		good_percent = 65;
 
 	/* Base chance of being "great".  Increased in Oangband. */
-	great_percent = (good_percent / 2) + 5;
+	great_percent = (good_percent / 2) + 5 + player_has(PF_LUCK_AURA);
 
 	/* Maximal chance of being "great".  Increased in Oangband. */
 	if (great_percent > 35)
@@ -1054,12 +1057,12 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good,
 	}
 
 	/* Roll for "dubious" */
-	else if ((randint0(100) < good_percent) && (required_tval == 0)) {
+	else if ((randint0(100 + (3 * player_has(PF_LUCK_AURA))) < good_percent) && (required_tval == 0)) {
 		/* Assume "dubious" */
 		power = -1;
 
 		/* Roll for "perilous" */
-		if (randint0(100) < great_percent)
+		if (randint0(100 + player_has(PF_LUCK_AURA)) < great_percent)
 			power = -2;
 	}
 
@@ -1769,7 +1772,7 @@ bool make_object(object_type * j_ptr, bool good, bool great,
 		/* Usually (67% chance) forbid very low-level objects that are
 		 * intrinsically worthless. */
 		if ((k_ptr->level < object_level / 4) && (k_ptr->cost < 1)
-			&& (randint1(3) != 1))
+			&& (randint1(3 + player_has(PF_LUCK_AURA)) != 1))
 			goto try_again;
 
 		/* Sometimes (33% chance) forbid very low-level objects that aren't

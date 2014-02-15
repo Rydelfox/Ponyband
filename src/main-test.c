@@ -73,13 +73,16 @@ static void c_player_birth(char *rest) {
 	char *sex = strtok(rest, " ");
 	char *race = strtok(NULL, " ");
 	char *class = strtok(NULL, " ");
+	char *cutiemark = strtok(NULL, " ");
 	int i;
 	struct player_class *c;
 	struct player_race *r;
+	struct player_cutiemark *cm;
 
 	if (!sex) sex = "Female";
 	if (!race) race = "Human";
 	if (!class) class = "Warrior";
+	if (!cutiemark) cutiemark = "None";
 
 	for (i = 0; i < MAX_SEXES; i++) {
 		if (!strcmp(sex, sex_info[i].title)) {
@@ -109,8 +112,15 @@ static void c_player_birth(char *rest) {
 		printf("player-birth: bad class '%s'\n", class);
 		return;
 	}
+	
+	for(cm = cutiemark; cm; cm = cm->next)
+	    if(!strcmp(cutiemark, cm->name))
+	        break;
+    
+    if(!cm) {
+	    printf("player-birth: bad cutie mark '%s'\n", cutiemark);
 
-	player_generate(p_ptr, NULL, r, c);
+	player_generate(p_ptr, NULL, r, c, cm);
 }
 
 static void c_player_class(char *rest) {
@@ -123,6 +133,10 @@ static void c_player_race(char *rest) {
 
 static void c_player_sex(char *rest) {
 	printf("player-sex: %s\n", p_ptr->sex->title);
+}
+
+static void c_player_mark(char *rest) {
+    printf("player-mark: %s\n", p_ptr->cutiemark->name);
 }
 
 typedef struct {
@@ -142,6 +156,7 @@ static test_cmd cmds[] = {
 	{ "player-class?", c_player_class },
 	{ "player-race?", c_player_race },
 	{ "player-sex?", c_player_sex },
+	{ "player-mark?", c_player_mark },
 
 	{ NULL, NULL }
 };

@@ -481,8 +481,7 @@ static void alloc_paths(int stage, int last_stage)
 	}
 	/* Place the player, unless we've just come upstairs */
 	if (((stage_map[p_ptr->last_stage][STAGE_TYPE] == CAVE)
-		 && (stage_map[p_ptr->last_stage][LOCALITY] != UNDERWORLD))
-		|| ((turn <= 10) && (MODE(THRALL))))
+		 && (stage_map[p_ptr->last_stage][LOCALITY] != UNDERWORLD)))
 		return;
 
 	player_place(py, px);

@@ -5976,7 +5976,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		/* Rangers, elves and druids can duck. */
 		if (tf_has(f_ptr->flags, TF_TREE)) {
 			if ((randint1(8) == 1) &&
-				((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))) {
+				((player_has(PF_WOODSMAN)) || (player_has(PF_PLANT_FRIEND)))) {
 				msg("You dodge behind a tree!");
 				return (FALSE);
 			}

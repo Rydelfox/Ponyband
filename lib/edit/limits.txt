@@ -45,8 +45,11 @@ M:P:14
 # Maximum number of player classes
 M:C:9
 
+# Maximum number of player cutie marks
+M:U:10
+
 # Maximum number of player history lines
-M:H:223
+M:H:434
 
 # Maximum number of owners per store
 M:B:14

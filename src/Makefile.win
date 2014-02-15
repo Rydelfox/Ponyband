@@ -61,6 +61,10 @@ ifdef BUILD_ID
   CFLAGS += -DBUILD_ID="$(BUILD_ID)"
 endif
 
+ifdef DEBUG
+  CFLAGS += -DDEBUG
+endif
+
 ifdef CYGWIN
 
   LIBS += -mno-cygwin -e _mainCRTStartup

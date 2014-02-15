@@ -384,7 +384,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		/* Players in trees can take advantage of cover, especially elves, 
 		 * rangers and druids. */
 		if (tf_has(f_ptr->flags, TF_ORGANIC)) {
-			if ((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))
+			if ((player_has(PF_WOODSMAN)) || (player_has(PF_PLANT_FRIEND)))
 				terrain_bonus = ac / 8 + 10;
 			else
 				terrain_bonus = ac / 10 + 2;

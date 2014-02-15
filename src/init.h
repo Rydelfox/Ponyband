@@ -39,6 +39,7 @@ typedef struct maxima {
     u16b s_max;		/**< Max size for "s_info[]" */
     u16b set_max;	/**< Max size for "set_info[]" */
     u16b pit_max;	/**< Maximum number of monster pit types */
+    u16b cm_max;    /**< Max size for "cm_info[]" */
 
     u16b o_max;		/**< Max size for "o_list[]" */
     u16b m_max;		/**< Max size for "mon_list[]" */
@@ -64,6 +65,7 @@ extern struct parser *init_parse_z(void);
 extern struct parser *init_parse_flavor(void);
 extern struct parser *init_parse_names(void);
 extern struct parser *init_parse_hints(void);
+extern struct parser *init_parse_marks(void);
 //#endif
 
 extern errr parse_file(struct parser *p, const char *filename);

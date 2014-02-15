@@ -2136,7 +2136,7 @@ s16b player_place(int y, int x)
 
 	/* No stairs if we don't do that */
 	if (MODE(NO_STAIRS) && !p_ptr->themed_level && p_ptr->depth &&
-		!(MODE(THRALL) && (p_ptr->depth == 58) && (turn < 10))) {
+		(p_ptr->depth == 58) && (turn < 10)) {
 		if (outside)
 			cave_set_feat(y, x, FEAT_ROAD);
 		else

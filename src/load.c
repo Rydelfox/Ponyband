@@ -442,25 +442,22 @@ int rd_options_1(void)
 			p_ptr->game_mode[GAME_MODE_IRONMAN] = opt_val;
 		}
 		if (i == 198) {
-			p_ptr->game_mode[GAME_MODE_THRALL] = opt_val;
-		}
-		if (i == 199) {
 			p_ptr->game_mode[GAME_MODE_SMALL_DEVICE] = opt_val;
 		}
-		if (i == 201) {
+		if (i == 200) {
 			p_ptr->game_mode[GAME_MODE_NO_ARTIFACTS] = opt_val;
 		}
-		if (i == 202) {
+		if (i == 201) {
 			p_ptr->game_mode[GAME_MODE_NO_STAIRS] = opt_val;
 		}
-		if (i == 203) {
+		if (i == 202) {
 			p_ptr->game_mode[GAME_MODE_AI_CHEAT] = opt_val;
 		}
-		if ((i == 200) && opt_val) {
+		if ((i == 199) && opt_val) {
 			p_ptr->map = MAP_DUNGEON;
 			map_extended = FALSE;
 		}
-		if ((i == 205) && opt_val) {
+		if ((i == 204) && opt_val) {
 			p_ptr->map = MAP_COMPRESSED;
 			map_extended = FALSE;
 		}
@@ -1067,6 +1064,17 @@ int rd_player_1(void)
 	cp_ptr = &c_info[p_ptr->pclass];
 	p_ptr->class = cp_ptr;
 	mp_ptr = &cp_ptr->magic;
+	
+	/* Player Cutie Mark */
+	rd_byte(&p_ptr->pmark);
+	
+	/* Verify player Cutie Mark */
+	if (p_ptr->pmark >= z_info->cm_max) {
+	    note(format("Invalid cutie mark (%d).", p_ptr->pmark));
+	    return (-1);
+	}
+	cmp_ptr = &cm_info[p_ptr->pmark];
+	p_ptr->cutiemark = cmp_ptr;
 
 	/* Player gender */
 	rd_byte(&p_ptr->psex);

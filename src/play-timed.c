@@ -649,7 +649,10 @@ bool set_food(int v)
 
 	/* Gorged */
 	else {
-		old_aux = 5;
+		if(!player_has(PF_EXTRA_FOOD))
+            old_aux = 5;
+        else
+            old_aux = 4;
 	}
 
 	/* Fainting / Starving */
@@ -679,7 +682,10 @@ bool set_food(int v)
 
 	/* Gorged */
 	else {
-		new_aux = 5;
+		if (player_has(PF_EXTRA_FOOD))
+		    new_aux = 4;
+        else
+            new_aux = 5;
 	}
 
 	/* Food increase */

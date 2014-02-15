@@ -162,7 +162,7 @@ term *angband_term[TERM_WIN_MAX];
  * The array[TERM_WIN_MAX] of window names (modifiable?)
  */
 char angband_term_name[TERM_WIN_MAX][16] = {
-	"FAangband",
+	"Ponyband",
 	"Term-1",
 	"Term-2",
 	"Term-3",
@@ -372,6 +372,7 @@ player_sex *sp_ptr;
 struct player_race *rp_ptr;
 struct player_class *cp_ptr;
 player_magic *mp_ptr;
+struct player_cutiemark *cmp_ptr;
 
 /**
  * The player other record (static)
@@ -468,6 +469,11 @@ struct player_race *p_info;
  * The player class arrays
  */
 player_class *c_info;
+
+/**
+ * The player cutie mark arrays
+ */
+struct player_cutiemark *cm_info;
 
 
 /**

@@ -66,7 +66,11 @@ void init_artifacts(void)
 			if (!a_ptr->name)
 				continue;
 
-			/* This is a "special" artifact */
+			/* Artifacts are more common for Lucky characters */
+			if(player_has(PF_LUCK_AURA))
+			    a_ptr->rarity++;
+			
+            /* This is a "special" artifact */
 			if ((a_idx < ART_MIN_NORMAL) ||
 				(a_ptr->tval == TV_AMULET) ||
 				(a_ptr->tval == TV_RING) ||
@@ -576,12 +580,12 @@ static void process_world(void)
 			/* Slow digestion takes less food */
 			if (p_ptr->state.slow_digest) {
 				notice_obj(OF_SLOW_DIGEST, 0);
-				i -= 10;
+				i -= 20;
 			}
 
 			/* Minimal digestion */
-			if (i < 1)
-				i = 1;
+			if (i < 0)
+				i = 0;
 
 			/* Digest some food */
 			(void) set_food(p_ptr->food - i);
@@ -591,7 +595,8 @@ static void process_world(void)
 	/* Digest quickly when gorged */
 	else {
 		/* Digest a lot of food */
-		(void) set_food(p_ptr->food - 100);
+		if (!player_has(PF_EXTRA_FOOD))
+            (void) set_food(p_ptr->food - 100);
 	}
 
 	/* Starve to death (slowly) */
@@ -2350,10 +2355,7 @@ void play_game(void)
 		player_birth(p_ptr->ht_birth ? TRUE : FALSE);
 
 		/* Start in home town - or on the stairs to Angband */
-		if (MODE(THRALL)) {
-			p_ptr->stage = THRALL_START;
-		} else
-			p_ptr->stage = p_ptr->home;
+		p_ptr->stage = p_ptr->home;
 
 		p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 

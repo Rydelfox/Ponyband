@@ -38,6 +38,10 @@
 #include "types.h"
 #include "tvalsval.h"
 
+#ifdef DEBUF
+#include <stdio>
+#endif
+
 /*
  * This file is used to initialize various variables and arrays for the
  * Angband game.  Note the use of "fd_read()" and "fd_write()" to bypass
@@ -411,6 +415,8 @@ static enum parser_error parse_z(struct parser *p)
 		z->set_max = value;
 	else if (streq(label, "N"))
 		z->l_max = value;
+	else if (streq(label, "U"))
+	    z->cm_max = value;
 	else
 		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 
@@ -3047,6 +3053,164 @@ struct file_parser c_parser = {
 	cleanup_c
 };
 
+static enum parser_error parse_mark_n(struct parser *p)
+{
+    struct player_cutiemark *h = parser_priv(p);
+    struct player_cutiemark *cm = mem_zalloc(sizeof *cm);
+    int i;
+    
+    /* Initialise values */
+    for (i = 0; i < MAX_P_RES; i++)
+        cm->percent_res[i] = RES_LEVEL_BASE;
+    
+    cm->next = h;
+    cm->cmidx = parser_getuint(p, "index");
+    cm->name = string_make(parser_getstr(p, "name"));
+    parser_setpriv(p, cm);
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_mark_s(struct parser *p)
+{
+    struct player_cutiemark *cm = parser_priv(p);
+
+	if (!cm)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	cm->cm_adj[A_STR] = parser_getint(p, "str");
+	cm->cm_adj[A_INT] = parser_getint(p, "int");
+	cm->cm_adj[A_WIS] = parser_getint(p, "wis");
+	cm->cm_adj[A_DEX] = parser_getint(p, "dex");
+	cm->cm_adj[A_CON] = parser_getint(p, "con");
+	cm->cm_adj[A_CHR] = parser_getint(p, "chr");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_mark_i(struct parser *p)
+{
+    struct player_cutiemark *cm = parser_priv(p);
+    if(!cm)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+        
+    cm->hist = parser_getint(p, "hist");
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_mark_u(struct parser *p)
+{
+    struct player_cutiemark *cm = parser_priv(p);
+    char *flags;
+    char *s;
+    
+    if(!cm)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+    if(!parser_hasval(p, "flags"))
+        return PARSE_ERROR_NONE;
+    flags = string_make(parser_getstr(p, "flags"));
+    s = strtok(flags, " |");
+    while (s) {
+        if(grab_flag(cm->pflags, PF_SIZE, player_info_flags, s))
+            break;
+        s = strtok(NULL, " |");
+    }
+    mem_free(flags);
+    return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_mark_b(struct parser *p)
+{
+    struct player_cutiemark *cm = parser_priv(p);
+    char *s = string_make(parser_getstr(p, "values"));
+    char *t;
+    int val, which = 0;
+    assert(cm);
+    
+    t = strtok(s, " |");
+    while (t) {
+        which = grab_value(t, player_resist_values,
+                           N_ELEMENTS(player_resist_values), &val);
+        if (which) {
+            cm->percent_res[which-1] = RES_LEVEL_BASE - val;
+            t = strtok(NULL, " |");
+            continue;
+        }
+        break;
+    }
+    mem_free(s);
+    return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_mark_d(struct parser *p)
+{
+    struct player_cutiemark *cm = parser_priv(p);
+    
+    assert(cm);
+    
+    cm->desc = string_make(parser_getstr(p, "desc"));
+    
+    return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_mark(void)
+{
+    struct parser *p = parser_new();
+    parser_setpriv(p, NULL);
+    parser_reg(p, "V sym version", ignored);
+    parser_reg(p, "N uint index str name", parse_mark_n);
+    parser_reg(p, "S int str int int int wis int dex int con int chr",
+               parse_mark_s);
+    parser_reg(p, "I int hist", parse_mark_i);
+    parser_reg(p, "D str desc", parse_mark_d);
+    parser_reg(p, "U ?str flags", parse_mark_u);
+    parser_reg(p, "B ?str values", parse_mark_b);
+    return p;
+}
+
+static errr run_parse_mark(struct parser *p)
+{
+    return parse_file(p, "p_mark");
+}
+
+static errr finish_parse_mark(struct parser *p)
+{
+    struct player_cutiemark *cm, *n;
+    
+    cm_info = mem_zalloc(sizeof(*cm) * z_info->cm_max);
+    for (cm = parser_priv(p); cm; cm = cm->next) {
+        if (cm->cmidx >= z_info->cm_max)
+            continue;
+        memcpy(&cm_info[cm->cmidx], cm, sizeof(*cm));
+    }
+    
+    cm = parser_priv(p);
+    while (cm) {
+        n = cm->next;
+        mem_free(cm);
+        cm = n;
+    }
+    
+    parser_destroy(p);
+    return 0;
+}
+
+static void cleanup_mark(void)
+{
+    int idx;
+    for (idx = 0; idx < z_info->cm_max; idx++) {
+        string_free((char *) cm_info[idx].name);
+        string_free((char *) cm_info[idx].desc);
+    }
+    mem_free(cm_info);
+}
+    
+struct file_parser mark_parser = {
+    "p_mark",
+    init_parse_mark,
+    run_parse_mark,
+    finish_parse_mark,
+    cleanup_mark
+};
+
 static enum parser_error parse_v_n(struct parser *p)
 {
 	struct vault *h = parser_priv(p);
@@ -3246,7 +3410,7 @@ static enum parser_error parse_h_n(struct parser *p)
 {
 	struct history *oh = parser_priv(p);
 	struct history *h = mem_zalloc(sizeof *h);
-
+	
 	h->chart = parser_getint(p, "chart");
 	h->next = parser_getint(p, "next");
 	h->roll = parser_getint(p, "roll");
@@ -3254,6 +3418,7 @@ static enum parser_error parse_h_n(struct parser *p)
 	h->nextp = oh;
 	h->hidx = oh ? oh->hidx + 1 : 0;
 	parser_setpriv(p, h);
+	
 	return PARSE_ERROR_NONE;
 }
 
@@ -4785,6 +4950,12 @@ bool init_angband(void)
 						"Initializing arrays... (classes)");
 	if (run_parser(&c_parser))
 		quit("Cannot initialize classes");
+		
+	/* Initialize cutie mark info */
+	event_signal_string(EVENT_INITSTATUS,
+                        "Initializing arrays... (cutie marks)");
+    if (run_parser(&mark_parser))
+        quit("Cannot initialize cutie marks");
 
 	/* Initialize flavor info */
 	event_signal_string(EVENT_INITSTATUS,
@@ -4964,6 +5135,7 @@ void cleanup_angband(void)
 	cleanup_parser(&hints_parser);
 	cleanup_parser(&mp_parser);
 	cleanup_parser(&z_parser);
+	cleanup_parser(&mark_parser);
 
 	/* Free the format() buffer */
 	vformat_kill();

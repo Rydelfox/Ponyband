@@ -55,6 +55,7 @@ enum birth_stage {
 	BIRTH_SEX_CHOICE,
 	BIRTH_RACE_CHOICE,
 	BIRTH_CLASS_CHOICE,
+	BIRTH_MARK_CHOICE,
 	BIRTH_ROLLER_CHOICE,
 	BIRTH_POINTBASED,
 	BIRTH_ROLLER,
@@ -69,6 +70,7 @@ enum birth_questions {
 	BQ_SEX,
 	BQ_RACE,
 	BQ_CLASS,
+	BQ_MARK,
 	BQ_ROLLER,
 	MAX_BIRTH_QUESTIONS
 };
@@ -141,7 +143,8 @@ static enum birth_stage get_quickstart_command(void)
 /* Show the map instructions */
 static void print_map_instructions(void)
 {
-	/* Clear screen */
+	
+    /* Clear screen */
 	Term_clear();
 
 	/* Output to the screen */
@@ -321,7 +324,7 @@ static enum birth_stage get_map_command(void)
 	enum birth_stage next;
 	menu_type *m;
 
-	m = map_menu_new();
+    m = map_menu_new();
 	// Hack -- remove map choice
 	/*
 	if (m) {
@@ -342,9 +345,10 @@ static enum birth_stage get_map_command(void)
 	*/
 	cmd_insert(CMD_SET_MAP);
 	cmd_set_arg_choice(cmd_get_top(), 0, MAP_FANILLA);
+	next = BIRTH_MODE_CHOICE;
 	map_menu_destroy(m);
 
-	return BIRTH_MODE_CHOICE;
+	return next;
 }
 
 /* ------------------------------------------------------------------------
@@ -383,8 +387,7 @@ static void print_mode_instructions(void)
  * accepting and quitting
  */
 const char *mode_name[] = {
-	"Thrall",
-	"Ironman",
+	"Ironpony",
 	"Disconnected stairs",
 	"Small device",
 	"No artifacts",
@@ -395,15 +398,14 @@ const char *mode_name[] = {
 };
 
 const char *mode_description[] = {
-	"Start as a thrall on the steps of Angband",
 	"Only ever go into greater danger until you win or die",
-	"Taking a dungeon stair or wilderness path will not place you on a stair or path back the way you came",
+	"Taking a dungeon stair will not place you on a stair back the way you came",
 	"Player and monster spell and view distances are halved.  This is good if you have a small screen or large tiles",
 	"Artifacts are never generated",
 	"You cannot sell items to shops for money, but you will get more money from the dungeon floor and monsters",
 	"Monsters know your weaknesses without having to learn them",
 	"Accept the currently selected game modes",
-	"Quit FAangband"
+	"Quit My Little Angband"
 };
 
 /**
@@ -418,13 +420,10 @@ struct mode_menu_data {
 
 /**
  * Is item oid valid?
+ * Semi-depricated
  */
 static int mode_menu_valid(menu_type * m, int oid)
 {
-	/* No thralls in FAnilla map */
-	if (MAP(FANILLA) && (oid == GAME_MODE_THRALL))
-		return 0;
-
 	return 1;
 }
 
@@ -452,7 +451,7 @@ static bool mode_menu_handler(menu_type * m, const ui_event * e, int oid)
 {
 	struct mode_menu_data *d = menu_priv(m);
 
-	if (e->type == EVT_SELECT) {
+    if (e->type == EVT_SELECT) {
 		/* We're done, return */
 		if (oid == GAME_MODE_MAX)
 			return FALSE;
@@ -620,24 +619,29 @@ static enum birth_stage get_mode_command(void)
  * ------------------------------------------------------------------------ */
 
 /* The various menus */
-static menu_type sex_menu, race_menu, class_menu, roller_menu;
+static menu_type sex_menu, race_menu, class_menu, cutiemark_menu, roller_menu;
 
 /* Locations of the menus, etc. on the screen */
-#define HEADER_ROW       1
-#define QUESTION_ROW     7
-#define TABLE_ROW       10
+#define HEADER_ROW         1
+#define QUESTION_ROW       7
+#define TABLE_ROW         10
 
-#define QUESTION_COL     2
-#define SEX_COL          2
-#define RACE_COL        14
-#define RACE_AUX_COL    29
-#define CLASS_COL       29
-#define CLASS_AUX_COL   48
+#define QUESTION_COL       2
+#define SEX_COL            2
+#define RACE_COL          14
+#define RACE_AUX_COL      29
+#define CLASS_COL         29
+#define CLASS_AUX_COL     48
+#define CUTIEMARK_COL     48
+#define CUTIEMARK_AUX_COL 65
 
 static region gender_region = { SEX_COL, TABLE_ROW, 15, -2 };
 static region race_region = { RACE_COL, TABLE_ROW, 15, -2 };
 static region class_region = { CLASS_COL, TABLE_ROW, 19, -2 };
-static region roller_region = { 44, TABLE_ROW, 21, -2 };
+static region cutiemark_region = { CUTIEMARK_COL, TABLE_ROW, 15, -2};
+/* When adding more menus, move Roller further right and make the menu
+ * after Cutie Mark clear the area by making value 3 high */
+static region roller_region = { 2, TABLE_ROW, 250, -2 };
 
 /* We use different menu "browse functions" to display the help text
    sometimes supplied with the menu items - currently just the list
@@ -709,6 +713,27 @@ static void race_help(int i, void *db, const region * l)
 
 	/* Reset text_out() indentation */
 	text_out_indent = 0;
+}
+
+static void cutiemark_help(int i, void *db, const region * l)
+{
+    int j;
+    struct player_cutiemark *cutiemark = &cm_info[i];
+    
+    /* Output to the screen */
+    text_out_hook = text_out_to_screen;
+    
+    /* Indent output */
+    text_out_indent = CUTIEMARK_AUX_COL;
+    Term_gotoxy(CUTIEMARK_AUX_COL, TABLE_ROW);
+    
+    for (j = 0; j < A_MAX; j++) {
+        text_out_e("%s%+d\n", stat_names_reduced[j], cutiemark->cm_adj[j]);
+    }
+    text_out_e("%s", cutiemark->desc);
+    
+    /* Reset test_out() indentation */
+    text_out_indent = 0;
 }
 
 static void class_help(int i, void *db, const region * l)
@@ -813,6 +838,19 @@ static void setup_menus()
 	}
 	mdata->hint =
 		"Your 'class' determines various intrinsic abilities and bonuses";
+		
+	/* Cutie Mark menu only displays if you have one */
+	if(player_has(PF_CUTIE_MARK)) {
+	    init_birth_menu(&cutiemark_menu, z_info->cm_max, p_ptr->pmark,
+	                    &cutiemark_region, TRUE, cutiemark_help);
+        mdata = cutiemark_menu.menu_data;
+        
+        for (i = 0; i < z_info->cm_max; i++) {
+            mdata->items[i] = cm_info[i].name;
+        }
+        mdata->hint =
+            "Your 'cutie mark' determines various intrinsic abilitis and bonuses";
+    }
 
 	/* Roller menu straightforward again */
 	init_birth_menu(&roller_menu, MAX_BIRTH_ROLLERS, 0, &roller_region,
@@ -842,6 +880,7 @@ static void free_birth_menus()
 	free_birth_menu(&sex_menu);
 	free_birth_menu(&race_menu);
 	free_birth_menu(&class_menu);
+	free_birth_menu(&cutiemark_menu);
 	free_birth_menu(&roller_menu);
 }
 
@@ -969,10 +1008,11 @@ static enum birth_stage menu_question(enum birth_stage current,
 	return next;
 }
 
+
 /* ------------------------------------------------------------------------
  * The rolling bit of the roller.
  * ------------------------------------------------------------------------ */
-#define ROLLERCOL 42
+#define ROLLERCOL 14
 
 static enum birth_stage roller_command(bool first_call)
 {
@@ -1322,6 +1362,7 @@ errr get_birth_command(bool wait)
 	case BIRTH_SEX_CHOICE:
 	case BIRTH_CLASS_CHOICE:
 	case BIRTH_RACE_CHOICE:
+    case BIRTH_MARK_CHOICE:
 	case BIRTH_ROLLER_CHOICE:
 		{
 			menu_type *menu = &sex_menu;
@@ -1344,8 +1385,20 @@ errr get_birth_command(bool wait)
 
 			if (current_stage > BIRTH_CLASS_CHOICE) {
 				menu_refresh(&class_menu, FALSE);
-				menu = &roller_menu;
-				command = CMD_NULL;
+				if (player_has(PF_CUTIE_MARK)) {
+				    menu = &cutiemark_menu;
+				    command = CMD_CHOOSE_MARK;
+				}
+                else {
+                    menu = &roller_menu;
+				    command = CMD_NULL;
+				}
+			}
+			
+			if (current_stage > BIRTH_MARK_CHOICE) {
+			    menu_refresh(&cutiemark_menu, FALSE);
+			    menu = &roller_menu;
+			    command = CMD_NULL;
 			}
 
 			next = menu_question(current_stage, menu, command);

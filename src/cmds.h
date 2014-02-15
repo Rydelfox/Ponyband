@@ -51,6 +51,12 @@ extern void do_cmd_monlist(void);
 extern void do_cmd_itemlist(void);
 extern void do_cmd_unknown(void);
 
+/* This function copies its text to a debug file in lib/info
+ * Leave this function intact even if it is not called anywhere
+ * It is very useful for debugging */
+extern void logbug(const char *s1);
+extern void logbugf(const char *s1, ...);
+
 /* cmd1.c */
 bool search(bool verbose);
 extern byte py_pickup(int pickup, int y, int x);

@@ -81,6 +81,7 @@ struct birther {
 	byte sex;
 	byte race;
 	byte class;
+	byte mark;
 
 	s16b age;
 	s16b wt;
@@ -109,6 +110,7 @@ static void save_roller_data(birther *player)
 	player->sex = p_ptr->psex;
 	player->race = p_ptr->prace;
 	player->class = p_ptr->pclass;
+	player->mark = p_ptr->pmark;
 	player->age = p_ptr->age;
 	player->wt = p_ptr->wt_birth;
 	player->ht = p_ptr->ht_birth;
@@ -161,6 +163,7 @@ static void load_roller_data(birther *player, birther *prev_player)
 	p_ptr->psex = player->sex;
 	p_ptr->prace = player->race;
 	p_ptr->pclass = player->class;
+	p_ptr->pmark = player->mark;
 	p_ptr->age = player->age;
 	p_ptr->wt = p_ptr->wt_birth = player->wt;
 	p_ptr->ht = p_ptr->ht_birth = player->ht;
@@ -230,8 +233,8 @@ static void get_stats(int stat_use[A_MAX])
 		/* Save that value */
 		p_ptr->stat_max[i] = j;
 
-		/* Obtain a "bonus" for "race" and "class" */
-		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+		/* Obtain a "bonus" for "race," "cutie mark," and "class" */
+		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i] + cmp_ptr->cm_adj[i];
 
 		/* Start fully healed */
 		p_ptr->stat_cur[i] = p_ptr->stat_max[i];
@@ -332,10 +335,39 @@ static void get_history(void)
 		/* Enter the next chart */
 		chart = h_info[i].next;
 	}
+	
+	/* Add history for the cutie mark */
+	if (player_has(PF_CUTIE_MARK)) {
+	    
+        /* Starting place */
+        chart = cmp_ptr->hist;
+        assert(chart);
+        
+        
+        while(chart) {
+            /* From the top */
+            i = 0;
+	    
+            /* Discover your special talent */
+	        roll = randint1(100);
+	    
+            /* Get the proper entry in the table */
+	         while ((chart != h_info[i].chart) || (roll > h_info[i].roll)) {
+                i++;
+             }
+        
+             /* Get the textual history */
+             my_strcat(p_ptr->history, h_info[i].text, sizeof(p_ptr->history));
+        
+             /* Add in any (unlikely) change in social class */
+             social_class += (int) (h_info[i].bonus) - 50;
+             
+             /* Enter the next chart */
+             chart = h_info[i].next;
+         }
+    }
 
-
-
-	/* Verify social class */
+    /* Verify social class */
 	if (social_class > 100)
 		social_class = 100;
 	else if (social_class < 1)
@@ -354,37 +386,17 @@ static void get_history(void)
 static void get_level(struct player *p)
 {
 
-	/* Check if they're an "advanced race" */
-	if ((rp_ptr->start_lev - 1) && !MODE(THRALL) &&
-		!MAP(DUNGEON) && !MAP(FANILLA)) {
-		/* Add the experience */
-		p->exp = player_exp[rp_ptr->start_lev - 2];
-		p->max_exp = player_exp[rp_ptr->start_lev - 2];
+	/* No Wilderness or advanced races, so most of this was excised */
+	/* Add the experience */
+	p->exp = 0;
+	p->max_exp = 0;
 
-		/* Set the level */
-		p->lev = rp_ptr->start_lev;
-		p->max_lev = rp_ptr->start_lev;
-	}
-	/* Paranoia */
-	else {
-		/* Add the experience */
-		p->exp = 0;
-		p->max_exp = 0;
-
-		/* Set the level */
-		p->lev = 1;
-		p->max_lev = 1;
-	}
-
+	/* Set the level */
+	p->lev = 1;
+	p->max_lev = 1;
+	
 	/* Set home town */
-	if (MODE(THRALL))
-		p->home = 0;
-	else if (MAP(DUNGEON) || MAP(FANILLA))
-		p->home = 1;
-	else if (MAP(COMPRESSED))
-		p->home = compressed_towns[rp_ptr->hometown];
-	else
-		p->home = towns[rp_ptr->hometown];
+	p->home = 1;
 }
 
 /*
@@ -394,6 +406,14 @@ static void get_ahw(void)
 {
 	/* Calculate the age */
 	p_ptr->age = rp_ptr->b_age + randint1(rp_ptr->m_age);
+	
+	/* Ponies with no cutie mark tend to by younger */
+	if(player_has(PF_CUTIE_MARK) && (cmp_ptr->cmidx == 0)) {
+	    p_ptr->age -= randint0(10);
+	    
+        /* Enforce a minimum age */
+	    if (p_ptr->age < rp_ptr->b_age) p_ptr->age = rp_ptr->b_age;
+	}
 
 	/* Calculate the height/weight for males */
 	if (p_ptr->psex == SEX_MALE) {
@@ -704,7 +724,7 @@ static void player_outfit(struct player *p)
 			i_ptr->origin = ORIGIN_BIRTH;
 
 			/* Nasty hack for "advanced" races -NRM- */
-			if (!MODE(THRALL) && (MAP(COMPRESSED) || MAP(EXTENDED)))
+			if ((MAP(COMPRESSED) || MAP(EXTENDED)))
 				object_upgrade(i_ptr);
 
 			object_aware(i_ptr);
@@ -719,11 +739,7 @@ static void player_outfit(struct player *p)
 	i_ptr = &object_type_body;
 
 	/* Hack -- Give the player some food */
-	if (MODE(THRALL))
-		object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD),
-					MINIMISE);
-	else
-		object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION), MINIMISE);
+	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION), MINIMISE);
 	i_ptr->number = (byte) rand_range(3, 7);
 	object_aware(i_ptr);
 	object_known(i_ptr);
@@ -744,73 +760,6 @@ static void player_outfit(struct player *p)
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
 	i_ptr->kind->everseen = TRUE;
-
-	/* Dungeon gear for escaping thralls */
-	if (MODE(THRALL)) {
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Nice amulet */
-		object_prep(i_ptr, lookup_kind(TV_AMULET, SV_AMULET_AMETHYST),
-					MINIMISE);
-		i_ptr->bonus_other[P_BONUS_M_MASTERY] = 4;
-		of_on(i_ptr->flags_obj, OF_TELEPATHY);
-		object_aware(i_ptr);
-		object_known(i_ptr);
-		apply_autoinscription(i_ptr);
-		(void) inven_carry(p, i_ptr);
-		i_ptr->kind->everseen = TRUE;
-
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Detection */
-		object_prep(i_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECTION),
-					MINIMISE);
-		object_aware(i_ptr);
-		object_known(i_ptr);
-		apply_autoinscription(i_ptr);
-		(void) inven_carry(p, i_ptr);
-		i_ptr->kind->everseen = TRUE;
-
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Mapping */
-		object_prep(i_ptr, lookup_kind(TV_ROD, SV_ROD_MAPPING), MINIMISE);
-		object_aware(i_ptr);
-		object_known(i_ptr);
-		apply_autoinscription(i_ptr);
-		(void) inven_carry(p, i_ptr);
-		i_ptr->kind->everseen = TRUE;
-
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Destruction */
-		object_prep(i_ptr,
-					lookup_kind(TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION),
-					MINIMISE);
-		i_ptr->number = 5;
-		object_aware(i_ptr);
-		object_known(i_ptr);
-		apply_autoinscription(i_ptr);
-		(void) inven_carry(p, i_ptr);
-		i_ptr->kind->everseen = TRUE;
-
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Identify */
-		object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY),
-					MINIMISE);
-		i_ptr->number = 25;
-		object_aware(i_ptr);
-		object_known(i_ptr);
-		apply_autoinscription(i_ptr);
-		(void) inven_carry(p, i_ptr);
-		i_ptr->kind->everseen = TRUE;
-	}
 
 	/* Now try wielding everything */
 	wield_all(p);
@@ -1049,36 +998,48 @@ static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
  * and so is called whenever things like race or class are chosen.
  */
 void player_generate(struct player *p, player_sex *s,
-					 struct player_race *r, player_class *c)
+					 struct player_race *r, player_class *c,
+                     struct player_cutiemark *cm)
 {
-	if (!s)
+    if (!s)
 		s = &sex_info[p->psex];
 	if (!c)
 		c = &c_info[p->pclass];
 	if (!r)
 		r = &p_info[p->prace];
+	if (!cm)
+	    cm = &cm_info[p->pmark];
 
 	sp_ptr = s;
 	cp_ptr = c;
 	mp_ptr = &cp_ptr->magic;
 	rp_ptr = r;
+	cmp_ptr = cm;
+	
+	/* Cutie Mark Sanity */
+	/* Also protects against giving invalid cutie marks via command line */
+	if (!player_has(PF_CUTIE_MARK)) {
+	    p->pmark = 0;
+        cm = &cm_info[0];
+	    cmp_ptr = cm;
+	}
 
-	/* Level */
+    /* Level */
 	get_level(p);
 
-	/* Hitdice */
+    /* Hitdice */
 	p->hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
 
-	/* Initial hitpoints */
+    /* Initial hitpoints */
 	p->mhp = p->hitdie;
 
-	/* Pre-calculate level 1 hitdice */
+    /* Pre-calculate level 1 hitdice */
 	p->player_hp[0] = p->hitdie;
 
-	/* Roll for age/height/weight */
+    /* Roll for age/height/weight */
 	get_ahw();
 
-	get_history();
+    get_history();
 }
 
 
@@ -1160,8 +1121,6 @@ void set_map(struct player *p)
 		/* Morgoth */
 		q_list[4].stage = 101;
 
-		/* No thralls in FAnilla map */
-		p_ptr->game_mode[GAME_MODE_THRALL] = FALSE;
 
 	} else if (p->map == MAP_COMPRESSED) {
 		int i;
@@ -1209,9 +1168,6 @@ void set_modes(struct player *p)
 			quit("Bad game mode string");
 	}
 
-	/* No thralls in FAnilla map */
-	if (p->map == MAP_FANILLA)
-		p->game_mode[GAME_MODE_THRALL] = FALSE;
 }
 
 /* Reset everything back to how it would be on loading the game. */
@@ -1223,7 +1179,7 @@ static void do_birth_reset(bool use_quickstart, birther *quickstart_prev)
 	if (use_quickstart && quickstart_prev)
 		load_roller_data(quickstart_prev, NULL);
 
-	player_generate(p_ptr, NULL, NULL, NULL);
+	player_generate(p_ptr, NULL, NULL, NULL, NULL);
 
 	/* Unset the modes if no quickstart */
 	if (!use_quickstart)
@@ -1262,33 +1218,34 @@ void player_birth(bool quickstart_allowed)
 	 * We rely on prev.age being zero to determine whether there is a stored
 	 * character or not, so initialise it here.
 	 */
-	birther prev = { 0, 0, 0, 0, 0, 0, 0, 0, {0}, 0, {0}, "" };
+	birther prev = { 0, 0, 0, 0, 0, 0, 0, 0, 0, {0}, 0, {0}, "" };
 
 	/* 
 	 * If quickstart is allowed, we store the old character in this,
 	 * to allow for it to be reloaded if we step back that far in the
 	 * birth process.
 	 */
-	birther quickstart_prev = { 0, 0, 0, 0, 0, 0, 0, 0, {0}, 0, {0}, "" };
+	birther quickstart_prev = { 0, 0, 0, 0, 0, 0, 0, 0, 0, {0}, 0, {0}, "" };
 
 	char long_day[25];
 
 	time_t ct = time((time_t *) 0);
 
-	/* 
+    /* 
 	 * If there's a quickstart character, store it for later use.
 	 * If not, default to whatever the first of the choices is.
 	 */
 	if (quickstart_allowed)
 		save_roller_data(&quickstart_prev);
 	else {
-		p_ptr->psex = 0;
+        p_ptr->psex = 0;
 		p_ptr->pclass = 0;
 		p_ptr->prace = 0;
-		player_generate(p_ptr, NULL, NULL, NULL);
+		p_ptr->pmark = 0;
+		player_generate(p_ptr, NULL, NULL, NULL, NULL);
 	}
 
-	/* Handle incrementing name suffix */
+    /* Handle incrementing name suffix */
 	buf = find_roman_suffix_start(op_ptr->full_name);
 
 	if (buf) {
@@ -1303,10 +1260,10 @@ void player_birth(bool quickstart_allowed)
 	}
 
 
-	/* We're ready to start the interactive birth process. */
+    /* We're ready to start the interactive birth process. */
 	event_signal_flag(EVENT_ENTER_BIRTH, quickstart_allowed);
 
-	/* 
+    /* 
 	 * Loop around until the UI tells us we have an acceptable character.
 	 * Note that it is possible to quit from inside this loop.
 	 */
@@ -1328,21 +1285,28 @@ void player_birth(bool quickstart_allowed)
 			set_modes(p_ptr);
 		} else if (cmd->command == CMD_CHOOSE_SEX) {
 			p_ptr->psex = cmd->arg[0].choice;
-			player_generate(p_ptr, NULL, NULL, NULL);
+			player_generate(p_ptr, NULL, NULL, NULL, NULL);
 		} else if (cmd->command == CMD_CHOOSE_RACE) {
 			p_ptr->prace = cmd->arg[0].choice;
-			player_generate(p_ptr, NULL, NULL, NULL);
+			player_generate(p_ptr, NULL, NULL, NULL, NULL);
 
 			reset_stats(stats, points_spent, &points_left);
 			generate_stats(stats, points_spent, &points_left);
 			rolled_stats = FALSE;
 		} else if (cmd->command == CMD_CHOOSE_CLASS) {
 			p_ptr->pclass = cmd->arg[0].choice;
-			player_generate(p_ptr, NULL, NULL, NULL);
+			player_generate(p_ptr, NULL, NULL, NULL, NULL);
 
 			reset_stats(stats, points_spent, &points_left);
 			generate_stats(stats, points_spent, &points_left);
 			rolled_stats = FALSE;
+		} else if (cmd->command == CMD_CHOOSE_MARK) {
+		    p_ptr->pmark = cmd->arg[0].choice;
+		    player_generate(p_ptr, NULL, NULL, NULL, NULL);
+		    
+		    reset_stats(stats, points_spent, &points_left);
+		    generate_stats(stats, points_spent, &points_left);
+		    rolled_stats = FALSE;
 		} else if (cmd->command == CMD_FINALIZE_OPTIONS) {
 			/* Level */
 			get_level(p_ptr);
@@ -1443,7 +1407,7 @@ void player_birth(bool quickstart_allowed)
 	history_clear();
 
 	/* Record the start for notes */
-	sprintf(notes_start, "Began the quest to kill Morgoth on %s\n",
+	sprintf(notes_start, "Began the quest to defeat Nightmare Moon on %s\n",
 			long_day);
 
 

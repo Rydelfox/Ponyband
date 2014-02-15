@@ -85,7 +85,6 @@ static struct cmd_info cmd_action[] = {
 	 textui_cmd_fire_at_nearest},
 	{"Racial shapechange/End shapechange", {']'}, CMD_NULL,
 	 do_cmd_reshape},
-	{"Move house", {'H', '$'}, CMD_NULL, do_cmd_move_house},
 	{"Walk into a trap", {'W', '-'}, CMD_JUMP, NULL}
 };
 

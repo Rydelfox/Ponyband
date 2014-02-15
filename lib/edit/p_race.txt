@@ -24,6 +24,10 @@
 # U:racial specials
 # C:classes (numeric)
 
+
+# Note: Currently, the histories have been updated, but not the races.
+# Descriptions may be weird.
+
 # Version stamp (required)
 
 V:1.1.6
@@ -37,7 +41,7 @@ X:9:6:0:2:0
 I:1:14:6
 H:72:6:66:4
 W:180:25:150:20
-U:SWORD_SKILL | XBOW_SKILL | PLAINSMAN | QUADRUPED
+U:SWORD_SKILL | XBOW_SKILL | PLAINSMAN | QUADRUPED | CUTIE_MARK
 C:0|1|2|3|4|5|6|7|8
 
 N:1:Test Pony
@@ -49,10 +53,10 @@ X:10:6:2:2:1
 I:4:50:20
 H:90:10:82:10
 W:190:20:180:15
-U:BOW_SKILL | ELVEN  | QUADRUPED
+U:BOW_SKILL | QUADRUPED | CUTIE_MARK
 C:0|1|2|3|4|5|6|7|8
 
-N:2:Grey-Elf
+N:2:Test Pegasus
 S:1:0:2:2:0:3
 R:-1:-1:5:1:4:12:0:2
 M:0:0:0:0:0:0:-6:10
@@ -62,7 +66,7 @@ I:5:300:100
 H:90:10:82:10
 W:190:20:180:15
 B:RES_LIGHT[40]
-U:BOW_SKILL | ELVEN 
+U:BOW_SKILL | QUADRUPED | WINGED | CUTIE_MARK
 C:0|1|2|3|4|5|6|7|8
 
 N:3:Hobbit
@@ -155,7 +159,6 @@ H:90:10:82:10
 W:190:20:180:15
 B:RES_LIGHT[40] 
 F:SEE_INVIS
-U:ELVEN
 C:0|1|2|3|4|6|7|8
 # Note that this race does not get U:BOW_SKILL, despite being Elven.
 # This is because they have such high missle weapon skill in general.
@@ -181,7 +184,7 @@ X:9:1:2:1:3
 I:28:200:100
 H:90:10:82:10
 W:190:20:180:15
-U:SHADOW | ELVEN
+U:SHADOW 
 C:0|1|2|3|4|5|6|7|8
 
 N:12:Ent

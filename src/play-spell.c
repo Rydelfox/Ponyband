@@ -209,6 +209,7 @@ bool spell_okay_to_browse(int spell)
 s16b spell_chance(int spell)
 {
 	int chance, minfail;
+	int effective_level;
 
 	magic_type *mt_ptr;
 
@@ -223,8 +224,15 @@ s16b spell_chance(int spell)
 	/* Extract the base spell failure rate */
 	chance = mt_ptr->sfail;
 
-	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 4 * (p_ptr->lev - mt_ptr->slevel);
+	/* Determine the player's effective level */
+	effective_level = p_ptr->lev;
+	if(player_has(PF_SKILLED_MAGIC)) {
+	    effective_level = (effective_level * 120) / 100;
+	    effective_level++;
+	}
+	
+    /* Reduce failure rate by "effective" level adjustment */
+	chance -= 4 * (effective_level - mt_ptr->slevel);
 
 	/* Reduce failure rate by INT/WIS adjustment */
 	chance -=

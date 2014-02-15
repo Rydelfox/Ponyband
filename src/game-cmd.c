@@ -54,6 +54,7 @@ static struct {
     { CMD_CHOOSE_SEX, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_CHOOSE_RACE, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_CHOOSE_CLASS, { arg_CHOICE }, NULL, FALSE, 0 },
+    { CMD_CHOOSE_MARK, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_FINALIZE_OPTIONS, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_BUY_STAT, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_SELL_STAT, { arg_CHOICE }, NULL, FALSE, 0 },

@@ -144,7 +144,7 @@ static const char *likert(int x, int y)
 
 /**
  * Obtain the "flags" for the player as if he was an item.  Currently includes 
- * race, class, and shapechange (optionally). -LM-
+ * race, class, cutiemark, and shapechange (optionally). -LM-
  *
  * Mega - Hack
  * 'shape' should be set on when calling this function for display purposes, 
@@ -161,6 +161,9 @@ void player_flags(bitflag * flags)
 
 	/* Add racial flags */
 	of_union(flags, rp_ptr->flags_obj);
+	
+	/* Add cutie mark flags */
+	of_union(flags, cmp_ptr->flags_obj);
 
 	/* Warrior. */
 	if (player_has(PF_RELENTLESS)) {
@@ -322,8 +325,10 @@ void get_player_resists(int *player_resists)
 {
 	int i;
 
-	for (i = 0; i < MAX_P_RES; i++)
+	for (i = 0; i < MAX_P_RES; i++) {
 		player_resists[i] = rp_ptr->percent_res[i];
+		apply_resist(&player_resists[i], cmp_ptr->percent_res[i]);
+	}
 
 	/* Shapechange, if any. */
 	switch (p_ptr->schange) {
@@ -664,6 +669,7 @@ void display_player_sml(void)
 	clear_from(0);
 
 	/* Name, Sex, Race, Class */
+	/* Cutie Mark is not included here, as it's in the History */
 	put_str("Name    :", 1, 1);
 	put_str("Sex     :", 2, 1);
 	put_str("Race    :", 1, 27);
@@ -850,6 +856,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	struct store_type *st_ptr = NULL;
 
 	char o_name[120];
+	char slots[14];
 
 	char buf[100];
 	char buf1[20];
@@ -883,7 +890,7 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	bool dead = FALSE;
 	bool have_home = (p_ptr->home != 0);
-
+	
 	const char *map_name[] = {
 		"Standard wilderness",
 		"Extended wilderness",
@@ -892,14 +899,19 @@ extern int make_dump(char_attr_line * line, int mode)
 	};
 
 	const char *mode_name[] = {
-		"Thrall",
-		"Ironman",
+		"Ironpony",
 		"Disconnected stairs",
 		"Small device",
 		"No artifacts",
 		"No selling",
 		"Smart cheat"
 	};
+	
+	for(i = 0; i < 13; i++);
+	    slots[i] = ' ';
+    for(i = 0; i < 9 + rp_ptr->num_rings; i++)
+	    slots[i] = 'a' + i;
+    slots[13] = '@';
 
 	/* Get the store number of the home */
 	if (have_home) {
@@ -945,8 +957,8 @@ extern int make_dump(char_attr_line * line, int mode)
 		dump_ptr = (char_attr *) & line[current_line];
 
 		/* Name, Sex, Race, Class */
-		dump_put_str(TERM_WHITE, "Name    : ", 1);
-		dump_put_str(TERM_L_BLUE, op_ptr->full_name, 11);
+		dump_put_str(TERM_WHITE, "Name      : ", 1);
+		dump_put_str(TERM_L_BLUE, op_ptr->full_name, 13);
 		dump_put_str(TERM_WHITE, "Age", 27);
 		sprintf(buf1, "%10d", (int) p_ptr->age);
 		dump_put_str(TERM_L_BLUE, buf1, 42);
@@ -966,8 +978,8 @@ extern int make_dump(char_attr_line * line, int mode)
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
-		dump_put_str(TERM_WHITE, "Sex     : ", 1);
-		dump_put_str(TERM_L_BLUE, sp_ptr->title, 11);
+		dump_put_str(TERM_WHITE, "Sex       : ", 1);
+		dump_put_str(TERM_L_BLUE, sp_ptr->title, 13);
 		dump_put_str(TERM_WHITE, "Height", 27);
 		sprintf(buf1, "%10d", (int) p_ptr->ht);
 		dump_put_str(TERM_L_BLUE, buf1, 42);
@@ -987,8 +999,8 @@ extern int make_dump(char_attr_line * line, int mode)
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
-		dump_put_str(TERM_WHITE, "Race    : ", 1);
-		dump_put_str(TERM_L_BLUE, rp_ptr->name, 11);
+		dump_put_str(TERM_WHITE, "Race      : ", 1);
+		dump_put_str(TERM_L_BLUE, rp_ptr->name, 13);
 		dump_put_str(TERM_WHITE, "Weight", 27);
 		sprintf(buf1, "%10d", (int) p_ptr->wt);
 		dump_put_str(TERM_L_BLUE, buf1, 42);
@@ -1008,8 +1020,8 @@ extern int make_dump(char_attr_line * line, int mode)
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
-		dump_put_str(TERM_WHITE, "Class   : ", 1);
-		dump_put_str(TERM_L_BLUE, cp_ptr->name, 11);
+		dump_put_str(TERM_WHITE, "Class     : ", 1);
+		dump_put_str(TERM_L_BLUE, cp_ptr->name, 13);
 		dump_put_str(TERM_WHITE, "Social Class", 27);
 		sprintf(buf1, "%10d", (int) p_ptr->sc);
 		dump_put_str(TERM_L_BLUE, buf1, 42);
@@ -1029,8 +1041,10 @@ extern int make_dump(char_attr_line * line, int mode)
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
-		if (p_ptr->total_winner)
-			dump_put_str(TERM_VIOLET, "***WINNER***", 0);
+		if(player_has(PF_CUTIE_MARK)) {
+		    dump_put_str(TERM_WHITE, "Cutie Mark: ", 1);
+		    dump_put_str(TERM_L_BLUE, cmp_ptr->name, 13);
+		}
 		red = (p_ptr->stat_cur[4] < p_ptr->stat_max[4]);
 		value = p_ptr->state.stat_use[4];
 		cnv_stat(value, buf1, sizeof(buf1));
@@ -1047,6 +1061,8 @@ extern int make_dump(char_attr_line * line, int mode)
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
+		if (p_ptr->total_winner)
+			dump_put_str(TERM_VIOLET, "***WINNER***", 0);
 		red = (p_ptr->stat_cur[5] < p_ptr->stat_max[5]);
 		value = p_ptr->state.stat_use[5];
 		cnv_stat(value, buf1, sizeof(buf1));
@@ -1320,7 +1336,8 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_ptr = (char_attr *) & line[current_line];
 
 	/* Header */
-	dump_put_str(TERM_WHITE, "abcdefghijkl@            abcdefghijkl@", 6);
+	sprintf(buf, "%s           %s", slots, slots);
+	dump_put_str(TERM_WHITE, buf, 6);
 	current_line++;
 
 	/* Resistances */
@@ -1395,7 +1412,8 @@ extern int make_dump(char_attr_line * line, int mode)
 		dump_ptr = (char_attr *) & line[current_line];
 
 		/* Header */
-		dump_put_str(TERM_WHITE, "abcdefghijkl@            abcdefghijkl@",
+		sprintf(buf, "%s           %s", slots, slots);
+		dump_put_str(TERM_WHITE, buf,
 					 6);
 		current_line++;
 	}

@@ -1119,7 +1119,7 @@ bool py_attack(int y, int x, bool can_push)
 	 * know nature lore. */
 	if (tf_has(f_ptr->flags, TF_PROTECT) &&
 		!(tf_has(f_ptr->flags, TF_ORGANIC) &&
-		  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
+		  (player_has(PF_WOODSMAN) || player_has(PF_PLANT_FRIEND)))) {
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
 
@@ -1834,7 +1834,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 			 * players who know nature lore. */
 			if (tf_has(f_ptr->flags, TF_PROTECT) &&
 				!(tf_has(f_ptr->flags, TF_ORGANIC) &&
-				  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
+				  (player_has(PF_WOODSMAN) || player_has(PF_PLANT_FRIEND)))) {
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
 			/* Monsters in water are vulnerable.  */
@@ -2371,7 +2371,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 			 * players who know nature lore. */
 			if (tf_has(f_ptr->flags, TF_PROTECT) &&
 				!(tf_has(f_ptr->flags, TF_ORGANIC) &&
-				  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
+				  (player_has(PF_WOODSMAN) || player_has(PF_PLANT_FRIEND)))) {
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
 			/* Monsters in water are vulnerable.  */

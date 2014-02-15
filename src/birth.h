@@ -5,7 +5,8 @@
 
 extern void player_birth(bool quickstart_allowed);
 extern void player_generate(struct player *p, player_sex *s,
-                            struct player_race *r, player_class *c);
+                            struct player_race *r, player_class *c,
+                            struct player_cutiemark *cm);
 
 char *find_roman_suffix_start(const char *buf);
 
