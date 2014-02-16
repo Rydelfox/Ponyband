@@ -480,3 +480,226 @@ bool spell_cast(int spell, int dir)
 
 	return TRUE;
 }
+
+/**
+ * Collect a list of valid abilities
+ */
+int ability_collect(int abilities[], int len)
+{
+    int i;
+    int n_abilities = 0;
+    
+    for (i = 0; i < len; i++) {
+        int ability = ability_info[i].aidx;
+        if(player_contains(ability_info[i].pflags)) {
+            abilities[n_abilities++] = ability;
+        }
+    }
+    
+    return n_abilities;
+}
+
+/**
+ * True if at least one ability is okay
+ */
+bool ability_okay_list(const int abilities[], int n_abilities)
+{
+    int i;
+    
+    for (i = 0; i< n_abilities; i++) {
+        if(ability_info[abilities[i]].fail < 100)
+            if(player_contains(ability_info[abilities[i]].pflags))
+                return TRUE;
+    }
+    
+    return FALSE;
+}
+
+/**
+ * Returns the chance of failure for an ability
+ */
+s16b ability_chance(int ability)
+{
+    int chance, i;
+    
+    innate_ability *ia_ptr = mem_alloc(sizeof(*ia_ptr));
+    
+    for (i = 0; i < z_info->ability_max; i++)
+        if(ability_info[i].aidx == ability) {
+            ia_ptr = &ability_info[i];
+            break;
+        }
+    /* Fail if we found nothing */
+    if(!ia_ptr) {
+        mem_free(ia_ptr);
+        return(100);
+    }
+    
+    /* Paranoia - must be able to use this ability */
+    if(!player_contains(ia_ptr->pflags)){
+        mem_free(ia_ptr);
+        return(100);
+    }
+        
+    /* Extract the base failure chance */
+    chance = ia_ptr->fail;
+    
+    /* Reduce the failure rate by the level adjustment */
+    chance -= 4 * (p_ptr->lev - ia_ptr->level);
+    
+    /* Reduce failure based on the ability's stat */
+    chance -= 3 * (adj_mag_stat[p_ptr->state.stat_ind[ia_ptr->stat]] - 1);
+    
+    
+    if(chance < 0)
+        chance = 0;
+    
+    /* Stunning makes abilities harder */
+    if (p_ptr->timed[TMD_STUN] > 50)
+		chance += 20;
+	else if (p_ptr->timed[TMD_STUN])
+		chance += 10;
+
+	/* Always a 5 percent chance of working */
+	if (chance > 95)
+		chance = 95;
+		
+	/* Return the chance */
+	mem_free(ia_ptr);
+	return chance;
+}
+
+/**
+ * Actually use the ability
+ */
+bool use_ability(int ability, int dir)
+{
+    int chance;
+    int plev = p_ptr->lev;
+    bool failed = FALSE;
+    int py = p_ptr->py;
+    int px = p_ptr->px;
+    
+    /* Get the ability */
+    const innate_ability *ia_ptr;
+    ia_ptr = &ability_info[ability];
+    
+    /* Failure chance */
+    chance = ability_chance(ability);
+    
+    /* Check for failure */
+    if (randint0(100) < chance) {
+        failed = TRUE;
+        
+        flush();
+        msg("You lost your concentration");
+    }
+    
+    /* Process the ability */
+    else {
+        /* Announce the action */
+        msg(ia_ptr->cast);
+        
+        /* Use the ability */
+        if (!ability_use(ability, dir, plev))
+            return FALSE;
+        
+        /* Abilities sound like spells */
+        sound(MSG_SPELL);
+        
+    }
+    
+    /* Abilities can cast from Runes of Mana */
+    
+    /* Hack - simplify rune of mana calculations by fully draining the rune
+	 * first */
+    if (cave_trap_specific(py, px, RUNE_MANA) &&
+        (mana_reserve <= ia_ptr->cost)) {
+            p_ptr->csp += mana_reserve;
+            mana_reserve = 0;
+    }
+    
+    /* Use mana from the rune if possible */
+    if(cave_trap_specific(py, px, RUNE_MANA) &&
+       (mana_reserve > ia_ptr->cost)) {
+           mana_reserve -= ia_ptr->cost;
+    }
+    
+    /* Sufficient Mana */
+    else if (ia_ptr->cost <= p_ptr->csp) {
+        /* Use some mana */
+        p_ptr->csp -= ia_ptr->cost;
+    }
+    
+    /* Cast from health */
+    else {
+        int health_cost = ia_ptr->cost - p_ptr->csp;
+        
+        /* No mana left */
+        p_ptr->csp = 0;
+        p_ptr->csp_frac = 0;
+        
+        /* Pay with health */
+        take_hit(health_cost, "overexertion");
+    }
+    
+    /* Redraw health and mana */
+    p_ptr->redraw |= (PR_MANA | PR_HEALTH);
+    
+    return TRUE;
+}
+
+/**
+ * Use an innate ability
+ */
+void do_cmd_ability(cmd_code code, cmd_arg args[])
+{
+    int ability = args[0].choice;
+    int dir = args[1].direction;
+    int i;
+       
+    /* Require there to be some usable ability */
+    if(!player_ability_count())
+        return;
+        
+    /* Not confused */
+    if(p_ptr->timed[TMD_CONFUSED])
+        return;
+
+    /* Loop through and find the ability we need */
+    for (i = 0; i < z_info->ability_max; i++)
+    {
+        if(ability_info[i].aidx == ability) {
+            /* Get the ability */
+            innate_ability *ia_ptr  = &ability_info[i];
+            
+            /* Verify dangerous abilities for mana users */
+            if((ia_ptr->cost > p_ptr->csp) && (p_ptr->msp > 0)) {
+                /* Warning */
+                msg("You do not have enough mana to use this ability");
+                
+                /* Flush input */
+                flush();
+                
+                /* Verify */
+                if(!get_check("Use it anyway? "))
+                    return;
+            }
+            
+            /* Use the ability */
+            if(use_ability(ability, dir)) {
+                /* Take a turn */
+                p_ptr->energy_use = 100;
+                
+                update_action(ACTION_MISC);
+                
+            } else {
+                /* Ability is present, but cannot be used */
+                msg("You cannot use that ability");
+            }
+            
+            return;
+        }
+    }
+}
+

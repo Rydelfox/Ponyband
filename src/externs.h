@@ -182,6 +182,7 @@ extern struct player_race *p_info;
 extern struct player_class *c_info;
 extern struct player_cutiemark *cm_info;
 extern struct owner_type *b_info;
+extern struct innate_ability *ability_info;
 extern spell_type *s_info;
 extern flavor_type *flavor_info;
 extern struct hint *hints;

@@ -97,4 +97,5 @@ PF(SKILLED_MAGIC, "Magic Skill", "You are more likely to succeed at casting spel
 PF(DETECT_MONSTER, "Monster Detection", "You are innately able to detect nearby monsters when you concentrate."),
 PF(DETECT_TREASURE, "Treasure Detection", "You are innately able to detect nearby treasure when you concentrate."),
 PF(LUCK_AURA, "Luck Aura", "You are able to find rare treasures more easily."),
-
+PF(BR_FIRE, "Breathe Fire", "As a fire breathing dragon, naturally, you can breathe fire."),
+PF(TELEKINESIS, "Telekinesis", "You are able to lift distant objects with your magic."),

@@ -58,7 +58,8 @@ static struct cmd_info cmd_magic[] = {
 	{"Gain new spells", {'G'}, CMD_STUDY_BOOK, textui_obj_study,
 	 player_can_study},
 	{"Cast a spell", {'m'}, CMD_CAST, textui_obj_cast, player_can_cast},
-	{"Pray a prayer", {'p'}, CMD_CAST, textui_obj_cast, player_can_cast}
+	{"Pray a prayer", {'p'}, CMD_CAST, textui_obj_cast, player_can_cast},
+	{"Use an ability", {'U'}, CMD_ABILITY, textui_ability, player_can_ability}
 };
 
 /**

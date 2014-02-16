@@ -44,6 +44,7 @@ typedef struct maxima {
     u16b o_max;		/**< Max size for "o_list[]" */
     u16b m_max;		/**< Max size for "mon_list[]" */
     u16b l_max;		/**< Max size for "trap_list[]" */
+    u16b ability_max;    /**< Maximum size for "ability_list[]" */
 } maxima;
 
 
@@ -66,6 +67,7 @@ extern struct parser *init_parse_flavor(void);
 extern struct parser *init_parse_names(void);
 extern struct parser *init_parse_hints(void);
 extern struct parser *init_parse_marks(void);
+extern struct parser *init_parse_abilities(void);
 //#endif
 
 extern errr parse_file(struct parser *p, const char *filename);

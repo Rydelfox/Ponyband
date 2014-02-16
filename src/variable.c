@@ -475,6 +475,11 @@ player_class *c_info;
  */
 struct player_cutiemark *cm_info;
 
+/**
+ * Player innate abilities
+ */
+struct innate_ability *ability_info;
+
 
 /**
  * The player history arrays

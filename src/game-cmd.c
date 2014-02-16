@@ -107,6 +107,7 @@ static struct {
     { CMD_QUIT, { arg_NONE }, do_cmd_quit, FALSE, 0 },
     { CMD_HELP, { arg_NONE }, NULL, FALSE, 0 },
     { CMD_REPEAT, { arg_NONE }, NULL, FALSE, 0 },
+    { CMD_ABILITY, { arg_CHOICE, arg_TARGET }, do_cmd_ability, FALSE, 0}
 };
 
 /* Item selector type (everything required for get_item()) */
@@ -621,6 +622,29 @@ void process_command(cmd_context ctx, bool no_request)
 
 				break;
 			}
+        case CMD_ABILITY:
+            {
+                bool get_target = FALSE;
+                
+                if (ability_needs_aim(cmd->arg[0].choice)) {
+                    if (!cmd->arg_present[1])
+                        get_target = TRUE;
+                    
+                    if (cmd->arg[1].direction == DIR_UNKNOWN)
+                        get_target = TRUE;
+                    
+                    if (cmd->arg[1].direction == DIR_TARGET
+                        && !target_okay())
+                        get_target = TRUE;
+                }
+                
+                if (get_target && !get_aim_dir(&cmd->arg[1].direction))
+                    return;
+                
+                cmd->arg_present[1] = TRUE;
+                
+                break;
+            }
 
 		case CMD_WIELD:
 			{

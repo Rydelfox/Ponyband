@@ -336,6 +336,7 @@ enum
 #define player_class_avail(flag)     (pf_has(cp_ptr->specialties, (flag)))
 #define player_chose(flag)           (pf_has(p_ptr->pflags, (flag)))
 #define player_has(flag)       (pf_has(rp_ptr->pflags, (flag)) || pf_has(cp_ptr->pflags, (flag)) || pf_has(p_ptr->pflags, (flag)) || pf_has(cmp_ptr->pflags, (flag)))
+#define player_contains(flag)  (pf_is_subset(rp_ptr->pflags, (flag)) || pf_is_subset(cp_ptr->pflags, (flag)) || pf_is_subset(p_ptr->pflags, (flag)) || pf_is_subset(cmp_ptr->pflags, (flag)))
 
 
 /*** Structures ***/
@@ -737,6 +738,24 @@ struct player_cutiemark {
 	bitflag pflags[PF_SIZE];	/* Cutie Mark (player) flags */
 };
 
+typedef struct innate_ability {
+    
+    struct innate_ability *next;
+    const char *name;	/**< Ability name */
+	const char *desc;	/**< Ability Description */
+	const char *cast;	/**< Ability Cast Text */
+	const char *mini;   /**< Short ability info */
+	
+	int aidx;		/**< Ability Index */
+	int level;		/**< Minimum level to use */
+	int cost;		/**< Mana cost */
+	int stat;		/**< Stat that alters fail rate */
+	int fail;		/**< Base Failure chance */
+	
+	bitflag pflags[PF_SIZE]; /**< Required flags for use */
+	
+}innate_ability;
+
 /**
  * Starting equipment entry
  */
@@ -892,6 +911,12 @@ bool spell_in_book(int spell, int book);
 s16b spell_chance(int spell);
 void spell_learn(int spell);
 bool spell_cast(int spell, int dir);
+bool ability_okay_list(const int abilities[], int n_abilities);
+
+int ability_collect(int abilities[], int len);
+bool use_ability(int ability, int dir);
+void do_cmd_ability(cmd_code, cmd_arg args[]);
+s16b ability_chance(int ability);
 
 /* play-timed.c */
 bool set_timed(int idx, int v, bool notify);
@@ -906,6 +931,7 @@ bool player_can_cast(void);
 bool player_can_study(void);
 bool player_can_read(void);
 bool player_can_fire(void);
+bool player_can_ability(void);
 extern const char *player_safe_name(struct player *p, bool strip_suffix);
 
 #endif /* !PLAYER_PLAYER_H */

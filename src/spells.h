@@ -226,5 +226,9 @@ extern const char *get_spell_name(int index);
 extern void get_spell_info(int tval, int index, char *buf, size_t len);
 extern bool cast_spell(int tval, int index, int dir, int plev);
 extern bool spell_needs_aim(int tval, int spell);
+extern int player_ability_count(void);
+extern bool ability_use(int index, int dir, int plev);
+extern bool ability_needs_aim(int ability);
+
 
 #endif /* !SPELLS_H */

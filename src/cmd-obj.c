@@ -959,3 +959,4 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
 	item_tester_hook = NULL;
 
 }
+

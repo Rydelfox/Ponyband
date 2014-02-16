@@ -166,7 +166,6 @@
  */
 #define MAX_HISCORES	100
 
-
 /**
  * OPTION: Maximum number of autoinscriptions(see "object1.c")
  */

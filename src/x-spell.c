@@ -287,6 +287,15 @@
 #define RITUAL_DARK_POWER                       254
 
 
+/**
+ * Same thing goes for innate abilities
+ */
+#define ABILITY_TELEKINESIS                     0
+#define ABILITY_BR_FIRE                         1
+#define ABILITY_DETECT_MONSTERS                 2
+#define ABILITY_DETECT_TREASURE                 3
+
+
 
 int get_spell_index(const object_type * o_ptr, int index)
 {
@@ -2381,11 +2390,13 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 			if (p_ptr->special_attack & ATTACK_HOLY)
 				p_ptr->special_attack &= ~ATTACK_HOLY;
 
-			if (!(p_ptr->special_attack & ATTACK_BLKBRTH))
-				if(player_has(PF_QUADRUPED))
+			if (!(p_ptr->special_attack & ATTACK_BLKBRTH)) {
+				if(player_has(PF_QUADRUPED)) {
                     msg("Your hooves start to radiate Night.");
-                else
+                } else {
                     msg("Your hands start to radiate Night.");
+                }
+            }
 			p_ptr->special_attack |= (ATTACK_BLKBRTH);
 
 			/* Redraw the state */
@@ -2481,4 +2492,75 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 	/* Success */
 	return (TRUE);
 
+}
+
+/**
+ * Count the total number of abilities the player has
+ */
+int player_ability_count(void)
+{
+   int i, count = 0;
+   
+   for(i = 0; i < z_info->ability_max; i++)
+   {
+       if(player_contains(ability_info[i].pflags)) {
+           count++;
+       }
+   }
+   
+   return count;
+}
+
+/**
+ * Use an ability
+ */
+bool ability_use(int index, int dir, int plev)
+{
+	
+	if(!plev)
+	    plev = p_ptr->lev;
+    switch(index) {
+	    case ABILITY_TELEKINESIS:
+        {
+			s16b ty, tx;
+			if (!target_set_interactive(TARGET_OBJ, -1, -1))
+				return FALSE;
+			target_get(&tx, &ty);
+			if (!py_pickup(1, ty, tx))
+				return FALSE;
+			break;
+		}
+		case ABILITY_BR_FIRE:
+        {
+            fire_arc(GF_FIRE, dir, p_ptr->chp / 3, 0, 20);
+            break;
+        }
+        case ABILITY_DETECT_MONSTERS:
+        {
+            (void) detect_monsters_normal(DETECT_RAD_DEFAULT, TRUE);
+			break;
+		}
+		case ABILITY_DETECT_TREASURE:
+        {
+			/* Hack - 'show' affected region only with the first detect */
+			(void) detect_treasure(DETECT_RAD_DEFAULT, TRUE);
+			(void) detect_objects_gold(DETECT_RAD_DEFAULT, FALSE);
+			(void) detect_objects_normal(DETECT_RAD_DEFAULT, TRUE);
+			break;
+		}
+    }
+    /* Success */
+	return (TRUE);
+}
+
+/* See if an ability needs to be aimed */
+bool ability_needs_aim(int ability)
+{
+    switch(ability){
+    case ABILITY_TELEKINESIS:
+    case ABILITY_BR_FIRE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
 }

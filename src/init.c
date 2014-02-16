@@ -417,6 +417,8 @@ static enum parser_error parse_z(struct parser *p)
 		z->l_max = value;
 	else if (streq(label, "U"))
 	    z->cm_max = value;
+    else if (streq(label, "I"))
+        z->ability_max = value;
 	else
 		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 
@@ -2727,6 +2729,146 @@ struct file_parser p_parser = {
 	cleanup_p
 };
 
+static enum parser_error parse_ability_n(struct parser *p)
+{
+    struct innate_ability *h = parser_priv(p);
+    struct innate_ability *a = mem_zalloc(sizeof *a);
+    
+    a->next = h;
+    a->aidx = parser_getuint(p, "index");
+    a->name = string_make(parser_getstr(p, "name"));
+    parser_setpriv(p, a);
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ability_d(struct parser *p)
+{
+    struct innate_ability *a = parser_priv(p);
+    if(!a)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+    a->desc = string_make(parser_getstr(p, "desc"));
+    parser_setpriv(p, a);
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ability_c(struct parser *p)
+{
+    struct innate_ability *a = parser_priv(p);
+    if(!a)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+    a->cast = string_make(parser_getstr(p, "cast"));
+    parser_setpriv(p, a);
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ability_s(struct parser *p)
+{
+    struct innate_ability *a = parser_priv(p);
+    if(!a)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+    a->level = parser_getint(p, "level");
+    a->cost = parser_getint(p, "cost");
+    a->stat = parser_getint(p, "stat");
+    a->fail = parser_getint(p, "fail");
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ability_u(struct parser *p)
+{
+    struct innate_ability *a = parser_priv(p);
+    char *flag;
+    char *s;
+    
+    if(!a)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+    flag = string_make(parser_getstr(p, "flag"));
+    s = strtok(flag, " |");
+	while (s) {
+	    if (grab_flag(a->pflags, PF_SIZE, player_info_flags, s))
+	       break;
+        s = strtok(NULL, " |");
+    }
+    mem_free(flag);
+    return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ability_m(struct parser *p)
+{
+    struct innate_ability *a = parser_priv(p);
+    
+    if(!a)
+        return PARSE_ERROR_MISSING_RECORD_HEADER;
+    if(!parser_hasval(p, "mini")) {
+        a->mini = string_make("");
+        return PARSE_ERROR_NONE;
+    }
+    
+    a->mini = string_make(parser_getstr(p, "mini"));
+    parser_setpriv(p, a);
+    return PARSE_ERROR_NONE;
+}
+        
+
+static struct parser *init_parse_ability(void)
+{
+    struct parser *p = parser_new();
+    parser_setpriv(p, NULL);
+    parser_reg(p, "V sym version", ignored);
+    parser_reg(p, "N uint index str name", parse_ability_n);
+    parser_reg(p, "D str desc", parse_ability_d);
+    parser_reg(p, "C str cast", parse_ability_c);
+    parser_reg(p, "S int level int cost int stat int fail", parse_ability_s);
+    parser_reg(p, "U str flag", parse_ability_u);
+    parser_reg(p, "M ?str mini", parse_ability_m);
+    return p;
+}
+
+static errr run_parse_ability(struct parser *p)
+{
+    return parse_file(p, "ability");
+}
+
+static errr finish_parse_ability(struct parser *p)
+{
+    struct innate_ability *a, *n;
+    
+    ability_info = mem_zalloc(sizeof(*a) * z_info->ability_max);
+    for (a = parser_priv(p); a; a = a->next) {
+        if (a->aidx >= z_info->ability_max)
+            continue;
+        memcpy(&ability_info[a->aidx], a, sizeof(*a));
+    }
+    
+    a = parser_priv(p);
+    while(a) {
+        n = a->next;
+        mem_free(a);
+        a = n;
+    }
+    
+    parser_destroy(p);
+    return 0;
+}
+static void cleanup_ability(void)
+{
+    int idx;
+    for(idx = 0; idx < z_info->ability_max; idx++) {
+        string_free((char*) ability_info[idx].name);
+        string_free((char*) ability_info[idx].desc);
+        string_free((char*) ability_info[idx].cast);
+        string_free((char*) ability_info[idx].mini);
+    }
+    mem_free(ability_info);
+}
+
+struct file_parser ability_parser = {
+    "ability",
+    init_parse_ability,
+    run_parse_ability,
+    finish_parse_ability,
+    cleanup_ability
+};
+
 static enum parser_error parse_c_n(struct parser *p)
 {
 	struct player_class *h = parser_priv(p);
@@ -4398,7 +4540,7 @@ static errr init_other(void)
 	/*** Pre-allocate space for the "format()" buffer ***/
 
 	/* Hack -- Just call the "format()" function */
-	(void) format("I wish you could swim, like dolphins can swim...");
+	(void) format("I used to wonder what friendship could be, until you shared its magic with me.");
 
 	/* Success */
 	return (0);
@@ -4956,6 +5098,12 @@ bool init_angband(void)
                         "Initializing arrays... (cutie marks)");
     if (run_parser(&mark_parser))
         quit("Cannot initialize cutie marks");
+        
+    /* Initialize innate abilities */
+    event_signal_string(EVENT_INITSTATUS,
+                        "Initializing arrays... (innate abilities)");
+    if(run_parser(&ability_parser))
+        quit("Cannot initialize innate abilities");
 
 	/* Initialize flavor info */
 	event_signal_string(EVENT_INITSTATUS,
@@ -5136,6 +5284,7 @@ void cleanup_angband(void)
 	cleanup_parser(&mp_parser);
 	cleanup_parser(&z_parser);
 	cleanup_parser(&mark_parser);
+	cleanup_parser(&ability_parser);
 
 	/* Free the format() buffer */
 	vformat_kill();

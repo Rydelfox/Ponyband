@@ -13,6 +13,27 @@
  */
 typedef void (*cmd_handler_fn)(cmd_code code, cmd_arg args[]);
 
+typedef struct power_desc_type power_desc_type;
+
+typedef struct cast_menu_data cast_menu_data;
+
+typedef enum cast_type cast_type;
+
+/*
+ * Struct for racial power information
+ */
+struct power_desc_type
+{
+	char name[40];
+	char desc[80];
+	int  level;
+	int  cost;
+	int  stat;
+	int  fail;
+	int  number;
+};
+
+
 
 /* cmd0.c */
 extern void cmd_init(void);
@@ -33,7 +54,9 @@ extern int get_channeling_boost(void);
 void do_cmd_cast(cmd_code code, cmd_arg args[]);
 void do_cmd_study_book(cmd_code code, cmd_arg args[]);
 
+
 void textui_obj_examine(void);
+
 
 /* cmd-misc.c */
 extern void cmd_init(void);
@@ -135,6 +158,7 @@ void textui_book_browse(const object_type *o_ptr);
 void textui_spell_browse(void);
 void textui_obj_study(void);
 void textui_obj_cast(void);
+void textui_ability(void);
 
 /* ui-knowledge.c */
 extern int big_pad(int col, int row, byte a, wchar_t c);

@@ -174,3 +174,19 @@ const char *player_safe_name(struct player *p, bool strip_suffix)
 
 	return buf;
 }
+
+/* Can the player use innate abilities? */
+bool player_can_ability(void)
+{
+    if(player_ability_count() < 1) {
+        msg("You do not have any innate abilities");
+        return FALSE;
+    }
+    
+    if (p_ptr->timed[TMD_CONFUSED]) {
+		msg("You are too confused!");
+		return FALSE;
+	}
+	
+	return TRUE;
+}
