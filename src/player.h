@@ -669,6 +669,9 @@ struct player_race {
     const char *name;
 
     unsigned int ridx;
+    
+    int name_m;     /**< male randname_type for randname.c */
+    int name_f;     /**< female randname_type for randname.c */
 
     s16b r_adj[A_MAX];	/**< Racial stat modifiers */
 

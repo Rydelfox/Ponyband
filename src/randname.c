@@ -18,6 +18,10 @@
 #include "angband.h"
 #include "randname.h"
 
+#ifdef DEBUG
+#include "cmds.h"
+#endif
+
 /* Markers for the start and end of words. */
 #define S_WORD 26
 #define E_WORD S_WORD
@@ -72,15 +76,109 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
 {
 	size_t lnum = 0;
 	bool found_word = FALSE;
+	int i, count;
+	char bugtext[50];
 
 	static name_probs lprobs;
 	static randname_type cached_type = RANDNAME_NUM_TYPES;
 
 	assert(name_type > 0 && name_type < RANDNAME_NUM_TYPES);
 
-	/* To allow for a terminating character */
+    /* To allow for a terminating character */
 	assert(buflen > max);
-
+	/* Ponies use a different method */
+	if ((name_type >= RANDNAME_EPONY_FIRST) && (name_type <= RANDNAME_BUFFALO))
+	{
+           char *word1 = malloc(sizeof(char) * 20);
+           char *word2 = malloc(sizeof(char) * 20);
+           
+           logbug("Making a pony name\n");
+           while(!found_word) {
+               
+               int use_type;
+               int count = 0;
+               int len;
+               const char **wordlist = NULL;
+               /* char *temp_word = NULL; */
+               u32b name_count, target_name;
+               logbug("Looping...\n");
+               
+               if ((name_type % 2))
+                   use_type = name_type;
+               else
+                   use_type = name_type - 1;
+               if (name_type == RANDNAME_APONY) {
+                   switch(randint1(3)) {
+                   case 1:
+                       use_type = RANDNAME_EPONY_FIRST; break;
+                   case 2:
+                       use_type = RANDNAME_PPONY_FIRST; break;
+                   default:
+                       use_type = RANDNAME_UPONY_FIRST; break;
+                   }
+               }
+               if(name_type == RANDNAME_BUFFALO)
+                   use_type = RANDNAME_EPONY_FIRST;
+                   
+               
+               wordlist = sections[use_type];
+           
+               /* Determine the number of names */
+               for(name_count = 0; wordlist[name_count] != NULL; name_count++){}
+               name_count--;
+               
+               target_name = randint0(name_count);
+               my_strcpy(word1, wordlist[target_name], 19);
+           
+               /* We have a first name, now get a second */
+               wordlist = sections[use_type+1];
+               
+               /* Determine the number of names */
+               for(name_count = 0; wordlist[name_count] != NULL; name_count++){}
+               name_count--;
+               
+               target_name = randint0(name_count);
+               my_strcpy(word2, wordlist[target_name], 20);
+           
+               /* Create the final name */
+               if(name_type != RANDNAME_BUFFALO)
+                   my_strcat(word1, " ", 20);
+               else
+                   word2[0] = tolower(word2[0]);
+               len = my_strcat(word1, word2, max);
+               if(!(len > strlen(word1)))  {
+                   found_word = TRUE;
+                   logbug("Found name\n");
+               }
+               
+               logbug("Name: ");
+               logbug(word1);
+               logbug("\n");
+               /* Check for more than two words */
+               for (i = 0; word1[i]; i++) {
+                   if(word1[i] == ' ')
+                       count++;
+               }
+               if(count > 1) {
+                   found_word = FALSE;
+                   logbug("FAIL - too many spaces\n");
+               }
+               if(sizeof(word1) > buflen) {
+                   found_word = FALSE;
+                   logbug("FAIL - too long\n");
+               }
+               
+           }
+           logbug("Name made!\n");
+           
+           /* + 1 because we need space for the null terminator. */
+           lnum = my_strcpy(word_buf, word1, strlen(word1) + 1);
+           string_free(word1);
+           string_free(word2);
+           logbug("Returning!\n");
+           return lnum;
+    }
+    
 	/* We cache one set of probabilities, only regenerate when
 	   the type changes.  It's as good a way as any for now.
 	   Frankly, we could probably regenerate every time. */

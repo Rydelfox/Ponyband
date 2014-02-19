@@ -1345,7 +1345,10 @@ static bool get_name_keypress(char *buf, size_t buflen, size_t *curs, size_t *le
 	{
 		case '*':
 		{
-			*len = randname_make(RANDNAME_TOLKIEN, 4, 8, buf, buflen, name_sections);
+			if(p_ptr->psex)
+                *len = randname_make(rp_ptr->name_m, 4, 24, buf, buflen, name_sections);
+            else
+                *len = randname_make(rp_ptr->name_f, 4, 24, buf, buflen, name_sections);
 			my_strcap(buf);
 			*curs = 0;
 			result = FALSE;

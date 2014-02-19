@@ -2544,6 +2544,8 @@ static enum parser_error parse_p_i(struct parser *p)
 	r->hist = parser_getint(p, "hist");
 	r->b_age = parser_getint(p, "b-age");
 	r->m_age = parser_getint(p, "m-age");
+	r->name_m = parser_getint(p, "mname");
+	r->name_f = parser_getint(p, "fname");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2675,7 +2677,7 @@ struct parser *init_parse_p(void)
 	parser_reg(p,
 			   "X int mhp int diff int infra int start_lev int hometown",
 			   parse_p_x);
-	parser_reg(p, "I int hist int b-age int m-age", parse_p_i);
+	parser_reg(p, "I int hist int b-age int m-age int mname int fname", parse_p_i);
 	parser_reg(p, "H int mbht int mmht int fbht int fmht", parse_p_h);
 	parser_reg(p, "W int mbwt int mmwt int fbwt int fmwt", parse_p_w);
 	parser_reg(p, "F ?str flags", parse_p_f);
