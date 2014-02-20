@@ -2532,7 +2532,7 @@ bool ability_use(int index, int dir, int plev)
 		}
 		case ABILITY_BR_FIRE:
         {
-            fire_arc(GF_FIRE, dir, p_ptr->chp / 3, 0, 20);
+            fire_arc(GF_FIRE, dir, p_ptr->chp / 3, 4, 20);
             break;
         }
         case ABILITY_DETECT_MONSTERS:

@@ -76,8 +76,7 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
 {
 	size_t lnum = 0;
 	bool found_word = FALSE;
-	int i, count;
-	char bugtext[50];
+	int i;
 
 	static name_probs lprobs;
 	static randname_type cached_type = RANDNAME_NUM_TYPES;
@@ -92,7 +91,6 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
            char *word1 = malloc(sizeof(char) * 20);
            char *word2 = malloc(sizeof(char) * 20);
            
-           logbug("Making a pony name\n");
            while(!found_word) {
                
                int use_type;
@@ -101,7 +99,6 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
                const char **wordlist = NULL;
                /* char *temp_word = NULL; */
                u32b name_count, target_name;
-               logbug("Looping...\n");
                
                if ((name_type % 2))
                    use_type = name_type;
@@ -148,12 +145,8 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
                len = my_strcat(word1, word2, max);
                if(!(len > strlen(word1)))  {
                    found_word = TRUE;
-                   logbug("Found name\n");
                }
                
-               logbug("Name: ");
-               logbug(word1);
-               logbug("\n");
                /* Check for more than two words */
                for (i = 0; word1[i]; i++) {
                    if(word1[i] == ' ')
@@ -161,21 +154,17 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
                }
                if(count > 1) {
                    found_word = FALSE;
-                   logbug("FAIL - too many spaces\n");
                }
                if(sizeof(word1) > buflen) {
                    found_word = FALSE;
-                   logbug("FAIL - too long\n");
                }
                
            }
-           logbug("Name made!\n");
            
            /* + 1 because we need space for the null terminator. */
            lnum = my_strcpy(word_buf, word1, strlen(word1) + 1);
            string_free(word1);
            string_free(word2);
-           logbug("Returning!\n");
            return lnum;
     }
     

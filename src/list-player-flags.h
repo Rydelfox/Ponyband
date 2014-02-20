@@ -55,7 +55,7 @@ PF(HARDY, "Hardy", "You recover quickly from poison and cuts, and succumb slowly
 PF(HUNGRY, "Ravenous", "You eat.  A lot."),
 PF(DIVINE, "Divine Powers", "You recover very quickly from negative effects, and can move through water without being slowed."),
 PF(SHADOW, "Shadow", "You are incredibly stealthy."),
-PF(WOODEN, "Treeish", "Your bare hands tear through stone and you are almost impossible to detect in forests, but you are vulnerable to fire and falling."),
+PF(TUNNELING, "Tunneling", "A mining culture and stong arms has left you adept at digging through rock with your bare claws."),
 PF(BEARSKIN, "Shapeshifter", "You can take the form of a bear (use the ']' command)."),
 PF(PLAINSMAN, "Plains Fighter", "You are more able to hit monsters while in plain regions."),
 PF(PLANT_FRIEND, "Plant Friend", "You have an inborn ability to move freely through forests."),

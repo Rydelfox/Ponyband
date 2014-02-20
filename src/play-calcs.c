@@ -2358,36 +2358,14 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		state->res_list[i] = rp_ptr->percent_res[i];
 		apply_resist(&state->res_list[i], cmp_ptr->percent_res[i]);
 		state->dis_res_list[i] = rp_ptr->percent_res[i];
-		apply_resist(&state->res_list[i], cmp_ptr->percent_res[i]);
+		apply_resist(&state->dis_res_list[i], cmp_ptr->percent_res[i]);
 	}
 
-	/* Ent */
-	if (player_has(PF_WOODEN)) {
-		/* Ents dig like maniacs, but only with their hands. */
+	/* Diamond Dogs */
+	if (player_has(PF_TUNNELING)) {
+		/* Diamond Dogs dig like maniacs, but only with their hands. */
 		if (!p_ptr->inventory[INVEN_WIELD].k_idx)
 			state->skills[SKILL_DIGGING] += p_ptr->lev * 10;
-
-		/* Ents get tougher and stronger as they age, but lose dexterity. */
-		if (p_ptr->lev > 25)
-			state->stat_add[A_STR]++;
-		if (p_ptr->lev > 40)
-			state->stat_add[A_STR]++;
-		if (p_ptr->lev > 45)
-			state->stat_add[A_STR]++;
-
-		if (p_ptr->lev > 25)
-			state->stat_add[A_DEX]--;
-		if (p_ptr->lev > 40)
-			state->stat_add[A_DEX]--;
-		if (p_ptr->lev > 45)
-			state->stat_add[A_DEX]--;
-
-		if (p_ptr->lev > 25)
-			state->stat_add[A_CON]++;
-		if (p_ptr->lev > 40)
-			state->stat_add[A_CON]++;
-		if (p_ptr->lev > 45)
-			state->stat_add[A_CON]++;
 	}
 
 	/* Warrior. */
@@ -2611,10 +2589,6 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		state->skills[SKILL_STEALTH] -= 3;
 		state->aggravate = FALSE;
 	}
-
-	/* Nothing, but nothing, can make an Ent lightfooted. */
-	if (player_has(PF_WOODEN))
-		state->ffall = FALSE;
 
 
 	/*** Analyze shapechanges - statistics only ***/

@@ -717,11 +717,9 @@ static void process_world(void)
 
 	/* Timed near-complete stealth -LM- */
 	if ((p_ptr->timed[TMD_SSTEALTH]) && (!extend_magic)) {
-		if (!(player_has(PF_WOODEN)
-			  &&
-			  (tf_has
+		if ((tf_has
 			   (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags,
-				TF_TREE)))) {
+				TF_TREE))) {
 			(void) dec_timed(TMD_SSTEALTH, 1, FALSE);
 
 			/* Warn the player that he's going to be revealed soon. */

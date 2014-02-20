@@ -27,6 +27,7 @@
 #									  52 --> 53
 #									  54 --> 55
 #	Griffon			--> 56 --> 57 --> 58 --> 59 -->  7
+#   Bat Pony		--> 73 --> 74 --> 75 --> 76 --> 77 --> 78 --> 79
 #
 # Special for Cutie Marks
 #   None		60 (Also used but not displayed for races with no Cutie Mark)
@@ -346,8 +347,10 @@ N:20:21:80:50
 D:You have a gray coat and wings,
 N:20:21:90:50
 D:You have a green coat and wings,
-N:20:21:100:50
+N:20:21:99:50
 D:You have a red coat and wings, 
+N:20:21:100:50
+D:You have a black coat and wings, 
 
 N:21:5:100:50
 D:a long horn, 
@@ -1005,3 +1008,104 @@ N:72:20:91:50
 D:winning a bet with Celestia. 
 N:72:20:100:50
 D:discovering the music of creation. 
+
+N:73:74:10:25
+D:You are the illegitimate and unacknowledged foal 
+N:73:74:20:35
+D:You are the illegitimate but acknowledged foal 
+N:73:74:45:40
+D:You are the youngest foal 
+N:73:74:75:45
+D:You are one of several foals 
+N:73:74:95:50
+D:You are the first foal 
+N:73:74:100:55
+D:You are the only foal 
+
+N:74:75:40:80
+D:of a Night Guard
+N:74:75:55:50
+D:of a Mercenary
+N:74:75:70:40
+D:of a Farmer
+N:74:85:100:65
+D:of a Scout
+
+N:75:76:20:20
+D:You are the black sheep of the family. 
+N:75:76:80:55
+D:You are a credit to the family. 
+N:75:76:100:60
+D:You are a well liked child. 
+
+N:76:77:20:50
+D:You have a dark blue coat and wings, 
+N:76:77:40:50
+D:You have a dark brown coat and wing, 
+N:76:77:60:50
+D:You have a light gray coat and dark gray wings, 
+N:76:77:80:50
+D:You have a dark gray coat and wings, 
+N:76:77:99:50
+D:You have a black coat and wings, 
+N:76:77:100:50
+D:You have a black coat and red wings, 
+
+N:77:78:12:50
+D:a long, straight 
+N:77:78:24:50
+D:a short, straight 
+N:77:78:36:50
+D:a long, wavy 
+N:77:78:48:50
+D:a short, wavy 
+N:77:78:60:50
+D:a spiked 
+N:77:78:72:49
+D:a short, curly 
+N:77:78:79:49
+D:a long, curly 
+N:77:78:87:48
+D:a poofy 
+N:77:78:100:45
+D:an unkempt 
+
+N:78:79:10:50
+D:dark green mane and tail, 
+N:78:79:19:50
+D:dark blue mane and tail, 
+N:78:79:28:50
+D:dark red mane and tail, 
+N:78:79:37:50
+D:light gray mane and tail, 
+N:78:79:46:50
+D:dark gray mane and tail, 
+N:78:79:55:50
+D:purple mane and tail, 
+N:78:79:64:50
+D:black mane and tail, 
+N:78:79:73:50
+D:white mane and tail, 
+N:78:79:82:50
+D:dark brown mane and tail, 
+N:78:79:91:50
+D:black and white mane and tail, 
+N:78:79:100:50
+D:dark yellow mane and tail, 
+
+N:79:0:14:50
+D:and yellow slitted eyes.
+N:79:0:28:50
+D:and orange slitted eyes.
+N:79:0:41:50
+D:and red slitted eyes.
+N:79:0:53:50
+D:and bright green slitted eyes.
+N:79:0:66:50
+D:and purple slitted eyes.
+N:79:0:79:50
+D:and dark green slitted eyes.
+N:79:0:90:50.
+D:and blue slitted eyes.
+N:79:0:100:50
+D:and gray slitted eyes

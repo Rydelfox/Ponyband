@@ -172,6 +172,11 @@ void player_flags(bitflag * flags)
 		if (p_ptr->lev >= 40)
 			of_on(flags, OF_REGEN);
 	}
+	
+	/* Flight */
+	if (player_has(PF_WINGED) || player_has(PF_WINGED_CHARGE)) {
+	    of_on(flags, OF_FEATHER);
+	}
 
 	/* Shapechange, if any. */
 	switch (p_ptr->schange) {
@@ -281,11 +286,6 @@ void player_weakness_dis(bitflag * flags)
 	/* Clear */
 	of_wipe(flags);
 
-	/* HACK - add weakness of some races */
-	if (player_has(PF_WOODEN)) {
-		of_on(flags, OF_FEATHER);
-	}
-
 	/* Shapechange, if any. */
 	switch (p_ptr->schange) {
 	case SHAPE_NORMAL:
@@ -348,10 +348,7 @@ void get_player_resists(int *player_resists)
 		{
 			apply_resist(&player_resists[P_RES_COLD], RES_BOOST_NORMAL);
 			apply_resist(&player_resists[P_RES_POIS], RES_BOOST_NORMAL);
-
-			/* Avoid double jeopardy */
-			if (!player_has(PF_WOODEN))
-				apply_resist(&player_resists[P_RES_FIRE], RES_CUT_MINOR);
+			apply_resist(&player_resists[P_RES_FIRE], RES_CUT_MINOR);
 			break;
 		}
 	case SHAPE_VAMPIRE:
@@ -861,6 +858,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	char buf[100];
 	char buf1[20];
 	char buf2[20];
+	char *ring_space = malloc(sizeof(char) * 3);
 
 	bool red;
 
@@ -907,9 +905,22 @@ extern int make_dump(char_attr_line * line, int mode)
 		"Smart cheat"
 	};
 	
+	switch(rp_ptr->num_rings)
+	{
+    case 0:
+        ring_space = "   ";
+        break;
+    case 1:
+        ring_space = "  ";
+        break;
+    default:
+        ring_space = " ";
+        break;
+    }
+	
 	for(i = 0; i < 13; i++);
 	    slots[i] = ' ';
-    for(i = 0; i < 9 + rp_ptr->num_rings; i++)
+    for(i = 0; i < 10 + rp_ptr->num_rings; i++)
 	    slots[i] = 'a' + i;
     slots[13] = '@';
 
@@ -959,85 +970,85 @@ extern int make_dump(char_attr_line * line, int mode)
 		/* Name, Sex, Race, Class */
 		dump_put_str(TERM_WHITE, "Name      : ", 1);
 		dump_put_str(TERM_L_BLUE, op_ptr->full_name, 13);
-		dump_put_str(TERM_WHITE, "Age", 27);
+		dump_put_str(TERM_WHITE, "Age", 33);
 		sprintf(buf1, "%10d", (int) p_ptr->age);
-		dump_put_str(TERM_L_BLUE, buf1, 42);
+		dump_put_str(TERM_L_BLUE, buf1, 48);
 		red = (p_ptr->stat_cur[0] < p_ptr->stat_max[0]);
 		value = p_ptr->state.stat_use[0];
 		cnv_stat(value, buf1, sizeof(buf1));
 		value = p_ptr->state.stat_top[0];
 		cnv_stat(value, buf2, sizeof(buf2));
-		dump_put_str(TERM_WHITE, (red ? "Str" : "STR"), 53);
+		dump_put_str(TERM_WHITE, (red ? "Str" : "STR"), 59);
 		dump_put_str(TERM_WHITE,
-					 ((p_ptr->stat_cur[0] == 18 + 100) ? "!" : " "), 56);
+					 ((p_ptr->stat_cur[0] == 18 + 100) ? "!" : " "), 62);
 		if (red) {
-			dump_put_str(TERM_YELLOW, buf1, 61);
-			dump_put_str(TERM_L_GREEN, buf2, 70);
+			dump_put_str(TERM_YELLOW, buf1, 67);
+			dump_put_str(TERM_L_GREEN, buf2, 76);
 		} else
-			dump_put_str(TERM_L_GREEN, buf1, 61);
+			dump_put_str(TERM_L_GREEN, buf1, 67);
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
 		dump_put_str(TERM_WHITE, "Sex       : ", 1);
 		dump_put_str(TERM_L_BLUE, sp_ptr->title, 13);
-		dump_put_str(TERM_WHITE, "Height", 27);
+		dump_put_str(TERM_WHITE, "Height", 33);
 		sprintf(buf1, "%10d", (int) p_ptr->ht);
-		dump_put_str(TERM_L_BLUE, buf1, 42);
+		dump_put_str(TERM_L_BLUE, buf1, 48);
 		red = (p_ptr->stat_cur[1] < p_ptr->stat_max[1]);
 		value = p_ptr->state.stat_use[1];
 		cnv_stat(value, buf1, sizeof(buf1));
 		value = p_ptr->state.stat_top[1];
 		cnv_stat(value, buf2, sizeof(buf2));
-		dump_put_str(TERM_WHITE, (red ? "Int" : "INT"), 53);
+		dump_put_str(TERM_WHITE, (red ? "Int" : "INT"), 59);
 		dump_put_str(TERM_WHITE,
-					 ((p_ptr->stat_cur[1] == 18 + 100) ? "!" : " "), 56);
+					 ((p_ptr->stat_cur[1] == 18 + 100) ? "!" : " "), 62);
 		if (red) {
-			dump_put_str(TERM_YELLOW, buf1, 61);
-			dump_put_str(TERM_L_GREEN, buf2, 70);
+			dump_put_str(TERM_YELLOW, buf1, 67);
+			dump_put_str(TERM_L_GREEN, buf2, 76);
 		} else
-			dump_put_str(TERM_L_GREEN, buf1, 61);
+			dump_put_str(TERM_L_GREEN, buf1, 67);
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
 		dump_put_str(TERM_WHITE, "Race      : ", 1);
 		dump_put_str(TERM_L_BLUE, rp_ptr->name, 13);
-		dump_put_str(TERM_WHITE, "Weight", 27);
+		dump_put_str(TERM_WHITE, "Weight", 33);
 		sprintf(buf1, "%10d", (int) p_ptr->wt);
-		dump_put_str(TERM_L_BLUE, buf1, 42);
+		dump_put_str(TERM_L_BLUE, buf1, 48);
 		red = (p_ptr->stat_cur[2] < p_ptr->stat_max[2]);
 		value = p_ptr->state.stat_use[2];
 		cnv_stat(value, buf1, sizeof(buf1));
 		value = p_ptr->state.stat_top[2];
 		cnv_stat(value, buf2, sizeof(buf2));
-		dump_put_str(TERM_WHITE, (red ? "Wis" : "WIS"), 53);
+		dump_put_str(TERM_WHITE, (red ? "Wis" : "WIS"), 59);
 		dump_put_str(TERM_WHITE,
-					 ((p_ptr->stat_cur[2] == 18 + 100) ? "!" : " "), 56);
+					 ((p_ptr->stat_cur[2] == 18 + 100) ? "!" : " "), 62);
 		if (red) {
-			dump_put_str(TERM_YELLOW, buf1, 61);
-			dump_put_str(TERM_L_GREEN, buf2, 70);
+			dump_put_str(TERM_YELLOW, buf1, 67);
+			dump_put_str(TERM_L_GREEN, buf2, 76);
 		} else
-			dump_put_str(TERM_L_GREEN, buf1, 61);
+			dump_put_str(TERM_L_GREEN, buf1, 67);
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
 		dump_put_str(TERM_WHITE, "Class     : ", 1);
 		dump_put_str(TERM_L_BLUE, cp_ptr->name, 13);
-		dump_put_str(TERM_WHITE, "Social Class", 27);
+		dump_put_str(TERM_WHITE, "Social Class", 33);
 		sprintf(buf1, "%10d", (int) p_ptr->sc);
-		dump_put_str(TERM_L_BLUE, buf1, 42);
+		dump_put_str(TERM_L_BLUE, buf1, 48);
 		red = (p_ptr->stat_cur[3] < p_ptr->stat_max[3]);
 		value = p_ptr->state.stat_use[3];
 		cnv_stat(value, buf1, sizeof(buf1));
 		value = p_ptr->state.stat_top[3];
 		cnv_stat(value, buf2, sizeof(buf2));
-		dump_put_str(TERM_WHITE, (red ? "Dex" : "DEX"), 53);
+		dump_put_str(TERM_WHITE, (red ? "Dex" : "DEX"), 59);
 		dump_put_str(TERM_WHITE,
-					 ((p_ptr->stat_cur[3] == 18 + 100) ? "!" : " "), 56);
+					 ((p_ptr->stat_cur[3] == 18 + 100) ? "!" : " "), 62);
 		if (red) {
-			dump_put_str(TERM_YELLOW, buf1, 61);
-			dump_put_str(TERM_L_GREEN, buf2, 70);
+			dump_put_str(TERM_YELLOW, buf1, 67);
+			dump_put_str(TERM_L_GREEN, buf2, 76);
 		} else
-			dump_put_str(TERM_L_GREEN, buf1, 61);
+			dump_put_str(TERM_L_GREEN, buf1, 67);
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
@@ -1050,14 +1061,14 @@ extern int make_dump(char_attr_line * line, int mode)
 		cnv_stat(value, buf1, sizeof(buf1));
 		value = p_ptr->state.stat_top[4];
 		cnv_stat(value, buf2, sizeof(buf2));
-		dump_put_str(TERM_WHITE, (red ? "Con" : "CON"), 53);
+		dump_put_str(TERM_WHITE, (red ? "Con" : "CON"), 59);
 		dump_put_str(TERM_WHITE,
-					 ((p_ptr->stat_cur[4] == 18 + 100) ? "!" : " "), 56);
+					 ((p_ptr->stat_cur[4] == 18 + 100) ? "!" : " "), 62);
 		if (red) {
-			dump_put_str(TERM_YELLOW, buf1, 61);
-			dump_put_str(TERM_L_GREEN, buf2, 70);
+			dump_put_str(TERM_YELLOW, buf1, 67);
+			dump_put_str(TERM_L_GREEN, buf2, 76);
 		} else
-			dump_put_str(TERM_L_GREEN, buf1, 61);
+			dump_put_str(TERM_L_GREEN, buf1, 67);
 		current_line++;
 
 		dump_ptr = (char_attr *) & line[current_line];
@@ -1068,14 +1079,14 @@ extern int make_dump(char_attr_line * line, int mode)
 		cnv_stat(value, buf1, sizeof(buf1));
 		value = p_ptr->state.stat_top[5];
 		cnv_stat(value, buf2, sizeof(buf2));
-		dump_put_str(TERM_WHITE, (red ? "Chr" : "CHR"), 53);
+		dump_put_str(TERM_WHITE, (red ? "Chr" : "CHR"), 59);
 		dump_put_str(TERM_WHITE,
-					 ((p_ptr->stat_cur[5] == 18 + 100) ? "!" : " "), 56);
+					 ((p_ptr->stat_cur[5] == 18 + 100) ? "!" : " "), 62);
 		if (red) {
-			dump_put_str(TERM_YELLOW, buf1, 61);
-			dump_put_str(TERM_L_GREEN, buf2, 70);
+			dump_put_str(TERM_YELLOW, buf1, 67);
+			dump_put_str(TERM_L_GREEN, buf2, 76);
 		} else
-			dump_put_str(TERM_L_GREEN, buf1, 61);
+			dump_put_str(TERM_L_GREEN, buf1, 67);
 		current_line += 2;
 
 		/* Get the bonuses to hit/dam */
@@ -1271,8 +1282,10 @@ extern int make_dump(char_attr_line * line, int mode)
 
 
 		/* End of mode 0 */
-		if (mode == 0)
+		if (mode == 0) {
+		    free(ring_space);
 			return (current_line);
+		}
 
 		current_line += 2;
 
@@ -1336,7 +1349,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_ptr = (char_attr *) & line[current_line];
 
 	/* Header */
-	sprintf(buf, "%s           %s", slots, slots);
+	sprintf(buf, "%s%s          %s%s", slots, ring_space, slots, ring_space);
 	dump_put_str(TERM_WHITE, buf, 6);
 	current_line++;
 
@@ -1412,7 +1425,7 @@ extern int make_dump(char_attr_line * line, int mode)
 		dump_ptr = (char_attr *) & line[current_line];
 
 		/* Header */
-		sprintf(buf, "%s           %s", slots, slots);
+		sprintf(buf, "%s%s          %s%s", slots, ring_space, slots, ring_space);
 		dump_put_str(TERM_WHITE, buf,
 					 6);
 		current_line++;
@@ -1636,10 +1649,10 @@ extern int make_dump(char_attr_line * line, int mode)
 	/* Print out the labels for the columns */
 	dump_put_str(TERM_WHITE, "Stat", 0);
 	dump_put_str(TERM_BLUE, "Intrnl", 5);
-	dump_put_str(TERM_L_BLUE, "Rce Cls Oth", 12);
-	dump_put_str(TERM_L_GREEN, "Actual", 24);
-	dump_put_str(TERM_YELLOW, "Currnt", 31);
-	dump_put_str(TERM_WHITE, "abcdefghijkl", 42);
+	dump_put_str(TERM_L_BLUE, "Rce CMk Cls Oth", 12);
+	dump_put_str(TERM_L_GREEN, "Actual", 28);
+	dump_put_str(TERM_YELLOW, "Currnt", 35);
+	dump_put_str(TERM_WHITE, "abcdefghijkl", 46);
 	current_line++;
 
 	/* Display the stats */
@@ -1656,26 +1669,28 @@ extern int make_dump(char_attr_line * line, int mode)
 		/* Race, class, and equipment modifiers */
 		sprintf(buf, "%3d", rp_ptr->r_adj[i]);
 		dump_put_str(TERM_L_BLUE, buf, 12);
-		sprintf(buf, "%3d", cp_ptr->c_adj[i]);
+		sprintf(buf, "%3d", cmp_ptr->cm_adj[i]);
 		dump_put_str(TERM_L_BLUE, buf, 16);
-		sprintf(buf, "%3d", p_ptr->state.stat_add[i]);
+		sprintf(buf, "%3d", cp_ptr->c_adj[i]);
 		dump_put_str(TERM_L_BLUE, buf, 20);
+		sprintf(buf, "%3d", p_ptr->state.stat_add[i]);
+		dump_put_str(TERM_L_BLUE, buf, 24);
 
 		/* Resulting "modified" maximum value */
 		cnv_stat(p_ptr->state.stat_top[i], buf, sizeof(buf));
-		dump_put_str(TERM_L_GREEN, buf, 24);
+		dump_put_str(TERM_L_GREEN, buf, 28);
 
 		/* Only display stat_use if not maximal */
 		if (p_ptr->state.stat_use[i] < p_ptr->state.stat_top[i]) {
 			cnv_stat(p_ptr->state.stat_use[i], buf, sizeof(buf));
-			dump_put_str(TERM_YELLOW, buf, 31);
+			dump_put_str(TERM_YELLOW, buf, 35);
 		}
 
 		for (j = INVEN_WIELD; j < INVEN_TOTAL; j++) {
 			byte a;
 			char c;
 
-			col = 42 + j - INVEN_WIELD;
+			col = 46 + j - INVEN_WIELD;
 
 			/* Access object */
 			o_ptr = &p_ptr->inventory[j];
@@ -1726,9 +1741,10 @@ extern int make_dump(char_attr_line * line, int mode)
 
 		current_line++;
 	}
+	free(ring_space);
 
 	/* End of mode 1 */
-	if (mode == 1)
+	if (mode == 1) 
 		return (current_line);
 
 	current_line++;

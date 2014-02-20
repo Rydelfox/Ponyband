@@ -896,10 +896,9 @@ void move_player(int dir)
 		}
 
 		if (tf_has(f_ptr->flags, TF_TREE)) {
-			/* Druids, rangers, elves and ents (SJGU) slip easily under
+			/* Druids, rangers, Plant Cutie Marks slip easily under
 			 * trees */
-			if (((player_has(PF_WOODSMAN)) || (player_has(PF_PLANT_FRIEND)))
-				|| (player_has(PF_WOODEN)))
+			if ((player_has(PF_WOODSMAN)) || (player_has(PF_PLANT_FRIEND)))
 				can_move = TRUE;
 
 			/* Bats, dragons can fly */
@@ -1018,23 +1017,6 @@ void move_player(int dir)
 		/* Update speed for Plant cutie mark woodspersons */
 		if (player_has(PF_WOODSMAN) && player_has(PF_PLANT_FRIEND))
 			p_ptr->update |= PU_BONUS;
-
-		/* Superstealth for ents in trees SJGU */
-		if ((player_has(PF_WOODEN)) &&
-			(tf_has
-			 (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))) {
-			if (!(tf_has(f_info[cave_feat[py][px]].flags, TF_TREE))
-				|| !(p_ptr->timed[TMD_SSTEALTH])) {
-				(void) inc_timed(TMD_SSTEALTH, 1, FALSE);
-				p_ptr->update |= (PU_BONUS);
-			}
-		} else if ((player_has(PF_WOODEN))
-				   && (tf_has(f_info[cave_feat[py][px]].flags, TF_TREE))) {
-			if (p_ptr->timed[TMD_SSTEALTH]) {
-				(void) dec_timed(TMD_SSTEALTH, 1, FALSE);
-				p_ptr->update |= (PU_BONUS);
-			}
-		}
 
 		/* New location */
 		y = py = p_ptr->py;

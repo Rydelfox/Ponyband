@@ -289,7 +289,7 @@ static void print_tomb(void)
 
 	bool boat = FALSE;
 	bool tree = ((p_ptr->total_winner)
-				 && (player_has(PF_WOODEN) || player_has(PF_DIVINE)));
+				 && player_has(PF_DIVINE));
 
 	/* Clear screen */
 	Term_clear();
