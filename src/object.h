@@ -162,7 +162,7 @@ typedef enum
 	 ((T)->tval == TV_BOLT))
 
 /**
- * Object is armour
+ * Object is weapon
  */
 #define is_weapon(T) \
   (((T)->tval >= TV_SHOT) && ((T)->tval <= TV_SWORD))
