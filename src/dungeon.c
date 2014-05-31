@@ -2268,6 +2268,9 @@ void play_game(void)
 
 	/* set a default warning level that will be overridden by the savefile */
 	op_ptr->hitpoint_warn = 3;
+	
+	/* set a default base delay that will be overridden by the savefile */
+	op_ptr->delay_factor = 3;
 
 	/* initialize window options that will be overridden by the savefile */
 	memset(window_flag, 0, sizeof(u32b) * ANGBAND_TERM_MAX);
