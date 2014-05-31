@@ -4785,6 +4785,9 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 			else {
 				/* Reset sleep counter */
 				m_ptr->csleep = 0;
+				
+				/* Wake with no energy */
+				m_ptr->energy = 0;
 
 				/* Notice the "waking up" */
 				if (m_ptr->ml) {
