@@ -1206,7 +1206,7 @@ static enum parser_error parse_names_n(struct parser *p)
 {
 	unsigned int section = parser_getint(p, "section");
 	struct names_parse *s = parser_priv(p);
-	if (s->section >= RANDNAME_NUM_TYPES)
+    if (s->section >= RANDNAME_NUM_TYPES)
 		return PARSE_ERROR_GENERIC;
 	s->section = section;
 	return PARSE_ERROR_NONE;
@@ -1218,7 +1218,7 @@ static enum parser_error parse_names_d(struct parser *p)
 	struct names_parse *s = parser_priv(p);
 	struct name *ns = mem_zalloc(sizeof *ns);
 
-	s->nnames[s->section]++;
+    s->nnames[s->section]++;
 	ns->next = s->names[s->section];
 	ns->str = string_make(name);
 	s->names[s->section] = ns;
@@ -1229,7 +1229,7 @@ struct parser *init_parse_names(void)
 {
 	struct parser *p = parser_new();
 	struct names_parse *n = mem_zalloc(sizeof *n);
-	n->section = 0;
+    n->section = 0;
 	parser_setpriv(p, n);
 	parser_reg(p, "N int section", parse_names_n);
 	parser_reg(p, "D str name", parse_names_d);
@@ -1238,7 +1238,7 @@ struct parser *init_parse_names(void)
 
 static errr run_parse_names(struct parser *p)
 {
-	return parse_file(p, "names");
+    return parse_file(p, "names");
 }
 
 static errr finish_parse_names(struct parser *p)
@@ -2154,6 +2154,7 @@ static enum parser_error parse_r_w(struct parser *p)
 	r->rarity = parser_getint(p, "rarity");
 	r->mana = parser_getint(p, "mana");
 	r->mexp = parser_getint(p, "mexp");
+	r->faction = parser_getint(p, "faction");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2304,7 +2305,7 @@ struct parser *init_parse_r(void)
 	parser_reg(p, "C sym color", parse_r_c);
 	parser_reg(p, "I int speed rand hp int aaf int ac int sleep",
 			   parse_r_i);
-	parser_reg(p, "W int level int rarity int mana int mexp", parse_r_w);
+	parser_reg(p, "W int level int rarity int mana int mexp int faction", parse_r_w);
 	parser_reg(p, "B sym method ?sym effect ?rand damage", parse_r_b);
 	parser_reg(p, "F ?str flags", parse_r_f);
 	parser_reg(p, "D str desc", parse_r_d);
@@ -2951,6 +2952,7 @@ static enum parser_error parse_c_i(struct parser *p)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	c->c_mhp = parser_getint(p, "mhp");
 	c->sense_base = parser_getint(p, "sense-base");
+	c->alignment = parser_getint(p, "alignment");
 	return PARSE_ERROR_NONE;
 }
 
@@ -3130,7 +3132,7 @@ struct parser *init_parse_c(void)
 	parser_reg(p,
 			   "X int dis int dev int sav int stl int srh int fos int thm int thb",
 			   parse_c_x);
-	parser_reg(p, "I int mhp int sense-base", parse_c_i);
+	parser_reg(p, "I int mhp int sense-base int alignment", parse_c_i);
 	parser_reg(p,
 			   "A int max_1 int max_50 int penalty int max_penalty int bonus int max_bonus",
 			   parse_c_a);

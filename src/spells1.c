@@ -419,7 +419,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 			msg("You come to rest in a pool of water.");
 		if (tf_has(f_ptr->flags, TF_FIERY)) {
 			msg("You are thrown into molten lava!");
-			fire_dam(damroll(4, 100), "burnt up in molten lava");
+			fire_dam(damroll(4, 100), "burnt up in molten lava", SOURCE_ENVIRONMENTAL);
 		}
 		if (tf_has(f_ptr->flags, TF_FALL) && (p_ptr->schange != SHAPE_BAT)
 			&& (p_ptr->schange != SHAPE_WYRM)) {
@@ -444,7 +444,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 				/* Hurt the monster.  No fear. */
 				mon_take_hit(cave_m_idx[y][x],
 							 damroll(2, 18 + m_ptr->maxhp / 12), &fear,
-							 note_dies);
+							 note_dies, who);
 
 				/* XXX - If still alive, monster escapes. */
 				teleport_away(cave_m_idx[y][x], 3);
@@ -458,7 +458,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 				/* Hurt the monster.  No fear. */
 				mon_take_hit(cave_m_idx[y][x],
 							 damroll(2, 18 + m_ptr->maxhp / 12), &fear,
-							 note_dies);
+							 note_dies, who);
 
 				/* XXX - If still alive, monster escapes. */
 				teleport_away(cave_m_idx[y][x], 3);
@@ -602,19 +602,19 @@ void teleport_player(int dis, bool safe)
 		/* The player may hit a tree, slam into rubble, or even land in lava. */
 		if (tf_has(f_ptr->flags, TF_TREE) && (randint0(2) == 0)) {
 			msg("You hit a tree!");
-			take_hit(damroll(2, 8), "being hurtled into a tree");
+			take_hit(damroll(2, 8), "being hurtled into a tree", SOURCE_ENVIRONMENTAL);
 			if (randint0(3) != 0)
 				inc_timed(TMD_STUN, damroll(2, 8), TRUE);
 		} else if (tf_has(f_ptr->flags, TF_ROCK) && (randint0(2) == 0)) {
 			msg("You slam into jagged rock!");
-			take_hit(damroll(2, 14), "being slammed into rubble");
+			take_hit(damroll(2, 14), "being slammed into rubble", SOURCE_ENVIRONMENTAL);
 			if (randint0(3) == 0)
 				inc_timed(TMD_STUN, damroll(2, 14), TRUE);
 			if (randint0(3) != 0)
 				inc_timed(TMD_CUT, damroll(2, 14) * 2, TRUE);
 		} else if (tf_has(f_ptr->flags, TF_FIERY)) {
 			msg("You land in molten lava!");
-			fire_dam(damroll(4, 100), "landing in molten lava");
+			fire_dam(damroll(4, 100), "landing in molten lava", SOURCE_ENVIRONMENTAL);
 		} else if (tf_has(f_ptr->flags, TF_FALL)) {
 			msg("You land in mid-air!");
 			fall_off_cliff();
@@ -763,19 +763,19 @@ void teleport_player_to(int ny, int nx, bool friendly)
 		/* The player may hit a tree, slam into rubble, or even land in lava. */
 		if (tf_has(f_ptr->flags, TF_TREE) && (randint0(2) == 0)) {
 			msg("You hit a tree!");
-			take_hit(damroll(2, 8), "being hurtled into a tree");
+			take_hit(damroll(2, 8), "being hurtled into a tree", SOURCE_ENVIRONMENTAL);
 			if (randint0(3) != 0)
 				inc_timed(TMD_STUN, damroll(2, 8), TRUE);
 		} else if (tf_has(f_ptr->flags, TF_ROCK) && (randint0(2) == 0)) {
 			msg("You slam into jagged rock!");
-			take_hit(damroll(2, 14), "being slammed into rubble");
+			take_hit(damroll(2, 14), "being slammed into rubble", SOURCE_ENVIRONMENTAL);
 			if (randint0(3) == 0)
 				inc_timed(TMD_STUN, damroll(2, 14), TRUE);
 			if (randint0(3) != 0)
 				inc_timed(TMD_CUT, damroll(2, 14) * 2, TRUE);
 		} else if (tf_has(f_ptr->flags, TF_FIERY)) {
 			msg("You land in molten lava!");
-			fire_dam(damroll(4, 100), "landing in molten lava");
+			fire_dam(damroll(4, 100), "landing in molten lava", SOURCE_ENVIRONMENTAL);
 		} else if (tf_has(f_ptr->flags, TF_FALL)) {
 			msg("You land in mid-air!");
 			fall_off_cliff();
@@ -1000,7 +1000,7 @@ bool chaotic_effects(monster_type * m_ptr)
 				delete_monster_idx(cave_m_idx[my][mx]);
 
 				/* Create a new monster (no groups) */
-				if (place_monster_aux(my, mx, tmp, FALSE, FALSE)) {
+				if (place_monster_aux(my, mx, tmp, FALSE, FALSE, m_ptr->faction)) {
 					/* Hack -- Get new monster */
 					m_ptr = &m_list[cave_m_idx[my][mx]];
 
@@ -1036,6 +1036,16 @@ bool chaotic_effects(monster_type * m_ptr)
 				else
 					msgt(MSG_HIT, "%s sounds confused.", m_name);
 				m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
+				/* Reduce alignment for confusing */
+				if(rf_has(r_ptr->flags, RF_EVIL)) {
+				    if(!randint0(12)) {
+				        p_ptr->alignment--;
+				    }
+				} else {
+				    if(!randint0(3)) {
+				       p_ptr->alignment--;
+				   }
+				}
 			}
 
 			return (TRUE);
@@ -1060,6 +1070,8 @@ bool chaotic_effects(monster_type * m_ptr)
 
 			/* Message */
 			msg("%s looks healthier.", m_name);
+			
+			p_ptr->alignment++;
 
 			return (TRUE);
 		}
@@ -1577,7 +1589,7 @@ int resist_damage(int dam, byte resist, byte rand_factor)
  * when he dies, since the "You die." message is shown before setting
  * the player to "dead".
  */
-void take_hit(int dam, const char *kb_str)
+void take_hit(int dam, const char *kb_str, int source)
 {
 	int old_chp = p_ptr->chp;
 
@@ -1670,6 +1682,10 @@ void take_hit(int dam, const char *kb_str)
 		msg("*** LOW HITPOINT WARNING! ***");
 		message_flush();
 	}
+	
+	/* Handle threat, ignoring self inflicted and environmental damage */
+	if(source > SOURCE_ENVIRONMENTAL)
+	    cause_threat(p_ptr->py, p_ptr->px, source, m_list[source].faction, dam, SOURCE_PLAYER, FALSE);
 }
 
 
@@ -2066,7 +2082,7 @@ static int minus_ac(int dam)
  * Hurt the player with Acid.  Resistances now reduce inventory
  * destruction.   Acid can reduce CHR, as in Zangband. -LM-
  */
-void acid_dam(int dam, const char *kb_str)
+void acid_dam(int dam, const char *kb_str, int source)
 {
 	int inv = 0;
 
@@ -2097,7 +2113,7 @@ void acid_dam(int dam, const char *kb_str)
 		(void) do_dec_stat(A_CHR);
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, source);
 
 	/* Inventory damage */
 	inven_damage(set_acid_destroy, inv);
@@ -2110,7 +2126,7 @@ void acid_dam(int dam, const char *kb_str)
  * destruction.   Electricity can reduce DEX, as in Zangband.  Electricity can 
  * stun the player. -LM-
  */
-void elec_dam(int dam, const char *kb_str)
+void elec_dam(int dam, const char *kb_str, int source)
 {
 	int inv = 0;
 
@@ -2144,7 +2160,7 @@ void elec_dam(int dam, const char *kb_str)
 	}
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, source);
 
 	/* Inventory damage */
 	inven_damage(set_elec_destroy, inv);
@@ -2156,7 +2172,7 @@ void elec_dam(int dam, const char *kb_str)
  * Hurt the player with Fire.  Resistances now reduce inventory
  * destruction.   Fire can reduce STR. -LM-
  */
-void fire_dam(int dam, const char *kb_str)
+void fire_dam(int dam, const char *kb_str, int source)
 {
 	int inv = 0;
 
@@ -2183,7 +2199,7 @@ void fire_dam(int dam, const char *kb_str)
 		(void) do_dec_stat(A_STR);
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, source);
 
 	/* Inventory damage */
 	inven_damage(set_fire_destroy, inv);
@@ -2195,7 +2211,7 @@ void fire_dam(int dam, const char *kb_str)
  * Hurt the player with Cold.  Resistances now reduce inventory
  * destruction.   Cold can reduce CON. -LM-
  */
-void cold_dam(int dam, const char *kb_str)
+void cold_dam(int dam, const char *kb_str, int source)
 {
 	int inv = 0;
 
@@ -2222,7 +2238,7 @@ void cold_dam(int dam, const char *kb_str)
 		(void) do_dec_stat(A_CON);
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, source);
 
 	/* Inventory damage */
 	inven_damage(set_cold_destroy, inv);
@@ -2233,7 +2249,7 @@ void cold_dam(int dam, const char *kb_str)
 /**
  * Hurt the player with Poison.
  */
-void pois_dam(int dam, const char *kb_str)
+void pois_dam(int dam, const char *kb_str, int source)
 {
 	/* No damage. */
 	if (dam <= 0)
@@ -2246,7 +2262,7 @@ void pois_dam(int dam, const char *kb_str)
 	dam -= resist_damage(dam, P_RES_POIS, 0);
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, source);
 
 	return;
 }
@@ -3864,6 +3880,14 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	/* Hold the monster name */
 	char m_name[80];
+	
+	/* Hold monster info */
+	int old_sleep;
+	u16b old_faction;
+	int old_depth;
+	bool old_evil;
+	bool old_unique;
+	bool killed = FALSE;
 
 	/* Assume no note */
 	const char *note = NULL;
@@ -3891,7 +3915,14 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	if (m_ptr->ml)
 		seen = TRUE;
 
-	/* Breathers don't blast members of the same race. */
+	/* Collect the monster's info */
+	old_sleep = m_ptr->csleep;
+	old_faction = m_ptr->faction;
+	old_depth = r_ptr->level;
+	old_evil = rf_has(r_ptr->flags, RF_EVIL);
+	old_unique = rf_has(r_ptr->flags, RF_UNIQUE);
+    
+    /* Breathers don't blast members of the same race. */
 	if ((who > 0) && (flg & (PROJECT_SAFE))) {
 		/* Point to monster information of caster */
 		m2_ptr = &m_list[who];
@@ -4829,7 +4860,11 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			if (m_ptr->hp > m_ptr->maxhp)
 				m_ptr->hp = m_ptr->maxhp;
 
-			/* Redraw (later) if needed */
+			/* Adjust alignment */
+			if(r_ptr->faction == F_GOOD)
+			    p_ptr->alignment++;
+            
+            /* Redraw (later) if needed */
 			if (p_ptr->health_who == cave_m_idx[y][x])
 				p_ptr->redraw |= (PR_HEALTH);
 
@@ -5596,6 +5631,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	if (dam > m_ptr->hp) {
 		/* Extract method of death */
 		note = note_dies;
+		killed = TRUE;
 	}
 
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
@@ -5622,7 +5658,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			delete_monster_idx(cave_m_idx[y][x]);
 
 			/* Create a new monster (no groups) */
-			(void) place_monster_aux(y, x, tmp, FALSE, FALSE);
+			(void) place_monster_aux(y, x, tmp, FALSE, FALSE, m_ptr->faction);
 
 			/* Hack -- Assume success XXX XXX XXX */
 
@@ -5738,6 +5774,16 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 		/* Apply confusion */
 		m_ptr->confused = (tmp < 200) ? tmp : 200;
+		/* Reduce alignment for confusing */
+		if(rf_has(r_ptr->flags, RF_EVIL)) {
+		    if(!randint0(12)) {
+		        p_ptr->alignment--;
+		    }
+		} else {
+		    if(!randint0(3)) {
+		       p_ptr->alignment--;
+		   }
+		}
 	}
 
 
@@ -5768,6 +5814,9 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 		/* Hurt the monster */
 		m_ptr->hp -= dam;
+		
+		/* Handle threat here */
+		cause_threat(m_ptr->fy, m_ptr->fx, who, m_list[who].faction, dam, cave_m_idx[y][x], FALSE);
 
 		/* Dead monster */
 		if (m_ptr->hp < 0) {
@@ -5810,8 +5859,9 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		bool fear = FALSE;
 
 		/* Hurt the monster, check for fear and death */
-		if (mon_take_hit(cave_m_idx[y][x], dam, &fear, note_dies)) {
+		if (mon_take_hit(cave_m_idx[y][x], dam, &fear, note_dies, SOURCE_PLAYER)) {
 			/* Dead monster */
+			killed = TRUE;
 		}
 
 		/* Damaged monster */
@@ -5851,6 +5901,8 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 				m_ptr->mflag &= ~(MFLAG_ACTV);
 			}
 		}
+		if ((who == 0) && (dam > 0))
+		    hit_alignment(old_faction, old_depth, old_evil, old_unique, old_sleep, killed);
 	}
 
 	/* Verify this code XXX XXX XXX */
@@ -6109,7 +6161,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				}
 
 				/* Take the damage. */
-				take_hit(dam, killer);
+				take_hit(dam, killer, who);
 			}
 
 			break;
@@ -6181,7 +6233,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				}
 
 				/* Take the damage. */
-				take_hit(dam, killer);
+				take_hit(dam, killer, who);
 			}
 
 			break;
@@ -6246,7 +6298,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				/* Hit the player */
 				if (fuzzy)
 					msg("You are hit by something hard!");
-				take_hit(dam, killer);
+				take_hit(dam, killer, who);
 
 				/* Player can be wounded. */
 				if (randint0(2) == 0) {
@@ -6364,13 +6416,13 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				/* Ordinary missile. */
 				if (k == 0) {
 					/* No special damage. */
-					take_hit(dam, killer);
+					take_hit(dam, killer, who);
 				}
 
 				/* Standard poisonous missile. */
 				if (k == 1) {
 					/* Damage is not affected by poison. */
-					take_hit(dam, killer);
+					take_hit(dam, killer, who);
 
 					/* Player may be poisoned in addition. */
 					pois_hit(dam + 5);
@@ -6379,7 +6431,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				/* Drain life . */
 				if (k == 2) {
 					/* First the raw damage, */
-					take_hit(dam, killer);
+					take_hit(dam, killer, who);
 
 					/* Then the poison, */
 					pois_hit(dam + 5);
@@ -6403,7 +6455,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 					msg("Foul magics assault body and mind!");
 
 					/* First the raw damage, */
-					take_hit(dam, killer);
+					take_hit(dam, killer, who);
 
 					/* Then the poison, */
 					pois_hit(dam + 5);
@@ -6419,7 +6471,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				/* Inflict the Black Breath. */
 				if (k >= 4) {
 					/* First the raw damage, */
-					take_hit(dam, killer);
+					take_hit(dam, killer, who);
 
 					/* Then the poison, */
 					pois_hit(dam + 5);
@@ -6465,7 +6517,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			} else {
 				if (fuzzy)
 					msg("You are struck by a whip!");
-				take_hit(dam, killer);
+				take_hit(dam, killer, who);
 			}
 			break;
 		}
@@ -6478,7 +6530,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by acid!");
-			acid_dam(dam, killer);
+			acid_dam(dam, killer, who);
 			break;
 		}
 
@@ -6490,7 +6542,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by lightning!");
-			elec_dam(dam, killer);
+			elec_dam(dam, killer, who);
 			break;
 		}
 
@@ -6502,7 +6554,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by fire!");
-			fire_dam(dam, killer);
+			fire_dam(dam, killer, who);
 			break;
 		}
 
@@ -6515,7 +6567,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by cold!");
-			cold_dam(dam, killer);
+			cold_dam(dam, killer, who);
 
 			/* Strong Morgul-cold can have extra side effects. */
 
@@ -6544,6 +6596,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 					if (!p_ptr->state.no_fear) {
 						(void) inc_timed(TMD_AFRAID, randint0(21) + 10,
 										 TRUE);
+					    if(!randint0(4))
+                            p_ptr->alignment--;
 					} else
 						notice_obj(OF_FEARLESS, 0);
 					if (!p_ptr->state.hold_life) {
@@ -6568,12 +6622,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			if ((!self) && (rf_has(r_ptr->flags, RF_MORGUL_MAGIC))) {
 				if (fuzzy)
 					msg("You are hit by acidic venom.");
-				acid_dam(dam / 3, killer);
+				acid_dam(dam / 3, killer, who);
 			} else if (fuzzy)
 				msg("You are hit by poison!");
 
 			/* Poison Damage and Add Poison */
-			pois_dam(dam, killer);
+			pois_dam(dam, killer, who);
 
 			/* Some nasty possible side-effects of Morgul-poison.  Poison
 			 * resistance (but not acid resistance) reduces the damage counted
@@ -6607,8 +6661,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by plasma!");
-			elec_dam((dam + 2) / 2, killer);
-			fire_dam((dam + 2) / 2, killer);
+			elec_dam((dam + 2) / 2, killer, who);
+			fire_dam((dam + 2) / 2, killer, who);
 			break;
 		}
 
@@ -6620,8 +6674,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by dragonfire!");
-			pois_dam((dam + 2) / 2, killer);
-			fire_dam((dam + 2) / 2, killer);
+			pois_dam((dam + 2) / 2, killer, who);
+			fire_dam((dam + 2) / 2, killer, who);
 
 			/* Some nasty possible side-effects of dragonfire. */
 			if ((!self) && (rf_has(r_ptr->flags, RF_POWERFUL))) {
@@ -6652,7 +6706,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by hellfire!");
-			fire_dam(2 * dam / 3, killer);
+			fire_dam(2 * dam / 3, killer, who);
 
 			/* Resist Darkness */
 			dam -= resist_damage(dam, P_RES_DARK, 1);
@@ -6663,7 +6717,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				(void) inc_timed(TMD_BLIND, randint1(5) + 2, TRUE);
 			} else
 				notice_obj(OF_SEEING, 0);
-			take_hit((dam + 2) / 3, killer);
+			take_hit((dam + 2) / 3, killer, who);
 
 			/* Test player's saving throw. */
 			if ((!self) && (!check_save(5 * r_ptr->level / 4))) {
@@ -6674,6 +6728,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 					(void) inc_timed(TMD_AFRAID,
 									 randint1(30) + r_ptr->level * 2,
 									 TRUE);
+				    if(!randint0(4))
+                        p_ptr->alignment--;
 				} else
 					notice_obj(OF_FEARLESS, 0);
 				if (!p_resist_good(P_RES_CHAOS)) {
@@ -6683,6 +6739,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				if (!p_resist_good(P_RES_CONFU)) {
 					(void) inc_timed(TMD_CONFUSED, randint0(31) + 30,
 									 TRUE);
+				    if(!randint0(4))
+                        p_ptr->alignment--;
 				} else
 					notice_other(IF_RES_CONFU, 0);
 			}
@@ -6698,7 +6756,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by something sharp!");
-			cold_dam(dam, killer);
+			cold_dam(dam, killer, who);
 			if (!p_resist_good(P_RES_SHARD)) {
 				(void) inc_timed(TMD_CUT, damroll(5, 8), TRUE);
 			} else
@@ -6729,7 +6787,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 								 randint1(5) + ((dam > 40) ? 2 : 0), TRUE);
 			} else
 				notice_obj(OF_SEEING, 0);
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -6751,7 +6809,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				(void) inc_timed(TMD_BLIND, randint1(5) + 2, TRUE);
 			} else
 				notice_obj(OF_SEEING, 0);
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -6773,7 +6831,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				(void) inc_timed(TMD_BLIND, randint1(5) + 2, TRUE);
 			} else
 				notice_obj(OF_SEEING, 0);
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 
 			/* Determine power of attack - usually between 25 and 350. */
 			if (!self)
@@ -6804,6 +6862,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 						msg("You are paralyzed with fear!");
 					}
 					(void) inc_timed(TMD_AFRAID, randint0(k), TRUE);
+					if(!randint0(4))
+                        p_ptr->alignment--;
 				} else
 					notice_obj(OF_FEARLESS, 0);
 
@@ -6892,8 +6952,10 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (!p_resist_good(P_RES_CONFU)) {
 				(void) inc_timed(TMD_CONFUSED, randint1(20) + 10, TRUE);
+				if(!randint0(4))
+                    p_ptr->alignment--;
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -6916,6 +6978,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				if (!p_resist_good(P_RES_CONFU)) {
 					k = (randint1((dam > 400) ? 21 : (1 + dam / 20)));
 					(void) inc_timed(TMD_CONFUSED, k, TRUE);
+					if(!randint0(4))
+                        p_ptr->alignment--;
 				} else
 					notice_other(IF_RES_CONFU, 0);
 
@@ -6932,7 +6996,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 					p_ptr->energy -= (s16b) randint0(dam / 2);
 				}
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 
 			/* Resistance to sound - much less inventory destruction . */
 			if (p_resist_good(P_RES_SOUND))
@@ -6987,7 +7051,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				inven_damage(set_cold_destroy,
 							 ((k / 20 > 20) ? 20 : k / 20));
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -6998,7 +7062,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				msg("You are hit by something strange!");
 			(void) inc_timed(TMD_SLOW, randint0(5) + (dam >= 100 ? 6 : 4),
 							 TRUE);
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7015,7 +7079,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			} else
 				notice_other(IF_RES_SOUND, 0);
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 
 			/* Mark grid for later processing. */
 			sqinfo_on(cave_info[y][x], SQUARE_TEMP);
@@ -7038,7 +7102,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			} else
 				notice_other(IF_RES_SOUND, 0);
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 
 			/* Mark grid for later processing. */
 			sqinfo_on(cave_info[y][x], SQUARE_TEMP);
@@ -7061,10 +7125,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if ((!p_resist_good(P_RES_CONFU)) && (randint0(2) == 0)) {
 				(void) inc_timed(TMD_CONFUSED, randint0(4) + 3, TRUE);
+				if(!randint0(4))
+                    p_ptr->alignment--;
 			} else
 				notice_other(IF_RES_CONFU, 0);
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7080,17 +7146,17 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				msg("You are enveloped in a storm!");
 
 			/* Pure (wind-driven water + flying objects) damage. */
-			take_hit(dam / 2, killer);
+			take_hit(dam / 2, killer, who);
 
 			/* Electrical damage. */
 			if (randint0(3) == 0) {
 				/* Lightning strikes. */
 				msg("You are struck by lightning!");
-				elec_dam(dam / 2, killer);
+				elec_dam(dam / 2, killer, who);
 			}
 			/* Lightning doesn't strike - at least not directly. */
 			else
-				elec_dam(dam / 4, killer);
+				elec_dam(dam / 4, killer, who);
 
 			/* Possibly cold and/or acid damage. */
 			if (randint0(2) == 0) {
@@ -7099,17 +7165,19 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				else
 					msg("You are bombarded with hail.");
 
-				cold_dam(dam / 4, killer);
+				cold_dam(dam / 4, killer, who);
 			}
 			if (randint0(2) == 0) {
 				msg("You are drenched by acidic rain.");
-				acid_dam(dam / 4, killer);
+				acid_dam(dam / 4, killer, who);
 			}
 
 			/* Sometimes, confuse the player. */
 			if ((randint0(2) == 0) && (!p_resist_good(P_RES_CONFU))) {
 				(void) inc_timed(TMD_CONFUSED, 5 + randint1(dam / 3),
 								 TRUE);
+			    if(!randint0(4))
+                    p_ptr->alignment--;
 			} else
 				notice_other(IF_RES_CONFU, 0);
 
@@ -7128,7 +7196,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			/* Resist damage */
 			dam -= resist_damage(dam, P_RES_NEXUS, 1);
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 
 			/* Mark grid for later processing. */
 			sqinfo_on(cave_info[y][x], SQUARE_TEMP);
@@ -7162,7 +7230,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 					lose_exp(200 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 				}
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7178,7 +7246,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			/* Resist damage */
 			dam -= resist_damage(dam, P_RES_CHAOS, 2);
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 
 			/* Mark grid for later processing. */
 			sqinfo_on(cave_info[y][x], SQUARE_TEMP);
@@ -7201,7 +7269,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				remove_player_mana(dam / 5);
 				apply_dispel(dam / 5);
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7278,7 +7346,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 				}
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7290,7 +7358,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by something!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7302,11 +7370,11 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by something strange!");
-			acid_dam(dam / 14, killer);
-			elec_dam(dam / 14, killer);
-			fire_dam(dam / 14, killer);
-			cold_dam(dam / 14, killer);
-			pois_dam(dam / 14, killer);
+			acid_dam(dam / 14, killer, who);
+			elec_dam(dam / 14, killer, who);
+			fire_dam(dam / 14, killer, who);
+			cold_dam(dam / 14, killer, who);
+			pois_dam(dam / 14, killer, who);
 
 			dam -= 5 * dam / 14;
 
@@ -7332,6 +7400,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			/* Apply Confusion */
 			if (!p_resist_good(P_RES_CONFU)) {
 				(void) inc_timed(TMD_CONFUSED, randint1(3), TRUE);
+				if(!randint0(4))
+                    p_ptr->alignment--;
 			}
 
 			/* Stun the player. */
@@ -7371,7 +7441,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 				apply_dispel(dam / 70);
 			}
 
-			take_hit(9 * dam / 14, killer);
+			take_hit(9 * dam / 14, killer, who);
 			break;
 		}
 
@@ -7383,9 +7453,9 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by something!");
-			if (!player_has(PF_EVIL))
+			if (p_ptr->alignment > (-1 * PY_ALIGN_CHANGE))
 				dam /= 2;
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 
@@ -7397,7 +7467,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 			if (fuzzy)
 				msg("You are hit by something!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, who);
 			break;
 		}
 

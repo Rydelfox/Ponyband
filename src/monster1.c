@@ -3000,3 +3000,152 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
 	/* Success */
 	return (TRUE);
 }
+
+int get_reaction(int attacker, int defender)
+{
+    int temp = reaction_matrix[attacker][defender];
+    
+    if (temp == REACT_ALIGNMENT)
+    {
+        //Adjust for player alignment.  Until that is added:
+        if(p_ptr->alignment > PY_ALIGN_CHANGE)
+            temp = REACT_FRIEND;
+        else
+            temp = REACT_HOSTILE;
+    }
+    
+    return temp;
+}
+
+void cause_threat(int y, int x, int source, u16b faction, int amount, int target, bool onlySameFaction)
+{
+    int checkX = x - MAX_THREAT_RANGE - 1; /* First loop adds 1, so counteract this */
+	int checkY = y - MAX_THREAT_RANGE;
+	
+	/* If the source is environmental (0), don't bother at all */
+	/* Hack: Unless it's onlySameFaction, then it'a a player order */
+	if ((source == SOURCE_ENVIRONMENTAL) && !onlySameFaction)
+	    return;
+	
+	while(checkY <= DUNGEON_HGT) {
+	    int currDist;
+		int mid;
+		int threatIncrease = 0;
+		monster_type *m_ptr;
+		
+		/* Check the next square */
+		checkX++;
+		
+		/* Check if we've gone too far to the right and move to the next line */
+		if(checkX > x + MAX_THREAT_RANGE) {
+		    checkX = x - MAX_THREAT_RANGE;
+			checkY++;
+			if (checkY > y + MAX_THREAT_RANGE)
+			    break;
+		}
+		
+		/* Get the monster ID */
+		mid = cave_m_idx[checkY][checkX];
+		
+		/* Skip empty cells and the player */
+		if(mid <= 0)
+		    continue;
+		    
+		/* Skip the source */
+		if(mid == source)
+		    continue;
+			
+		/* Get the distance from the threat's point of origin */
+		currDist = distance(checkY, checkX, y, x);
+		
+		/* If we're out of range, move on */
+		if(currDist > MAX_THREAT_RANGE)
+		    continue;
+		
+		/* Get the monster's information */
+		m_ptr = &m_list[mid];
+		
+		/* If only affecting our own faction, skip monsters in other factions */
+		if(onlySameFaction && (m_ptr->faction != faction))
+		    continue;
+		
+		/* If we aren't only affecting our faction, ignore friends and allies that aren't directly affected */
+		if((!get_reaction(m_ptr->faction, faction) == REACT_HOSTILE) && (mid != target) && !onlySameFaction)
+		    continue;
+		    
+        /* Ignore sleeping monsters unless attacking them directly */
+        if(m_ptr->csleep && (mid != target))
+            continue;
+			
+		/* Determine threat if you have LoS */
+		if(los(checkY, checkX, y, x)) {
+		    threatIncrease = amount / (currDist + 1);
+		} 
+		/* Work off sound, but this only works for the player */
+		else if ((source < 0) && cave_cost[checkY][checkX]) {
+		    threatIncrease = amount / (2 * currDist + 1);
+		}
+		/* Everything else */
+		else {
+		    threatIncrease = (amount / (3 * currDist + 1)) - 1;
+		}
+		
+		/* Reduce threat on friendly monsters */
+		if((get_reaction(m_ptr->faction, faction) != REACT_HOSTILE) && mid != target && !onlySameFaction) {
+		    /* Multiply by 3/4 */
+			threatIncrease *= 3;
+			threatIncrease /= 4;
+		}
+		
+		/* Further reduction if they are the same faction */
+		if(!onlySameFaction && (m_ptr->faction == faction)) {
+		    /* Multiply by 3/4 */
+			threatIncrease *= 3;
+			threatIncrease /= 4;
+		}
+		
+		/* Pets should gain threat on whatever the player attacks */
+		if((m_ptr->faction == F_PLAYER) && (faction == F_PLAYER) && (target > 0)) {
+		    
+            /* First, handle player orders */
+            if((source == target) && (onlySameFaction)) {
+                if(threatIncrease > m_ptr->threat) {
+                    m_ptr->hostile = target;
+                    m_ptr->threat = threatIncrease;
+                    m_ptr->ty = y;
+                    m_ptr->tx = x;
+                    monster_distance(mid);
+                    continue;
+                }
+            }
+            if(m_list[target].faction != F_PLAYER) {
+		        /* Gain threat on them if they are the current target */
+		        if(target == m_ptr->hostile) {
+		            m_ptr->threat += threatIncrease;
+		            continue;
+		        }
+		        
+		        /* Otherwise, become the new target if necessary */
+		        if(threatIncrease > m_ptr->threat) {
+		            m_ptr->hostile = target;
+		            m_ptr->threat = threatIncrease;
+		            monster_distance(mid);
+		            continue;
+		        }
+		        continue;
+		    }
+		}
+		
+		/* If you are already target, just gain threat */
+		if(source == m_ptr->hostile) {
+		    m_ptr->threat += threatIncrease;
+		}
+		
+		/* Otherwise, become the new target if necessary */
+		else if (threatIncrease > m_ptr->threat) {
+		    m_ptr->hostile = source;
+			m_ptr->threat = threatIncrease;
+			monster_distance(mid);
+		}
+	}
+}

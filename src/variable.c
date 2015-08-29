@@ -767,6 +767,18 @@ bool angband_keymap_flag = TRUE;
  */
 void (*sound_hook) (int sound);
 
+/**
+ * Enemy reactions based on faction
+ */
+const int reaction_matrix[NUM_FACTIONS][NUM_FACTIONS] = 
+    {{REACT_ALLY,      REACT_ALIGNMENT, REACT_HOSTILE, REACT_FRIEND},
+     {REACT_ALIGNMENT, REACT_ALLY,      REACT_HOSTILE, REACT_FRIEND},
+     {REACT_HOSTILE,   REACT_HOSTILE,   REACT_ALLY,    REACT_HOSTILE},
+     {REACT_FRIEND,    REACT_FRIEND,    REACT_HOSTILE, REACT_ALLY}};
+ 
+/* Distance for pets to follow from */    
+u16b follow_distance = 5;
+
 
 /*
  * For autoinscriptions.

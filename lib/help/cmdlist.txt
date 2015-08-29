@@ -32,7 +32,7 @@ mation about any command, consult the help file "cmddesc.txt".
  m  Cast a spell or pray a prayer        M  Full dungeon map
  n  Repeat last command                  N  (unused)
  o  Open a door or chest                 O  View abilites/Gain Specialty
- p  Pray a prayer or cast a spell        P  (unused)
+ p  Pray a prayer or cast a spell        P  Give pet commands
  q  Quaff a potion                       Q  Quit (commit suicide)
  r  Read a scroll                        R  Rest for a period
  s  Search for traps/doors               S  Toggle search mode
@@ -110,7 +110,7 @@ mation about any command, consult the help file "cmddesc.txt".
  $  Move house                          ^D  Destroy item
  %  Interact with visuals               ^E  Toggle choice window
  ^  (special - control key)             ^F  Repeat level feeling
- &  Interact with colors                ^G  (unused)
+ &  Interact with colors                ^G  Give pet commands
  *  Target monster or location          ^H  (alter - west)
  (  Load screen dump                    ^I  (show item list)
  )  Dump screen dump                    ^J  (alter - south)

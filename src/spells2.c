@@ -142,6 +142,7 @@ void shapechange(s16b shape)
 		}
 
 	}
+	cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, 20, SOURCE_PLAYER, FALSE);
 }
 
 /**
@@ -563,6 +564,8 @@ void rebalance_weapon(void)
 		/* Prevent money-making. */
 		o_ptr->discount = 80;
 	}
+	
+	cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, 300, SOURCE_PLAYER, FALSE);
 }
 
 /*
@@ -603,6 +606,8 @@ bool hp_player(int num)
 		else {
 			msg("You feel very good.");
 		}
+		
+		cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, num * 2, SOURCE_PLAYER, FALSE);
 
 		/* Notice */
 		return (TRUE);
@@ -1094,7 +1099,7 @@ static bool remove_curse_aux(int good)
 				msg("There is a bang and a flash!");
 
 				/* Damage */
-				take_hit(damroll(5, 5), "Failed uncursing");
+				take_hit(damroll(5, 5), "Failed uncursing", SOURCE_PLAYER);
 
 				/* Gone */
 				if (item >= 0) {
@@ -3778,6 +3783,7 @@ void tap_magical_energy(void)
 				item_name);
 		}
 	}
+	cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, energy, SOURCE_PLAYER, FALSE);
 }
 
 
@@ -3949,6 +3955,7 @@ void grow_trees_and_grass(bool powerful)
 			} else
 				cave_set_feat(y, x, FEAT_GRASS);
 		}
+    cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, 20 * (1+ powerful), SOURCE_PLAYER, FALSE);
 
 	return;
 }
@@ -4433,6 +4440,9 @@ bool aggravate_monsters(int who, bool the_entire_level)
 				known = TRUE;
 			}
 		}
+		
+		/* Make monsters want to hurt the player */
+		cause_threat(m_ptr->fy, m_ptr->fx, SOURCE_PLAYER, F_PLAYER, p_ptr->depth * 2, i, FALSE);
 	}
 
 	/* Messages */
@@ -4484,7 +4494,7 @@ bool genocide(void)
 		delete_monster_idx(i);
 
 		/* Take some damage */
-		take_hit(randint1(4), "the strain of casting Genocide");
+		take_hit(randint1(4), "the strain of casting Genocide", SOURCE_PLAYER);
 	}
 
 	/* Update monster list window */
@@ -4526,7 +4536,7 @@ bool mass_genocide(void)
 		delete_monster_idx(i);
 
 		/* Take some damage */
-		take_hit(randint1(3), "the strain of casting Mass Genocide");
+		take_hit(randint1(3), "the strain of casting Mass Genocide", SOURCE_PLAYER);
 	}
 
 	/* Update monster list window */
@@ -4708,6 +4718,9 @@ void destroy_area(int y1, int x1, int r, bool full)
 			notice_obj(OF_SEEING, 0);
 		}
 	}
+	
+	/* This should upset surviving monsters */
+	cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, 300, SOURCE_PLAYER, FALSE);
 
 
 	/* Fully update the visuals */
@@ -4934,7 +4947,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 
 		/* Take some damage */
 		if (damage)
-			take_hit(damage, "an earthquake");
+			take_hit(damage, "an earthquake", SOURCE_ENVIRONMENTAL);
 	}
 
 
@@ -5186,6 +5199,9 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			}
 		}
 	}
+	
+	/* This should upset surviving monsters */
+	cause_threat(p_ptr->py, p_ptr->px, SOURCE_PLAYER, F_PLAYER, 15 * r, SOURCE_PLAYER, FALSE);
 
 
 	/* Fully update the visuals */

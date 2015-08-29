@@ -31,6 +31,8 @@
 #define PY_MAX_LEVEL	50		/* Maximum level */
 #define PY_MAX_SPELLS   64              /* Maximum number of spells */
 #define PY_MAX_BOOKS    11              /* Maximum number of spellbooks */
+#define PY_MAX_ALIGN    1000    /* Maximum alignment magnetude */
+#define PY_ALIGN_CHANGE 500     /* Point at which you're considered part of an alignment */
 
 
 /*
@@ -516,6 +518,8 @@ typedef struct player {
     s16b msp;		/**< Max mana pts */
     s16b csp;		/**< Cur mana pts */
     u16b csp_frac;	/**< Cur mana frac (times 2^16) */
+    
+    s16b alignment; /**< Current Alignmnet */
 
     s16b stat_max[A_MAX];/**< Current "maximal" stat values */
     s16b stat_cur[A_MAX];/**< Current "natural" stat values */
@@ -834,6 +838,8 @@ typedef struct player_class {
 			/**< Max Penalty */
     byte bonus;		/**< Bonus per 10 pounds under */
     byte max_bonus;	/**< Max Bonus */
+    
+    s16b alignment; /**< Starting alignment for this class */
 
     struct start_item start_items[MAX_START_ITEMS];	/**< The starting inventory */
     player_magic magic;	/**< Class magic details */
@@ -936,5 +942,6 @@ bool player_can_read(void);
 bool player_can_fire(void);
 bool player_can_ability(void);
 extern const char *player_safe_name(struct player *p, bool strip_suffix);
+void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, bool killed);
 
 #endif /* !PLAYER_PLAYER_H */

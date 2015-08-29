@@ -109,6 +109,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 
 		/* Sound */
 		sound(MSG_STORE1);
+		p_ptr->alignment--;
 	}
 
 	/* Item was cheaper than we thought, and we paid more than necessary */

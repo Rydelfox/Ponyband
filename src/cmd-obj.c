@@ -467,8 +467,13 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 		object_aware(o_ptr);
 		gain_exp((lev + (p_ptr->lev / 2)) / p_ptr->lev);
 		p_ptr->notice |= PN_SQUELCH;
+		
+		/* Alignment hit for chaotic behavior */
+		p_ptr->alignment--;
 	} else if (used) {
 		object_tried(o_ptr);
+		/* Alignment hit for chaotic behavior */
+		p_ptr->alignment--;
 	}
 
 	/* If there are no more of the item left, then we're done. */

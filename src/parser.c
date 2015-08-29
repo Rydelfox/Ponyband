@@ -36,6 +36,9 @@
 #include "z-msg.h"
 #include "z-textblock.h"
 #include "externs.h"
+#ifdef DEBUG
+#include "cmds.h"
+#endif
 
 
 const char *parser_error_str[PARSE_ERROR_MAX] = {
@@ -45,7 +48,7 @@ const char *parser_error_str[PARSE_ERROR_MAX] = {
 	"invalid item number",
 	"invalid spell frequency",
 	"invalid value",
-	"invalid colour",
+	"invalid color",
 	"invalid effect",
 	"invalid option",
 	"missing field",
@@ -279,7 +282,7 @@ enum parser_error parser_parse(struct parser *p, const char *line) {
 
 	h = findhook(p, tok);
 	if (!h) {
-		my_strcpy(p->errmsg, tok, sizeof(p->errmsg));
+        my_strcpy(p->errmsg, tok, sizeof(p->errmsg));
 		p->error = PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		mem_free(cline);
 		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
@@ -646,9 +649,9 @@ errr parse_file(struct parser *p, const char *filename) {
 	if (!fh)
 		quit(format("Cannot open '%s.txt'", filename));
 	while (file_getl(fh, buf, sizeof(buf))) {
-		r = parser_parse(p, buf);
+        r = parser_parse(p, buf);
 		if (r)
-			break;
+            break;
 	}
 	file_close(fh);
 	return r;

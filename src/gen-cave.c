@@ -2079,7 +2079,7 @@ extern void cave_gen(void)
 				}
 
 				/* Place the questor */
-				place_monster_aux(y, x, i, TRUE, TRUE);
+				place_monster_aux(y, x, i, TRUE, TRUE, r_ptr->faction);
 
 
 			}

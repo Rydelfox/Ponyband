@@ -1778,7 +1778,7 @@ static bool build_type5(void)
 				r_idx = get_mon_num_quick(depth);
 
 				/* Place a single monster */
-				(void) place_monster_aux(y, x, r_idx, FALSE, FALSE);
+				(void) place_monster_aux(y, x, r_idx, FALSE, FALSE, r_info[r_idx].faction);
 			}
 		}
 	}
@@ -1814,59 +1814,59 @@ static bool build_type5(void)
 
 		/* Top and bottom rows (outer) */
 		for (x = x0 - 9; x <= x0 - 4; x++) {
-			place_monster_aux(y0 - 2, x, what[2], FALSE, FALSE);
-			place_monster_aux(y0 + 2, x, what[2], FALSE, FALSE);
+			place_monster_aux(y0 - 2, x, what[2], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y0 + 2, x, what[2], FALSE, FALSE, r_info[what[2]].faction);
 		}
 		for (x = x0 + 4; x <= x0 + 9; x++) {
-			place_monster_aux(y0 - 2, x, what[2], FALSE, FALSE);
-			place_monster_aux(y0 + 2, x, what[2], FALSE, FALSE);
+			place_monster_aux(y0 - 2, x, what[2], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y0 + 2, x, what[2], FALSE, FALSE, r_info[what[2]].faction);
 		}
 
 		/* Top and bottom rows (inner) */
 		for (x = x0 - 3; x <= x0 + 3; x++) {
-			place_monster_aux(y0 - 2, x, what[3], FALSE, FALSE);
-			place_monster_aux(y0 + 2, x, what[3], FALSE, FALSE);
+			place_monster_aux(y0 - 2, x, what[3], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y0 + 2, x, what[3], FALSE, FALSE, r_info[what[2]].faction);
 		}
 
 		/* Middle columns */
 		for (y = y0 - 1; y <= y0 + 1; y++) {
-			place_monster_aux(y, x0 - 9, what[2], FALSE, FALSE);
-			place_monster_aux(y, x0 + 9, what[2], FALSE, FALSE);
+			place_monster_aux(y, x0 - 9, what[2], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 9, what[2], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 8, what[4], FALSE, FALSE);
-			place_monster_aux(y, x0 + 8, what[4], FALSE, FALSE);
+			place_monster_aux(y, x0 - 8, what[4], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 8, what[4], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 7, what[5], FALSE, FALSE);
-			place_monster_aux(y, x0 + 7, what[5], FALSE, FALSE);
+			place_monster_aux(y, x0 - 7, what[5], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 7, what[5], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 6, what[6], FALSE, FALSE);
-			place_monster_aux(y, x0 + 6, what[6], FALSE, FALSE);
+			place_monster_aux(y, x0 - 6, what[6], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 6, what[6], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 5, what[7], FALSE, FALSE);
-			place_monster_aux(y, x0 + 5, what[7], FALSE, FALSE);
+			place_monster_aux(y, x0 - 5, what[7], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 5, what[7], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 4, what[8], FALSE, FALSE);
-			place_monster_aux(y, x0 + 4, what[8], FALSE, FALSE);
+			place_monster_aux(y, x0 - 4, what[8], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 4, what[8], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 3, what[9], FALSE, FALSE);
-			place_monster_aux(y, x0 + 3, what[9], FALSE, FALSE);
+			place_monster_aux(y, x0 - 3, what[9], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 3, what[9], FALSE, FALSE, r_info[what[2]].faction);
 
-			place_monster_aux(y, x0 - 2, what[11], FALSE, FALSE);
-			place_monster_aux(y, x0 + 2, what[11], FALSE, FALSE);
+			place_monster_aux(y, x0 - 2, what[11], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y, x0 + 2, what[11], FALSE, FALSE, r_info[what[2]].faction);
 		}
 
 		/* Above/Below the center monster */
 		for (x = x0 - 1; x <= x0 + 1; x++) {
-			place_monster_aux(y0 + 1, x, what[12], FALSE, FALSE);
-			place_monster_aux(y0 - 1, x, what[12], FALSE, FALSE);
+			place_monster_aux(y0 + 1, x, what[12], FALSE, FALSE, r_info[what[2]].faction);
+			place_monster_aux(y0 - 1, x, what[12], FALSE, FALSE, r_info[what[2]].faction);
 		}
 
 		/* Next to the center monster */
-		place_monster_aux(y0, x0 + 1, what[14], FALSE, FALSE);
-		place_monster_aux(y0, x0 - 1, what[14], FALSE, FALSE);
+		place_monster_aux(y0, x0 + 1, what[14], FALSE, FALSE, r_info[what[2]].faction);
+		place_monster_aux(y0, x0 - 1, what[14], FALSE, FALSE, r_info[what[2]].faction);
 
 		/* Center monster */
-		place_monster_aux(y0, x0, what[15], FALSE, FALSE);
+		place_monster_aux(y0, x0, what[15], FALSE, FALSE, r_info[what[2]].faction);
 	}
 
 	/* Remove restrictions */

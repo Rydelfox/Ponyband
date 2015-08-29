@@ -80,6 +80,7 @@ typedef enum cmd_code
 	CMD_ENTER_STORE,
 	CMD_ALTER,
 	CMD_ABILITY,
+	CMD_PET,
 
     /* Store commands */	
 	CMD_SELL,

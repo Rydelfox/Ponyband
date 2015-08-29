@@ -682,7 +682,7 @@ void hit_trap_aux(int y, int x, int trap)
 				msg("You float gently down to the next level.");
 			} else {
 				dam = damroll(2, 8);
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 			}
 			/* Remember where we came from */
 			p_ptr->last_stage = p_ptr->stage;
@@ -757,7 +757,7 @@ void hit_trap_aux(int y, int x, int trap)
 							k = randint1(3) + 2;
 							for (i = 0; i < k; i++) {
 								summon_specific(y, x, FALSE, p_ptr->depth,
-												SUMMON_UNDEAD);
+												SUMMON_UNDEAD, F_MONSTER);
 							}
 						}
 
@@ -785,7 +785,7 @@ void hit_trap_aux(int y, int x, int trap)
 					(void) inc_timed(TMD_CUT, randint1(dam), TRUE);
 
 					/* Take the damage. */
-					take_hit(dam, name);
+					take_hit(dam, name, SOURCE_PLAYER);
 				}
 			}
 
@@ -821,7 +821,7 @@ void hit_trap_aux(int y, int x, int trap)
 					}
 
 					/* Take the damage */
-					take_hit(dam, name);
+					take_hit(dam, name, SOURCE_PLAYER);
 
 					Rand_quick = TRUE;
 				}
@@ -852,7 +852,7 @@ void hit_trap_aux(int y, int x, int trap)
 					}
 
 					/* Take the damage */
-					take_hit(dam, name);
+					take_hit(dam, name, SOURCE_PLAYER);
 
 					Rand_quick = TRUE;
 				}
@@ -868,7 +868,7 @@ void hit_trap_aux(int y, int x, int trap)
 					Rand_quick = FALSE;
 
 					dam = damroll(2, 6);
-					take_hit(dam, name);
+					take_hit(dam, name, SOURCE_PLAYER);
 
 					Rand_quick = TRUE;
 				}
@@ -893,7 +893,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 				msg("A small dart hits you!");
 				dam = damroll(1, 4);
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 
 				/* Determine how dangerous the trap is allowed to be. */
 				nastyness = randint1(p_ptr->depth);
@@ -946,7 +946,7 @@ void hit_trap_aux(int y, int x, int trap)
 					Rand_quick = TRUE;
 				}
 				Rand_quick = FALSE;
-				elec_dam(dam, "an electricity trap");
+				elec_dam(dam, "an electricity trap", SOURCE_ENVIRONMENTAL);
 				Rand_quick = TRUE;
 
 			}
@@ -969,7 +969,7 @@ void hit_trap_aux(int y, int x, int trap)
 					Rand_quick = TRUE;
 				}
 				Rand_quick = FALSE;
-				cold_dam(dam, "a frost trap");
+				cold_dam(dam, "a frost trap", SOURCE_ENVIRONMENTAL);
 				Rand_quick = TRUE;
 			}
 
@@ -991,7 +991,7 @@ void hit_trap_aux(int y, int x, int trap)
 					Rand_quick = TRUE;
 				}
 				Rand_quick = FALSE;
-				fire_dam(dam, "a fire trap");
+				fire_dam(dam, "a fire trap", SOURCE_ENVIRONMENTAL);
 				Rand_quick = TRUE;
 			}
 
@@ -1013,7 +1013,7 @@ void hit_trap_aux(int y, int x, int trap)
 					Rand_quick = TRUE;
 				}
 				Rand_quick = FALSE;
-				acid_dam(dam, "an acid trap");
+				acid_dam(dam, "an acid trap", SOURCE_ENVIRONMENTAL);
 				Rand_quick = TRUE;
 			}
 
@@ -1089,7 +1089,7 @@ void hit_trap_aux(int y, int x, int trap)
 				num = 2 + randint1(3);
 				for (i = 0; i < num; i++) {
 					(void) summon_specific(y, x, FALSE, p_ptr->depth,
-										   SUMMON_THIEF);
+										   SUMMON_THIEF, F_MONSTER);
 				}
 
 				Rand_quick = TRUE;
@@ -1102,7 +1102,7 @@ void hit_trap_aux(int y, int x, int trap)
 				Rand_quick = FALSE;
 
 				(void) summon_specific(y, x, FALSE, p_ptr->depth + 5,
-									   SUMMON_UNIQUE);
+									   SUMMON_UNIQUE, F_MONSTER);
 
 				Rand_quick = TRUE;
 			}
@@ -1115,7 +1115,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 				num = 2 + randint1(3);
 				for (i = 0; i < num; i++) {
-					(void) summon_specific(y, x, FALSE, p_ptr->depth, 0);
+					(void) summon_specific(y, x, FALSE, p_ptr->depth, 0, F_MONSTER);
 				}
 
 				Rand_quick = TRUE;
@@ -1152,7 +1152,7 @@ void hit_trap_aux(int y, int x, int trap)
 				(void) inc_timed(TMD_BLIND, randint0(30) + 15, TRUE);
 				(void) inc_timed(TMD_STUN, randint1(50) + 50, TRUE);
 				dam = damroll(15, 15);
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 			}
 
 			/* earthquake trap. */
@@ -1165,7 +1165,7 @@ void hit_trap_aux(int y, int x, int trap)
 			else if ((nastyness > 4) && (randint1(2) == 1)) {
 				msg("A rock falls on your head.");
 				dam = damroll(2, 10);
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 
 				(void) inc_timed(TMD_STUN, randint1(10) + 10, TRUE);
 			}
@@ -1174,7 +1174,7 @@ void hit_trap_aux(int y, int x, int trap)
 			else {
 				msg("A bunch of pebbles rain down on you.");
 				dam = damroll(1, 8);
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 			}
 
 			Rand_quick = TRUE;
@@ -1362,7 +1362,7 @@ void hit_trap_aux(int y, int x, int trap)
 					}
 
 					/* Attempt to place the awake bug */
-					place_monster_aux(y, x, 453, FALSE, TRUE);
+					place_monster_aux(y, x, 453, FALSE, TRUE, F_MONSTER);
 				}
 
 				/* herald the arrival of bugs. */
@@ -1469,7 +1469,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 				Rand_quick = TRUE;
 
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 			}
 
 			/* Explain what just happened. */
@@ -1519,7 +1519,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 				Rand_quick = TRUE;
 
-				take_hit(dam, name);
+				take_hit(dam, name, SOURCE_PLAYER);
 			}
 
 			/* Explain what just happened. */

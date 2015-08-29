@@ -640,7 +640,7 @@ bool use_ability(int ability, int dir)
         p_ptr->csp_frac = 0;
         
         /* Pay with health */
-        take_hit(health_cost, "overexertion");
+        take_hit(health_cost, "overexertion", SOURCE_PLAYER);
     }
     
     /* Redraw health and mana */

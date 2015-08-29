@@ -870,7 +870,8 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
 
 	/* Place the monsters. */
 	for (i = 0; i < 300; i++) {
-		/* Check for early completion. */
+		int r_idx = get_mon_num_quick(depth);
+        /* Check for early completion. */
 		if (!monsters_left)
 			break;
 
@@ -883,8 +884,8 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
 			continue;
 
 		/* Place a single monster.  Sleeping 2/3rds of the time. */
-		place_monster_aux(y, x, get_mon_num_quick(depth),
-						  (randint0(3) != 0), FALSE);
+		place_monster_aux(y, x, r_idx,
+						  (randint0(3) != 0), FALSE, r_info[r_idx].faction);
 
 		/* One less monster to place. */
 		monsters_left--;
@@ -1058,6 +1059,7 @@ extern void get_vault_monsters(char racial_symbol[], byte vault_type,
 	const char *t;
 
 	for (i = 0; racial_symbol[i] != '\0'; i++) {
+	    int r_idx;
 		/* Require correct race, allow uniques. */
 		allow_unique = TRUE;
 		sprintf(d_char_req, "%c", racial_symbol[i]);
@@ -1100,10 +1102,11 @@ extern void get_vault_monsters(char racial_symbol[], byte vault_type,
 		/* Place the monsters */
 		for (t = data, y = y1; y <= y2; y++) {
 			for (x = x1; x <= x2; x++, t++) {
-				if (*t == racial_symbol[i]) {
+				r_idx = get_mon_num_quick(temp);
+                if (*t == racial_symbol[i]) {
 					/* Place a monster */
-					place_monster_aux(y, x, get_mon_num_quick(temp), FALSE,
-									  FALSE);
+					place_monster_aux(y, x, r_idx, FALSE,
+									  FALSE, r_info[r_idx].faction);
 				}
 			}
 		}

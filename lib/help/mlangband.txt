@@ -1,0 +1,68 @@
+Ponyband version whatever
+
+It's been said that everything in the world has been crossed by ponies. This 
+includes Roguelikes in general and Angband in particular.  However, despite 
+this, I felt I still had something to offer.
+
+My Little Angband: Dungeons are Magic is based on FAAngband version 1.4.4 by 
+Nick McConnell.  The main goal has been to create an in depth move of the game 
+from Middle Earth to Equestria.  While doing so, I tried to keep the feel of 
+its predecessors.
+
+Here are some of the biggest goals for this:
+
+- Many of the game's races are quadrupeds and the gameplay reflects this.  This
+  both helps give a unique feel, but also introduces a number of strategic 
+  differences from bipedal creatures.  There are also differences between the
+  races such as the ability to equip rings or use magic.  These also have a 
+  number of race specific activated abilities in combat.
+  
+- Ponies have Cutie Marks.  These add an additional level of fine tuning for 
+  character creation and a level of personalization of the character.
+
+- Replaced references to Middle Earth with ones to Equestria.  While this is 
+  fairly normal with variants like this, references to other franchises can
+  quickly break immersion.
+  
+I also wanted to add additional variety beyond what was added by the varying 
+races and Cutie Marks.
+
+- A number of additional classes beyond the normal selection that should have 
+  a distinct feel from the original classes.
+  
+- A pet system allowing another form of combat
+
+- Multiple spell realms so a casting class isn't the same from game to game.
+
+Thanks to the teams at Hasbro and Studio B for creating the show, fans of my 
+previous game for supporting me, and the people at angband.oook.cz for their 
+help.
+
+Michael Northingotn
+
+
+
+=== My Little Angband Copyright Information ===
+=== See fadesc.txt for FAAngband Copyright Information ===
+=== See also oangdesc.txt for OAngband Copyright Information ===
+=== See also angdesc.txt for Angband Copyright Information ===
+
+My Little Angband Version 0.0.1:  Michael 'Rydel' Northington
+
+Copyright (c) 2014 Michael Northington, Nick McConnell, Bahman Rabii, 
+                        Leon Marrick, Robert Ruehlmann, Ben Harrison, 
+						James E. Wilson, Robert A. Koeneke
+		
+This software may be copied and distributed for educational, research,
+and not for profit purposes provided that this copyright and statement
+are included in all such copies.  Other copyrights may also apply.
+
+All changes made by Nick McConnell are also available under the GNU
+GENERAL PUBLIC LICENSE.  Note that this doesn't influence the current
+distribution, since parts of the source are still only available under
+the old Moria/Angband/Oangband/FAangband license.  Until all parts of Angband
+are distributed under the GPL the only valid license remains the
+original Moria/Angband license.
+
+Note, though, that current efforts to release Angband and its variants under
+the GPL are close to complete, so future versions of FAangband may be GPLd.

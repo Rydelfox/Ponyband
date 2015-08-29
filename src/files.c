@@ -1056,6 +1056,14 @@ extern int make_dump(char_attr_line * line, int mode)
 		    dump_put_str(TERM_WHITE, "Cutie Mark: ", 1);
 		    dump_put_str(TERM_L_BLUE, cmp_ptr->name, 13);
 		}
+		dump_put_str(TERM_WHITE, "Alignment", 33);
+		if (p_ptr->alignment > PY_ALIGN_CHANGE) {
+		    dump_put_str(TERM_L_BLUE, "   Harmony", 48);
+		} else if (p_ptr->alignment < (-1 * PY_ALIGN_CHANGE)) {
+		    dump_put_str(TERM_L_BLUE, "     Chaos", 48);
+		} else {
+		    dump_put_str(TERM_L_BLUE, "    Neutral", 48);
+		}
 		red = (p_ptr->stat_cur[4] < p_ptr->stat_max[4]);
 		value = p_ptr->state.stat_use[4];
 		cnv_stat(value, buf1, sizeof(buf1));

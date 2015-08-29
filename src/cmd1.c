@@ -685,7 +685,7 @@ void fall_off_cliff(void)
 			(void) inc_timed(TMD_STUN, damroll(4, 8), TRUE);
 			(void) inc_timed(TMD_CUT, damroll(4, 8), TRUE);
 		}
-		take_hit(dam, "falling off a precipice");
+		take_hit(dam, "falling off a precipice", SOURCE_ENVIRONMENTAL);
 	}
 
 	/* Nan Dungortheb */
@@ -704,7 +704,7 @@ void fall_off_cliff(void)
 				(void) inc_timed(TMD_STUN, damroll(4, 8), TRUE);
 				(void) inc_timed(TMD_CUT, damroll(4, 8), TRUE);
 			}
-			take_hit(dam, "falling off a precipice");
+			take_hit(dam, "falling off a precipice", SOURCE_ENVIRONMENTAL);
 			if (p_ptr->depth == 70)
 				break;
 		}
@@ -758,7 +758,7 @@ void move_player(int dir)
 	bool trapped = TRUE;
 
 	int temp;
-	int y, x, i;
+	int y, x;
 
 	feature_type *f_ptr;
 
@@ -960,7 +960,7 @@ void move_player(int dir)
 					temp = 124 + randint1(126);
 
 				/* Will take serious fire damage. */
-				fire_dam(temp, "burnt to a cinder in molten lava");
+				fire_dam(temp, "burnt to a cinder in molten lava", SOURCE_ENVIRONMENTAL);
 			}
 			else
 				/* Player refuse to go. */

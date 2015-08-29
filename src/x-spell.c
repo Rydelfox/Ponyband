@@ -2121,7 +2121,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_BECOME_BAT:
 		{
-			take_hit(damroll(2, 4), "shapeshifting stress");
+			take_hit(damroll(2, 4), "shapeshifting stress", SOURCE_PLAYER);
 			shape = SHAPE_BAT;
 			break;
 		}
@@ -2179,7 +2179,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_SHADOW_SHIFTING:
 		{
-			take_hit(damroll(1, 4), "shadow dislocation");
+			take_hit(damroll(1, 4), "shadow dislocation", SOURCE_PLAYER);
 			teleport_player(16, TRUE);
 			break;
 		}
@@ -2212,7 +2212,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_DEATH_BOLT:
 		{
-			take_hit(damroll(1, 6), "the dark arts");
+			take_hit(damroll(1, 6), "the dark arts", SOURCE_PLAYER);
 			fire_bolt_or_beam(beam, GF_SPIRIT, dir,
 							  damroll(2 + plev / 3, 8));
 			break;
@@ -2250,7 +2250,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_STENCH_OF_DEATH:
 		{
-			take_hit(damroll(2, 8), "the stench of Death");
+			take_hit(damroll(2, 8), "the stench of Death", SOURCE_PLAYER);
 			(void) dispel_living(50 + randint1(plev));
 			confu_monsters(plev + 10);
 			fire_sphere(GF_POIS, dir, plev * 2, 5 + plev / 11, 40);
@@ -2274,7 +2274,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_SHADOW_WARPING:
 		{
-			take_hit(damroll(2, 6), "shadow dislocation");
+			take_hit(damroll(2, 6), "shadow dislocation", SOURCE_PLAYER);
 			teleport_player(plev * 3, TRUE);
 			break;
 		}
@@ -2335,7 +2335,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_ORB_OF_DEATH:
 		{
-			take_hit(damroll(2, 8), "Death claiming his wages");
+			take_hit(damroll(2, 8), "Death claiming his wages", SOURCE_PLAYER);
 			fire_sphere(GF_SPIRIT, dir, 20 + (4 * plev), 1, 20);
 			break;
 		}
@@ -2359,7 +2359,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_BECOME_WEREWOLF:
 		{
-			take_hit(damroll(2, 7), "shapeshifting stress");
+			take_hit(damroll(2, 7), "shapeshifting stress", SOURCE_PLAYER);
 			shape = SHAPE_WEREWOLF;
 			break;
 		}
@@ -2371,7 +2371,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 		}
 	case RITUAL_BECOME_VAMPIRE:
 		{
-			take_hit(damroll(3, 6), "shapeshifting stress");
+			take_hit(damroll(3, 6), "shapeshifting stress", SOURCE_PLAYER);
 			shape = SHAPE_VAMPIRE;
 			break;
 		}
@@ -2467,7 +2467,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 	case RITUAL_DARK_POWER:
 		{
 			if (p_ptr->csp < p_ptr->msp) {
-				take_hit(75, "dark power");
+				take_hit(75, "dark power", SOURCE_PLAYER);
 				p_ptr->csp += 3 * plev / 2;
 				p_ptr->csp_frac = 0;
 				if (p_ptr->csp > p_ptr->msp)

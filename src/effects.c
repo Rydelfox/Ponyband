@@ -28,6 +28,7 @@
 #include "object.h"
 #include "spells.h"
 #include "target.h"
+#include "player.h"
 
 
 /**
@@ -199,12 +200,24 @@ bool effect_wonder(int dir, int die)
    Thus, add 1/5 of the player's level to the die roll.
    This eliminates the worst effects later on, while
    keeping the results quite random.  It also allows
-   some potent effects only at high level. */
+   some potent effects only at high level.  It also
+   gets more powerful as the player becomes more
+   chaotic. */
+   
 
 	bool visible = FALSE;
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 	int plev = p_ptr->lev;
+	int bonus = 0;
+	
+	if(p_ptr->alignment < (-1* PY_ALIGN_CHANGE)) {
+	    bonus = -1 * p_ptr->alignment - PY_ALIGN_CHANGE;
+	    bonus /= 5;
+	}
+	
+	bonus += plev;
+	die += bonus;
 
 	if (die > 100) {
 		/* above 100 the effect is always visible */
@@ -223,53 +236,53 @@ bool effect_wonder(int dir, int die)
 	else if (die < 36)
 		visible =
 			fire_bolt_or_beam(10, GF_MISSILE, dir,
-							  damroll(3 + ((plev - 1) / 5), 4));
+							  damroll(3 + ((bonus - 2) / 5), 4));
 	else if (die < 41)
 		visible = confuse_monster(dir, plev);
 	else if (die < 46)
-		visible = fire_ball(GF_POIS, dir, 20 + (plev / 2), 3, TRUE);
+		visible = fire_ball(GF_POIS, dir, 15 + bonus + (plev / 2), 3, TRUE);
 	else if (die < 51)
 		visible = light_line(dir);
 	else if (die < 56)
 		visible =
-			fire_beam(GF_ELEC, dir, damroll(3 + ((plev - 5) / 6), 6));
+			fire_beam(GF_ELEC, dir, damroll(3 + ((bonus - 6) / 6), 6));
 	else if (die < 61)
 		visible =
 			fire_bolt_or_beam(10, GF_COLD, dir,
-							  damroll(5 + ((plev - 5) / 4), 8));
+							  damroll(5 + ((bonus - 6) / 4), 8));
 	else if (die < 66)
 		visible =
 			fire_bolt_or_beam(10, GF_ACID, dir,
-							  damroll(6 + ((plev - 5) / 4), 8));
+							  damroll(6 + ((bonus - 6) / 4), 8));
 	else if (die < 71)
 		visible =
 			fire_bolt_or_beam(10, GF_FIRE, dir,
-							  damroll(8 + ((plev - 5) / 4), 8));
+							  damroll(8 + ((bonus - 6) / 4), 8));
 	else if (die < 76)
 		visible = drain_life(dir, 75);
 	else if (die < 81)
-		visible = fire_ball(GF_ELEC, dir, 30 + plev / 2, 2, TRUE);
+		visible = fire_ball(GF_ELEC, dir, 25 + bonus + plev / 2, 2, TRUE);
 	else if (die < 86)
-		visible = fire_ball(GF_ACID, dir, 40 + plev, 2, TRUE);
+		visible = fire_ball(GF_ACID, dir, 35 + bonus + plev, 2, TRUE);
 	else if (die < 91)
-		visible = fire_ball(GF_ICE, dir, 70 + plev, 3, TRUE);
+		visible = fire_ball(GF_ICE, dir, 65 + bonus + plev, 3, TRUE);
 	else if (die < 96)
-		visible = fire_ball(GF_FIRE, dir, 80 + plev, 3, TRUE);
+		visible = fire_ball(GF_FIRE, dir, 75 + bonus + plev, 3, TRUE);
 	/* above 100 'visible' is already true */
 	else if (die < 101)
-		drain_life(dir, 100 + plev);
+		drain_life(dir, 100 + bonus);
 	else if (die < 104)
 		earthquake(py, px, 12, FALSE);
 	else if (die < 106)
 		destroy_area(py, px, 15, TRUE);
 	else if (die < 108)
 		genocide();
-	else if (die < 110)
-		dispel_monsters(120);
+	else if (die < 112)
+		dispel_monsters(110 + bonus);
 	else {						/* RARE */
 
-		dispel_monsters(150);
-		slow_monsters(50);
+		dispel_monsters(140 + bonus);
+		slow_monsters(40 + bonus);
 		sleep_monsters(TRUE);
 		hp_player(300);
 	}
@@ -399,7 +412,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_WEAKNESS:
 		{
-			take_hit(damroll(6, 6), "poisonous food.");
+			take_hit(damroll(6, 6), "poisonous food.", SOURCE_ENVIRONMENTAL);
 			(void) do_dec_stat(A_STR);
 			*ident = TRUE;
 			return TRUE;
@@ -407,7 +420,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_SICKNESS:
 		{
-			take_hit(damroll(6, 6), "poisonous food.");
+			take_hit(damroll(6, 6), "poisonous food.", SOURCE_ENVIRONMENTAL);
 			(void) do_dec_stat(A_CON);
 			*ident = TRUE;
 			return TRUE;
@@ -415,7 +428,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_STUPIDITY:
 		{
-			take_hit(damroll(8, 8), "poisonous food.");
+			take_hit(damroll(8, 8), "poisonous food.", SOURCE_ENVIRONMENTAL);
 			(void) do_dec_stat(A_INT);
 			*ident = TRUE;
 			return TRUE;
@@ -423,7 +436,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_NAIVETY:
 		{
-			take_hit(damroll(8, 8), "poisonous food.");
+			take_hit(damroll(8, 8), "poisonous food.", SOURCE_ENVIRONMENTAL);
 			(void) do_dec_stat(A_WIS);
 			*ident = TRUE;
 			return TRUE;
@@ -431,7 +444,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_UNHEALTH:
 		{
-			take_hit(damroll(10, 10), "poisonous food.");
+			take_hit(damroll(10, 10), "poisonous food.", SOURCE_ENVIRONMENTAL);
 			(void) do_dec_stat(A_CON);
 			*ident = TRUE;
 			return TRUE;
@@ -439,7 +452,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	case EF_DISEASE:
 		{
-			take_hit(damroll(10, 10), "poisonous food.");
+			take_hit(damroll(10, 10), "poisonous food.", SOURCE_ENVIRONMENTAL);
 			(void) do_dec_stat(A_STR);
 			*ident = TRUE;
 			return TRUE;
@@ -448,7 +461,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_DETONATIONS:
 		{
 			msg("Massive explosions rupture your body!");
-			take_hit(damroll(50, 20), "a potion of Detonation");
+			take_hit(damroll(50, 20), "a potion of Detonation", SOURCE_PLAYER);
 			(void) inc_timed(TMD_STUN, 75, TRUE);
 			(void) inc_timed(TMD_CUT, 5000, TRUE);
 			*ident = TRUE;
@@ -458,7 +471,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_DEATH:
 		{
 			msg("A feeling of Death flows through your body.");
-			take_hit(p_ptr->chp, "a potion of Death");
+			take_hit(p_ptr->chp, "a potion of Death", SOURCE_PLAYER);
 			*ident = TRUE;
 			return TRUE;
 		}
@@ -506,7 +519,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_RUINATION:
 		{
 			msg("Your nerves and muscles feel weak and lifeless!");
-			take_hit(damroll(5, 10), "a potion of Ruination");
+			take_hit(damroll(5, 10), "a potion of Ruination", SOURCE_ENVIRONMENTAL);
 			(void) dec_stat(A_DEX, 25, FALSE);
 			(void) dec_stat(A_WIS, 25, FALSE);
 			(void) dec_stat(A_CON, 25, FALSE);
@@ -556,7 +569,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		{
 			sound(MSG_SUM_MONSTER);
 			for (k = 0; k < randint1(3); k++) {
-				if (summon_specific(py, px, FALSE, p_ptr->depth, 0)) {
+				if (summon_specific(py, px, FALSE, p_ptr->depth, 0, F_MONSTER)) {
 					*ident = TRUE;
 				}
 			}
@@ -568,7 +581,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			sound(MSG_SUM_UNDEAD);
 			for (k = 0; k < randint1(3); k++) {
 				if (summon_specific
-					(py, px, FALSE, p_ptr->depth, SUMMON_UNDEAD)) {
+					(py, px, FALSE, p_ptr->depth, SUMMON_UNDEAD, F_MONSTER)) {
 					*ident = TRUE;
 				}
 			}
@@ -611,7 +624,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		{
 			sound(MSG_SUM_MONSTER);
 			for (k = 0; k < randint1(4); k++) {
-				if (summon_specific(py, px, FALSE, p_ptr->depth, 0)) {
+				if (summon_specific(py, px, FALSE, p_ptr->depth, 0, F_MONSTER)) {
 					*ident = TRUE;
 				}
 			}
@@ -1100,16 +1113,16 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 				return TRUE;
 
 			/* Priests/Paladins can't be Vampires */
-			if (mp_ptr->spell_book == TV_PRAYER_BOOK) {
+			if (player_has(PF_HOLY)) {
 				msg("You reject the unholy serum.");
-				take_hit(damroll(10, 6), "dark forces");
+				take_hit(damroll(10, 6), "dark forces", SOURCE_ENVIRONMENTAL);
 				return TRUE;
 			}
 
 			/* Druids/Rangers can't be Vampires */
-			if (mp_ptr->spell_book == TV_DRUID_BOOK) {
+			if (mp_ptr->spell_book == TV_DRUID_BOOK) {  //TODO: Adjust so this isn't spellbook based
 				msg("You reject the unnatural serum.");
-				take_hit(damroll(10, 6), "dark forces");
+				take_hit(damroll(10, 6), "dark forces", SOURCE_ENVIRONMENTAL);
 				return TRUE;
 			}
 
@@ -1117,7 +1130,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			msg("You are infused with dark power.");
 
 			/* But it hurts */
-			take_hit(damroll(3, 6), "shapeshifting stress");
+			take_hit(damroll(3, 6), "shapeshifting stress", SOURCE_PLAYER);
 			shapechange(SHAPE_VAMPIRE);
 			*ident = TRUE;
 			return TRUE;
@@ -1630,7 +1643,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			fire_sphere(GF_MANA, 0, randint1(75) + 125, 5, 20);
 			if (!(player_has(PF_DEVICE_EXPERT))) {
 				(void) take_hit(20,
-								"unleashing magics too mighty to control");
+								"unleashing magics too mighty to control", SOURCE_PLAYER);
 			}
 			*ident = TRUE;
 			return TRUE;
@@ -2268,7 +2281,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_MAEGLIN:
 		{
 			fire_bolt(GF_SPIRIT, dir, damroll(9, 8));
-			take_hit(damroll(1, 6), "the dark arts");
+			take_hit(damroll(1, 6), "the dark arts", SOURCE_PLAYER);
 			return TRUE;
 		}
 	case EF_PAURNIMMEN:
@@ -2748,12 +2761,12 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		}
 	case EF_RAND_DISPEL_EVIL:
 		{
-			msg("A wave of goodness washes over you...");
+			msg("A wave of harmony washes over you...");
 			(void) dispel_evil(100);
 
-			if (player_has(PF_EVIL)) {
+			if (p_ptr->alignment < (-1 * PY_ALIGN_CHANGE)) {
 				msg("Your black soul is hit!");
-				take_hit(25, "struck down by Good");
+				take_hit(25, "struck down by Harmony", SOURCE_PLAYER);
 			}
 			return TRUE;
 		}
@@ -2919,7 +2932,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 			if (randint1(2) == 1) {
 				msg("Your wild movements exhaust you!");
-				take_hit(damroll(1, 12), "danced to death");
+				take_hit(damroll(1, 12), "danced to death", SOURCE_PLAYER);
 			}
 			return TRUE;
 		}
@@ -3425,7 +3438,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 			/* Summon golems */
 			summon_specific(targ_y, targ_x, FALSE, p_ptr->depth,
-							SUMMON_GOLEM);
+							SUMMON_GOLEM, F_PLAYER);
 
 			/* Hack - make all local golems hostile to the target */
 			for (m_idx = 0; m_idx < z_info->m_max; m_idx++) {

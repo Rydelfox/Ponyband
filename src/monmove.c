@@ -33,6 +33,7 @@
 #include "spells.h"
 #include "squelch.h"
 #include "trap.h"
+#include "target.h"
 
 /**
  * Monsters will run up to 25 grids away
@@ -44,6 +45,350 @@
  * character, and closer to him than this distance.
  */
 #define TURN_RANGE      3
+
+/* Helper funtion for AoE tests */
+static int test_project(int who, int rad, int y, int x, int flg,
+                    int degrees_of_arc, byte diameter_of_source)
+{
+    /* Count of how targets are affected */
+	int count = 0;
+	
+	/* Get the monster */
+	monster_type *m_ptr = &m_list[who];
+	
+	/* Number of grids in the "path" */
+	int path_n = 0;
+
+	/* Actual grids in the "path" */
+	u16b path_g[512];
+
+	/* Number of grids in the "blast area" (including the "beam" path) */
+	int grids = 0;
+
+	/* Coordinates of the affected grids */
+	byte gx[256], gy[256];
+
+	/* Distance to each of the affected grids. */
+	byte gd[256];
+	
+	/* Source */
+	int y1 = m_list[who].fy;
+	int x1 = m_list[who].fx;
+	
+	/* Default destination */
+	int y2 = y;
+	int x2 = x;
+	
+	/* Default center of explosion */
+	int y0 = y1;
+	int x0 = x1;
+	
+	int i, dist;
+	int n1y = y;
+	int n1x = x;
+	
+	/* If a single grid is both source and destination, store it. */
+	if ((x1 == x2) && (y1 == y2)) {
+		gy[grids] = y;
+		gx[grids] = x;
+		gd[grids] = 0;
+		grids++;
+	}
+	
+	/* Otherwise, travel along the projection path. */
+	else {
+		/* Calculate the projection path */
+		path_n = project_path(path_g, MAX_RANGE, y1, x1, y2, x2, flg);
+
+		/* Start from caster */
+		y = y1;
+		x = x1;
+		
+		/* Project along the path (except for arcs) */
+		if (!(flg & (PROJECT_ARC))) {
+			for (i = 0; i < path_n; ++i) {
+				int ny = GRID_Y(path_g[i]);
+				int nx = GRID_X(path_g[i]);
+				feature_type *f_ptr = &f_info[cave_feat[ny][nx]];
+
+
+				/* Hack -- Balls explode before reaching walls. */
+				if (!tf_has(f_ptr->flags, TF_PASSABLE) && (rad > 0))
+					break;
+
+				/* Advance */
+				y = ny;
+				x = nx;
+
+				/* If a beam, collect all grids in the path. */
+				if (flg & (PROJECT_BEAM)) {
+					gy[grids] = y;
+					gx[grids] = x;
+					gd[grids] = 0;
+					grids++;
+				}
+
+				/* Otherwise, collect only the final grid in the path. */
+				else if (i == path_n - 1) {
+					gy[grids] = y;
+					gx[grids] = x;
+					gd[grids] = 0;
+					grids++;
+				}
+			}
+		}
+	}
+		
+	/* Save the "blast epicenter" */
+	y0 = y;
+	x0 = x;
+
+	/* Beams have already stored all the grids they will affect. */
+	if (flg & (PROJECT_BEAM)) {
+		/* No special actions */
+	}
+
+	/* 
+	 * All non-beam projections with a positive radius explode in some way.
+	 */
+	else if (rad > 0) {
+	    /* Pre-calculate some things for arcs. */
+		if ((flg & (PROJECT_ARC)) && (path_n != 0)) {
+			/* Explosion centers on the caster. */
+			y0 = y1;
+			x0 = x1;
+
+			/* The radius of arcs cannot be more than 20 */
+			if (rad > 20)
+				rad = 20;
+
+			/* Ensure legal table access */
+			if (path_n < 21)
+				i = path_n - 1;
+			else
+				i = 20;
+
+			/* Reorient the grid forming the end of the arc's centerline. */
+			n1y = GRID_Y(path_g[i]) - y0 + 20;
+			n1x = GRID_X(path_g[i]) - x0 + 20;
+		}
+
+		/* 
+		 * If the center of the explosion hasn't been 
+		 * saved already, save it now. 
+		 */
+		if (grids == 0) {
+			gy[grids] = y0;
+			gx[grids] = x0;
+			gd[grids] = 0;
+			grids++;
+		}
+
+		/* 
+		 * Scan every grid that might possibly 
+		 * be in the blast radius. 
+		 */
+		for (y = y0 - rad; y <= y0 + rad; y++) {
+			for (x = x0 - rad; x <= x0 + rad; x++) {
+				/* Center grid has already been stored. */
+				if ((y == y0) && (x == x0))
+					continue;
+
+				/* Precaution: Stay within area limit. */
+				if (grids >= 255)
+					break;
+
+				/* Ignore "illegal" locations */
+				if (!in_bounds(y, x))
+					continue;
+				
+				/* Most explosions are immediately stopped by walls. */
+				if (!cave_project(y, x))
+					continue;
+				
+				/* Must be within maximum distance. */
+				dist = (distance(y0, x0, y, x));
+				if (dist > rad)
+					continue;
+
+
+				/* If not an arc, accept all grids in LOS. */
+				if (!(flg & (PROJECT_ARC))) {
+					if (los(y0, x0, y, x)) {
+						gy[grids] = y;
+						gx[grids] = x;
+						gd[grids] = dist;
+						grids++;
+					}
+				}
+
+				/* Use angle comparison to delineate an arc. */
+				else {
+					int n2y, n2x, tmp, rotate, diff;
+
+					/* Reorient current grid for table access. */
+					n2y = y - y1 + 20;
+					n2x = x - x1 + 20;
+
+					/* 
+					 * Find the angular difference (/2) between 
+					 * the lines to the end of the arc's center-
+					 * line and to the current grid.
+					 */
+					rotate = 90 - get_angle_to_grid[n1y][n1x];
+					tmp = ABS(get_angle_to_grid[n2y][n2x] + rotate) % 180;
+					diff = ABS(90 - tmp);
+
+					/* 
+					 * If difference is not greater then that 
+					 * allowed, and the grid is in LOS, accept it.
+					 */
+					if (diff < (degrees_of_arc + 6) / 4) {
+						if (los(y0, x0, y, x)) {
+							gy[grids] = y;
+							gx[grids] = x;
+							gd[grids] = dist;
+							grids++;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/* We have everything listed. Count them */
+	for(i = 0; i < grids; i++) {
+	    int compare_id = cave_m_idx[gy[i]][gx[i]];
+		if(compare_id > 0) {
+		    if(get_reaction(m_ptr->faction, m_list[compare_id].faction) == REACT_HOSTILE)
+			    count++;
+			else
+			    count--;
+			continue;
+		}
+		if(compare_id < 0) {
+		    if(get_reaction(m_ptr->faction, F_PLAYER) == REACT_HOSTILE)
+			    count++;
+			else
+			    count--;
+			continue;
+		}
+	}
+	
+	return count;
+}
+
+/* Count the number of hostile mobs minus friendlies in a breath */
+static int test_breath(int m_idx)
+{
+    monster_type *m_ptr = &m_list[m_idx];
+	int ty = m_list[m_ptr->hostile].fy;
+	int tx = m_list[m_ptr->hostile].fx;
+	
+	int flg =
+		PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_ARC |
+		PROJECT_PLAY;
+	
+	/* Estimate using the default diameter and a normal breath attack */
+	return test_project(m_idx, 0, ty, tx, flg, 20, 60);
+}
+
+/* Count the number of hostile mobs minus friendlies in ball */
+static int test_ball(int m_idx, int rad)
+{
+    monster_type *m_ptr = &m_list[m_idx];
+	int ty = m_list[m_ptr->hostile].fy;
+	int tx = m_list[m_ptr->hostile].fx;
+	
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_PLAY;
+	
+	return test_project(m_idx, rad, ty, tx, flg, 0, 0);
+}
+
+/* Count the number of hostile mobs minus friendlies in beam */
+static int test_beam(int m_idx)
+{
+    monster_type *m_ptr = &m_list[m_idx];
+	int ty = m_list[m_ptr->hostile].fy;
+	int tx = m_list[m_ptr->hostile].fx;
+	
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_PLAY | PROJECT_BEAM;
+	
+	return test_project(m_idx, 0, ty, tx, flg, 0, 0);
+}
+
+/* Checks the number of hostile in the area of a spell, minus the number of non-hostiles */
+static int check_aoe(int attack, int m_idx)
+{	
+	int rad = 1;
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	int spower = ((r_ptr->spell_power > 1) ? r_ptr->spell_power : 1);
+	
+	switch(attack)
+	{
+	/* First, test all the breath spells and Arcs */
+	case RSF_BRTH_ACID:
+	case RSF_BRTH_ELEC:
+	case RSF_BRTH_FIRE:
+	case RSF_BRTH_COLD:
+	case RSF_BRTH_POIS:
+	case RSF_BRTH_PLAS:
+	case RSF_BRTH_LIGHT:
+	case RSF_BRTH_DARK:
+	case RSF_BRTH_CONFU:
+	case RSF_BRTH_SOUND:
+	case RSF_BRTH_INER:
+	case RSF_BRTH_GRAV:
+	case RSF_BRTH_FORCE:
+	case RSF_BRTH_NEXUS:
+	case RSF_BRTH_NETHR:
+	case RSF_BRTH_CHAOS:
+	case RSF_BRTH_DISEN:
+	case RSF_BRTH_TIME:
+	case RSF_BRTH_STORM:
+	case RSF_BRTH_DFIRE:
+	case RSF_BRTH_ICE:
+	case RSF_BRTH_ALL:
+	case RSF_ARC_HFIRE:
+	case RSF_ARC_FORCE:
+	    return test_breath(m_idx);
+	/* Test Spellpower sized balls.  This varies based on element, so this is an estimate */
+	case RSF_BALL_ACID:
+	case RSF_BALL_ELEC:
+	case RSF_BALL_FIRE:
+	case RSF_BALL_COLD:
+	case RSF_BALL_POIS:
+	case RSF_BALL_LIGHT:
+	case RSF_BALL_DARK:
+	case RSF_BALL_CONFU:
+	case RSF_BALL_SOUND:
+	case RSF_BALL_STORM:
+	case RSF_BALL_NETHR:
+	case RSF_BALL_CHAOS:
+	case RSF_BALL_MANA:
+	case RSF_BALL_ALL:
+	    if (spower < 20) {
+		    rad = 1;
+		} else if (spower < 70) {
+		    rad = 2;
+		} else if (spower < 120) {
+		    rad = 3;
+		} else {
+		    rad = 4;
+		}
+		return test_ball(m_idx, rad);
+	/* Test Beams */
+	case RSF_BEAM_ELEC:
+	case RSF_BEAM_ICE:
+	case RSF_BEAM_NETHR:
+	    return test_beam(m_idx);
+	}
+	
+	/* Everything else */
+	return 1;
+}
 
 /**
  * Calculate minimum and desired combat ranges.  -BR-
@@ -71,8 +416,21 @@ static void find_range(monster_type * m_ptr)
 		/* Minimum distance - stay at least this far if possible */
 		m_ptr->min_range = 1;
 
-		/* Examine player power (level) */
-		p_lev = p_ptr->lev;
+		if(m_ptr->hostile <= 0 ) {
+		    /* Examine player power (level) */
+            p_lev = p_ptr->lev;
+            
+            /* Examine player health */
+			p_chp = p_ptr->chp;
+			p_mhp = p_ptr->mhp;
+        } else {
+            /* Examine player power (level) */
+            p_lev = r_info[m_list[m_ptr->hostile].r_idx].level / 2;
+            
+            /* Examine player health */
+			p_chp = m_list[m_ptr->hostile].hp;
+			p_mhp = m_list[m_ptr->hostile].maxhp;
+        }
 
 		/* Hack - increase p_lev based on specialty abilities */
 
@@ -84,10 +442,6 @@ static void find_range(monster_type * m_ptr)
 		if (m_lev + 3 < p_lev)
 			m_ptr->min_range = FLEE_RANGE;
 		else if (m_lev - 5 < p_lev) {
-
-			/* Examine player health */
-			p_chp = p_ptr->chp;
-			p_mhp = p_ptr->mhp;
 
 			/* Examine monster health */
 			m_chp = m_ptr->hp;
@@ -871,7 +1225,7 @@ static int choose_attack_spell_fast(int m_idx, bool random)
 		/* Hack - Don't cast if known to be immune, unless casting randomly
 		 * anyway.  */
 		if (!(random)) {
-			if (find_resist(m_idx, spell_desire[spells[0]][D_RES]) == 100)
+			if ((find_resist(m_idx, spell_desire[spells[0]][D_RES]) == 100) && m_list[m_idx].target < 0)
 				return (0);
 		}
 
@@ -923,6 +1277,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 	bool is_harass = FALSE;
 	bool is_best_harass = FALSE;
 	bool is_breath = FALSE;
+	bool is_pet = m_ptr->faction == F_PLAYER;
 
 	int i, py = p_ptr->py, px = p_ptr->px, ty, tx;
 	int breath_hp, breath_maxhp, path, spaces;
@@ -1097,7 +1452,10 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 			cur_spell_rating =
 				(cur_spell_rating * breath_hp) / breath_maxhp;
 
-		/* Bonus if want summon and this spell is helpful */
+		/* Bonus if it will hit several enemies or penality if it hits allies */
+		cur_spell_rating += 5 * check_aoe(i, m_idx);
+        
+        /* Bonus if want summon and this spell is helpful */
 		if (spell_desire[i][D_SUMM] && want_summon)
 			cur_spell_rating += want_summon * spell_desire[i][D_SUMM];
 
@@ -1997,12 +2355,186 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 
 	bool done = FALSE;
 	bool dummy;
+	
+	/* Target's location */
+	int hy = m_list[m_ptr->hostile].fy;
+	int hx = m_list[m_ptr->hostile].fx;
 
 
 	/* If the monster is well away from danger, let it relax. */
 	if (m_ptr->cdis >= FLEE_RANGE) {
 		return (FALSE);
 	}
+	
+	/* Handle pets separately */
+	if(m_ptr->faction == F_PLAYER) {
+	    /* Monster has a target */
+	    if ((m_ptr->ty) && (m_ptr->tx)) {
+	        /* It's out of LOS; keep using it, except in "knight's move" cases */
+	        if (!los(hy, hx, m_ptr->fy, m_ptr->fx)) {
+	            /* Get axis distance from monster's desired target to current target */
+	            int dist_y = ABS(hy - m_ptr->ty);
+	            int dist_x = ABS(hx - m_ptr->tx);
+	            
+	            /* It's only out of LOS because of "knight's move" rules */
+		    	if (((dist_y == 2) && (dist_x == 1))
+			    	|| ((dist_y == 1) && (dist_x == 2))) {
+				    /* 
+				     * If there is another grid adjacent to the monster that 
+				     * the character cannot see into, and it isn't any harder 
+			    	 * to enter, use it instead.  Prefer diagonals.
+			    	 */
+				    for (i = 7; i >= 0; i--) {
+				    	y = m_ptr->fy + ddy_ddd[i];
+				    	x = m_ptr->fx + ddx_ddd[i];
+
+					    /* Check Bounds */
+					    if (!in_bounds(y, x))
+						    continue;
+						
+					    if(los(hy, hx, y, x))
+					        continue;
+	    
+	                    if ((y == m_ptr->ty) && (x == m_ptr->tx))
+	                        continue;
+                    
+                        if (cave_passable_mon
+						    (m_ptr, m_ptr->ty, m_ptr->tx,
+						     &dummy) > cave_passable_mon(m_ptr, y, x, &dummy))
+						    continue;
+
+					    m_ptr->ty = y;
+					    m_ptr->tx = x;
+					    break;
+				    }
+			    }
+
+			    /* Move towards the target */
+			    *ty = m_ptr->ty;
+			    *tx = m_ptr->tx;
+			    return (TRUE);
+		    }
+
+		    /* It's in LOS; cancel it. */
+		    else {
+			    m_ptr->ty = 0;
+			    m_ptr->tx = 0;
+		    }
+	    }
+	    
+	    /* If monster is not in los but still thinks it is too close */
+	    if(!los(hy, hx, m_ptr->fy, m_ptr->fx)) {
+	        /* Monster cannot pass through walls */
+	        if (!((rf_has(r_ptr->flags, RF_PASS_WALL))
+			    || (rf_has(r_ptr->flags, RF_KILL_WALL)))) {
+			    /* Run away from noise */
+			    if (cave_cost[m_ptr->fy][m_ptr->fx]) {
+				    int start_cost = cave_cost[m_ptr->fy][m_ptr->fx];
+
+				    /* Look at adjacent grids, diagonals first */
+				    for (i = 7; i >= 0; i--) {
+				    	y = m_ptr->fy + ddy_ddd[i];
+					    x = m_ptr->fx + ddx_ddd[i];
+
+					    /* Check Bounds */
+					    if (!in_bounds(y, x))
+						    continue;
+
+					    /* Accept the first non-visible grid with a higher cost */
+					    if (cave_cost[y][x] > start_cost) {
+						    if (!los(hy, hx, y, x)) {
+						        *ty = y;
+						        *tx = x;
+						        done = TRUE;
+						        break;
+						    }
+						}
+					}
+					
+				/* Return if done */
+				if(done)
+				     return (TRUE);
+				}
+            }
+				
+            /* No flow info, don't need it */
+        }
+			
+        /* The monster is in line of sight */
+		else {
+		    int prev_cost = cave_cost[m_ptr->fy][m_ptr->fx];
+		    int start = randint0(8);
+
+		    /* Look for adjacent hiding places */
+		    for (i = start; i < 8 + start; i++) {
+		        y = m_ptr->fy + ddy_ddd[i % 8];
+	            x = m_ptr->fx + ddx_ddd[i % 8];
+
+			    /* Check Bounds */
+			    if (!in_bounds(y, x))
+				   continue;
+
+                /* No grids in LOS */
+			    if (los(hy, hx, y, x))
+			        continue;
+                
+				/* Grid must be pretty easy to enter */
+			    if (cave_passable_mon(m_ptr, y, x, &dummy) < 50)
+				    continue;
+
+			    /* Accept any grid that doesn't have a lower flow (noise) cost. */
+			    if (cave_cost[y][x] >= prev_cost) {
+				    *ty = y;
+				    *tx = x;
+				    prev_cost = cave_cost[y][x];
+
+				    /* Success */
+				    return (TRUE);
+			    }
+		    }
+            /* Find a nearby grid not in LOS of the character. */
+		    if (find_safety(m_ptr, ty, tx) == TRUE)
+			    return (TRUE);
+
+	    	/* 
+		     * No safe place found.  If monster is in LOS and close,
+		     * it will turn to fight.
+		     */
+		    if ((los(hy, hx, m_ptr->fy, m_ptr->fx))
+			    && (m_ptr->cdis < TURN_RANGE)) {	
+  	            byte fear = m_ptr->monfear;
+  	            
+  	            	/* Turn and fight */
+			    m_ptr->monfear = 0;
+
+			    /* Recalculate combat range (later) */
+			    m_ptr->min_range = 0;
+
+			    /* Visible */
+			    if ((m_ptr->ml) && fear) {
+				    char m_name[80];
+
+				    /* Get the monster name */
+				    monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
+
+				    /* Dump a message */
+				    msg("%s rallies to the fight!", m_name);
+			    }
+
+			    /* Charge! */
+			    *ty = hy;
+			    *tx = hx;
+			    return (TRUE);
+		    }
+	    }
+	    
+	    /* Move directly away from opponent. */
+	    *ty = -(hy - m_ptr->fy);
+	    *tx = -(hx - m_ptr->fx);
+
+	    /* We want to run away */
+	    return (TRUE);
+    }
 
 	/* Monster has a target */
 	if ((m_ptr->ty) && (m_ptr->tx)) {
@@ -2220,8 +2752,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 	/* Assume no movement */
 	*ty = m_ptr->fy;
 	*tx = m_ptr->fx;
-
-
+	
 	/* 
 	 * Monster is only allowed to use targetting information.
 	 */
@@ -2288,8 +2819,8 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 	/* Monster is frightened or terrified. */
 	if (*fear) {
 		/* The character is too close to avoid, and faster than we are */
-		if ((!m_ptr->monfear) && (m_ptr->cdis < TURN_RANGE)
-			&& (p_ptr->state.pspeed > m_ptr->mspeed)) {
+		if (((!m_ptr->monfear) && (m_ptr->cdis < TURN_RANGE)
+			&& (p_ptr->state.pspeed > m_ptr->mspeed)) && (m_ptr->faction != F_PLAYER)) {
 			/* Recalculate range */
 			find_range(m_ptr);
 
@@ -2347,10 +2878,10 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 
 
 	/* Uninjured animals in packs try to lure the character into the open. */
-	if ((!*fear) && (rf_has(r_ptr->flags, RF_FRIENDS))
+	if (((!*fear) && (rf_has(r_ptr->flags, RF_FRIENDS))
 		&& (rf_has(r_ptr->flags, RF_ANIMAL)) && (m_ptr->hp == m_ptr->maxhp)
 		&& (!((rf_has(r_ptr->flags, RF_PASS_WALL))
-			  || (rf_has(r_ptr->flags, RF_KILL_WALL))))) {
+			  || (rf_has(r_ptr->flags, RF_KILL_WALL))))) && (m_ptr->faction != F_PLAYER)) {
 		/* Animal has to be willing to melee */
 		if (m_ptr->min_range == 1) {
 			/* 
@@ -2449,6 +2980,16 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 			return (TRUE);
 		}
 	}
+	
+	/* Pets too far away from the player will move toward him */
+	if((!*fear) && (m_ptr->faction == F_PLAYER) 
+        && (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > follow_distance)) {
+        if(motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px) == 5)
+            return (FALSE);
+        *ty = m_ptr->fy + ddy_ddd[motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)];
+        *tx = m_ptr->fx + ddx_ddd[motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)];
+        return (TRUE);
+    }
 
 	/* Monster can go through rocks - head straight for target */
 	if ((!*fear)
@@ -2468,7 +3009,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 		 * XXX XXX -- The monster cannot see the character.  Make it 
 		 * advance, so the player can have fun ambushing it.
 		 */
-		if (!player_has_los_bold(m_ptr->fy, m_ptr->fx)) {
+		if (!los(py, px, m_ptr->fy, m_ptr->fx)) {
 			/* Advance */
 			get_move_advance(m_ptr, ty, tx);
 		}
@@ -2765,7 +3306,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 
 		if (mon_take_hit
 			(cave_m_idx[m_ptr->fy][m_ptr->fx], 50 + m_ptr->maxhp / 50,
-			 &fear, note_dies)) {
+			 &fear, note_dies, SOURCE_ENVIRONMENTAL)) {
 			death = TRUE;
 		} else {
 			if (seen)
@@ -2779,7 +3320,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 		const char *note_dies = " is drowned!";
 
 		if (mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx],
-						 5 + m_ptr->maxhp / 20, &fear, note_dies)) {
+						 5 + m_ptr->maxhp / 20, &fear, note_dies, SOURCE_ENVIRONMENTAL)) {
 			death = TRUE;
 		} else {
 			if (seen)
@@ -3050,7 +3591,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 				/* Monster is visible */
 				if (m_ptr->ml) {
 					/* And is in LOS */
-					if (player_has_los_bold(oy, ox)) {
+					if (player_has_los_bold(oy, ox) && (m_ptr->faction != F_PLAYER)) {
 						/* Accept any easily passable grid out of LOS */
 						if ((!player_has_los_bold(ny, nx))
 							&& (moves_data[i].move_chance > 40)) {
@@ -3060,7 +3601,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 
 					else {
 						/* Do not enter a grid in LOS */
-						if (player_has_los_bold(ny, nx)) {
+						if (player_has_los_bold(ny, nx) && (m_ptr->faction != F_PLAYER)) {
 							moves_data[i].move_chance = 0;
 							continue;
 						}
@@ -3234,7 +3775,12 @@ static bool push_aside(monster_type * m_ptr, monster_type * n_ptr)
 
 	int y, x, i;
 	int dir = 0;
-
+	
+	
+	/* Only push aside monsters allied or friendly.*/
+	if((get_reaction(m_ptr->faction, n_ptr->faction) == REACT_ALLY)
+	    || (get_reaction(m_ptr->faction, n_ptr->faction) == REACT_FRIEND))
+	    return (FALSE);
 
 	/* 
 	 * Translate the difference between the locations of the two 
@@ -3468,7 +4014,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 		/* The basic trap does full damage */
 		if (t_ptr->t_idx == MTRAP_BASE) {
 			if (mon_take_hit
-				(cave_m_idx[y][x], trap_power, &fear, note_dies))
+				(cave_m_idx[y][x], trap_power, &fear, note_dies, SOURCE_ENVIRONMENTAL))
 				mon_dies = TRUE;
 		}
 
@@ -3601,7 +4147,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 		/* Other traps (sturdy, net, spirit) default to 75% of normal damage */
 		else {
 			if (mon_take_hit
-				(cave_m_idx[y][x], (3 * trap_power) / 4, &fear, note_dies))
+				(cave_m_idx[y][x], (3 * trap_power) / 4, &fear, note_dies, SOURCE_ENVIRONMENTAL))
 				mon_dies = TRUE;
 		}
 
@@ -3859,6 +4405,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 			/* XXX - Kill weaker monsters */
 			if ((rf_has(r_ptr->flags, RF_KILL_BODY))
 				&& (!(rf_has(r_ptr->flags, RF_UNIQUE)))
+				&& (n_ptr->faction == m_ptr->faction)
 				&& (r_ptr->mexp > nr_ptr->mexp)) {
 				/* Monster ate another monster */
 				did_kill_body = TRUE;
@@ -4004,7 +4551,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		if ((!player_has_los_bold(ny, nx))
 			&& (rf_has(r_ptr->flags, RF_FRIENDS))
 			&& (monster_can_smell(m_ptr)) && (get_scent(oy, ox) == -1)
-			&& (!m_ptr->ty) && (!m_ptr->tx)) {
+			&& (!m_ptr->ty) && (!m_ptr->tx) && (m_ptr->faction != F_PLAYER)) {
 			int i;
 			monster_type *n_ptr;
 			monster_race *nr_ptr;
@@ -4040,6 +4587,10 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 				n_ptr->mflag |= (MFLAG_ACTV);
 				n_ptr->ty = ny;
 				n_ptr->tx = nx;
+				if((n_ptr->hostile == 0) && (get_reaction(m_ptr->faction, n_ptr->faction) == REACT_ALLY)) {
+				    n_ptr->hostile = m_ptr->hostile;
+				    n_ptr->threat += 10;
+				}
 			}
 		}
 
@@ -4257,8 +4808,50 @@ static void process_monster(monster_type * m_ptr)
 	/* If monster is sleeping, or in stasis, it loses its turn. */
 	if ((m_ptr->csleep) || (m_ptr->stasis))
 		return;
-
-	/* Calculate the monster's preferred combat range when needed */
+	
+	/* Some target sanity checking */
+	if(m_ptr->hostile == cave_m_idx[m_ptr->fy][m_ptr->fx])
+	    m_ptr->hostile = 0;
+    if(!m_list[m_ptr->hostile].r_idx)
+        m_ptr->hostile = 0;
+    
+    /* Avoid fighting allies */
+    if(m_ptr->hostile > 0) {
+        if(get_reaction(m_ptr->faction, m_list[m_ptr->hostile].faction) == REACT_ALLY) {
+            m_ptr->threat *= .8;
+            if(m_ptr->threat <= damroll(1, r_ptr->level))
+                m_ptr->hostile = 0;
+        }
+    } else if (m_ptr->hostile == -1) {
+        if(get_reaction(m_ptr->faction, F_PLAYER) == REACT_ALLY) {
+            m_ptr->threat *= .8;
+            if(m_ptr->threat <= damroll(1, 2 * p_ptr->lev))
+                m_ptr->hostile = 0;
+        }
+    }
+    
+    /* Additional reducation against group and leader */
+    if(m_ptr->hostile == m_ptr->group_leader) {
+        m_ptr->threat *= .8;
+        if(m_ptr->threat <= damroll(1, r_ptr->level))
+            m_ptr->hostile = 0;
+    }
+    if(m_ptr->group == m_list[m_ptr->hostile].group) {
+        m_ptr->threat *= .8;
+        if(m_ptr->threat <= damroll(1, r_ptr->level))
+            m_ptr->hostile = 0;
+    }
+    
+    /* Hostile creatures with no target should target the player */
+    if((m_ptr->hostile == 0) && (get_reaction(m_ptr->faction, F_PLAYER) == REACT_HOSTILE))
+        m_ptr->hostile = -1;
+        
+    /* Pets with no target take the player's target, if there is one */
+    if((m_ptr->hostile == 0) && (m_ptr->faction == F_PLAYER) && target_is_set()) {
+        pet_target(m_ptr);
+    }
+    
+    /* Calculate the monster's preferred combat range when needed */
 	if (m_ptr->min_range == 0)
 		find_range(m_ptr);
 
@@ -4757,6 +5350,10 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 				/* Dump a message */
 				msg("%s wakes up.", m_name);
 			}
+			if((m_ptr->hostile == 0) && (get_reaction(m_ptr->faction, F_PLAYER) == REACT_HOSTILE)) {
+			    m_ptr->hostile = -1;
+			    m_ptr->threat += 50;
+		    }
 		}
 
 		/* See if monster notices player */
@@ -4806,8 +5403,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 				}
 
 				/* Monster gets its bearings */
-				if (m_ptr->energy > p_ptr->energy)
-					m_ptr->energy = p_ptr->energy;
+				m_ptr->energy = 0;
 			}
 		}
 	}
@@ -4854,8 +5450,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 				}
 
 				/* Monster gets its bearings */
-				if (m_ptr->energy > p_ptr->energy)
-					m_ptr->energy = p_ptr->energy;
+				m_ptr->energy = 0;
 			}
 		}
 	}
@@ -5105,6 +5700,9 @@ void process_monsters(byte minimum_energy)
 
 		/* Prevent reprocessing */
 		m_ptr->moved = TRUE;
+		
+		/* Reduce current threat on their target */
+		m_ptr->threat *= .96;
 
 		/* Handle temporary monster attributes every ten game turns */
 		if (recover)

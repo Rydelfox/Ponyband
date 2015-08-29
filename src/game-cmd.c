@@ -107,7 +107,8 @@ static struct {
     { CMD_QUIT, { arg_NONE }, do_cmd_quit, FALSE, 0 },
     { CMD_HELP, { arg_NONE }, NULL, FALSE, 0 },
     { CMD_REPEAT, { arg_NONE }, NULL, FALSE, 0 },
-    { CMD_ABILITY, { arg_CHOICE, arg_TARGET }, do_cmd_ability, FALSE, 0}
+    { CMD_ABILITY, { arg_CHOICE, arg_TARGET }, do_cmd_ability, FALSE, 0 },
+    { CMD_PET, { arg_CHOICE, arg_TARGET }, do_cmd_pet, FALSE, 0 } 
 };
 
 /* Item selector type (everything required for get_item()) */
@@ -641,6 +642,33 @@ void process_command(cmd_context ctx, bool no_request)
                 if (get_target && !get_aim_dir(&cmd->arg[1].direction))
                     return;
                 
+                cmd->arg_present[1] = TRUE;
+                
+                break;
+            }
+            
+            /* Two commands need a target */
+        case CMD_PET:
+            {
+                bool get_target = FALSE;
+                
+                logbug("Received CMD_PET\n");
+                if(pet_command_needs_aim(cmd->arg[0].choice)) {
+                    if (!cmd->arg_present[1])
+                        get_target = TRUE;
+                    
+                    if (cmd->arg[1].direction == DIR_UNKNOWN)
+                        get_target = TRUE;
+                    
+                    if (cmd->arg[1].direction == DIR_TARGET
+                        && !target_okay())
+                        get_target = TRUE;
+                }
+                
+                if(get_target && !get_aim_dir(&cmd->arg[1].direction))
+                    return;
+                
+                logbug("No aim\n");
                 cmd->arg_present[1] = TRUE;
                 
                 break;

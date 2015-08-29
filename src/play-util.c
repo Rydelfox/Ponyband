@@ -190,3 +190,33 @@ bool player_can_ability(void)
 	
 	return TRUE;
 }
+
+/* Alter alignment when hitting an enemy */
+void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, bool killed)
+{
+    int i;
+    
+    if(faction == F_GOOD) p_ptr->alignment--;
+    if((faction == F_GOOD) && killed) p_ptr->alignment-=2;
+    if(evil && killed) p_ptr->alignment++;
+    if((faction == F_RELEASED_PET) && killed) p_ptr->alignment-=4;
+    if(faction == F_PLAYER) p_ptr->alignment-=4;
+    if(sleep) {
+        if(evil) {
+            if(!randint0(4)) {
+                p_ptr->alignment--;
+            }
+        }else {
+            p_ptr->alignment--;
+        }
+    }
+    if((faction == F_GOOD) && killed && unique) p_ptr->alignment-=50;
+    if(evil && killed && unique) p_ptr->alignment+=50;
+    if(killed && !depth) p_ptr->alignment--;
+    
+    if(p_ptr->alignment > PY_MAX_ALIGN)
+        p_ptr->alignment = PY_MAX_ALIGN;
+    else if (p_ptr->alignment < (-1 * PY_MAX_ALIGN))
+        p_ptr->alignment = (-1 * PY_MAX_ALIGN);
+}
+

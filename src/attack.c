@@ -895,7 +895,7 @@ bool attempt_shield_bash(int y, int x, bool * fear, int *blows,
 		}
 
 		/* Damage, check for fear and death. */
-		if (mon_take_hit(cave_m_idx[y][x], bash_dam, fear, NULL)) {
+		if (mon_take_hit(cave_m_idx[y][x], bash_dam, fear, NULL, SOURCE_PLAYER)) {
 			/* 
 			 * Hack -- High-level warriors can spread their attacks out 
 			 * among weaker foes.
@@ -1036,6 +1036,14 @@ bool py_attack(int y, int x, bool can_push)
 	bool did_burn = FALSE;
 
 	bool chaotic = FALSE;
+	
+	/* Store some stats for alignment effects */
+	int old_sleep;
+	u16b old_faction;
+	int old_depth;
+	bool old_evil;
+	bool old_unique;
+	bool killed = FALSE;
 
 	/* Get the monster */
 	m_ptr = &m_list[cave_m_idx[y][x]];
@@ -1067,6 +1075,7 @@ bool py_attack(int y, int x, bool can_push)
 	}
 
 	/* Disturb the monster */
+	old_sleep = m_ptr->csleep;
 	m_ptr->csleep = 0;
 
 	/* Disturb the player */
@@ -1302,9 +1311,15 @@ bool py_attack(int y, int x, bool can_push)
 			}
 
 			/* The verbose wizard message has been moved to mon_take_hit. */
+			
+			/* Get status info in case the enemy dies */
+			old_faction = m_ptr->faction;
+			old_depth = r_ptr->level;
+			old_evil = rf_has(r_ptr->flags, RF_EVIL);
+			old_unique = rf_has(r_ptr->flags, RF_UNIQUE);
 
 			/* Damage, check for fear and death. */
-			if (mon_take_hit(cave_m_idx[y][x], (s16b) damage, &fear, NULL)) {
+			if (mon_take_hit(cave_m_idx[y][x], (s16b) damage, &fear, NULL, SOURCE_PLAYER)) {
 				/* 
 				 * Hack -- High-level warriors can spread their attacks out 
 				 * among weaker foes.
@@ -1317,7 +1332,10 @@ bool py_attack(int y, int x, bool can_push)
 				/* No "holding over" druid confusion attacks */
 				p_ptr->special_attack &= ~(ATTACK_DRUID_CONFU);
 
-				/* Fight's over. */
+				/* Been killed */
+				killed = TRUE;
+				
+                /* Fight's over. */
 				break;
 			}
 
@@ -1359,6 +1377,16 @@ bool py_attack(int y, int x, bool can_push)
 					else
 						msgt(MSG_HIT, "%s sounds confused.", m_name);
 					m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
+					/* Reduce alignment for confusing */
+					if(rf_has(r_ptr->flags, RF_EVIL)) {
+					    if(!randint0(12)) {
+					        p_ptr->alignment--;
+					    }
+					} else {
+					    if(!randint0(3)) {
+					       p_ptr->alignment--;
+					   }
+					}
 				}
 			}
 
@@ -1393,8 +1421,18 @@ bool py_attack(int y, int x, bool can_push)
 					m_ptr->black_breath = TRUE;
 					msgt(MSG_HIT,
 						 "%s is stricken with the Black Breath!", m_name);
+				    /* Reduce alignment */
+                    p_ptr->alignment--;
 				}
 			}
+			
+			/* We can leave after this, so calculate alignment here */
+			hit_alignment(old_faction, old_depth, old_evil, old_unique, old_sleep, killed);
+			
+			/* For that same reason, handle hostility and faction changes here */
+			m_ptr->hostile = -1;
+			if(m_ptr->faction == F_PLAYER)
+			    m_ptr->faction = F_MONSTER;
 
 			/* Rogue "Hit and Run" attack. -LM- */
 			if (p_ptr->special_attack & (ATTACK_FLEE)) {
@@ -1426,7 +1464,7 @@ bool py_attack(int y, int x, bool can_push)
 					add_speed_boost(boost_value);
 				}
 
-				/* Fight's over. */
+                /* Fight's over. */
 				return (TRUE);
 			}
 
@@ -1438,11 +1476,15 @@ bool py_attack(int y, int x, bool can_push)
 					notice_obj(OF_CHAOTIC, 0);
 					if (!chaotic_effects(m_ptr))
 						return (TRUE);
+					else
+					   if(!randint0(9))
+					       p_ptr->alignment--;
 				}
 			}
 
 			/* Monster is no longer asleep */
 			sleeping_bonus = 0;
+			
 		}
 
 		/* Player misses */
@@ -1597,7 +1639,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	u16b path_g[256];
 
 	int msec = op_ptr->delay_factor * op_ptr->delay_factor;
-
+	
 	(void) code;
 
 	/* Get the "bow" (if any) */
@@ -1701,7 +1743,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 		}
 
 		/* Inflict both normal and wound damage. */
-		take_hit(damage, "ammo of backbiting");
+		take_hit(damage, "ammo of backbiting", SOURCE_PLAYER);
 		inc_timed(TMD_CUT, randint1(damage * 3), TRUE);
 
 		/* That ends that shot! */
@@ -1792,6 +1834,14 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 			int dice, add;
 			long die_average, temp, sides;
 			int cur_range, base_range, chance2;
+			
+			/* Keep info about a monster for alignment */
+	        u16b old_faction = m_ptr->faction;
+	        int old_depth = r_ptr->level;
+	        bool old_evil = rf_has(r_ptr->flags, RF_EVIL);
+	        bool old_unique = rf_has(r_ptr->flags, RF_UNIQUE);
+	        int old_sleep = m_ptr->csleep;
+	        bool killed = FALSE;
 
 			/* Assume a default death */
 			const char *note_dies = " dies.";
@@ -1978,8 +2028,9 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 				damage = 0;
 
 			/* Hit the monster, check for death. */
-			if (mon_take_hit(cave_m_idx[y][x], damage, &fear, note_dies)) {
+			if (mon_take_hit(cave_m_idx[y][x], damage, &fear, note_dies, SOURCE_PLAYER)) {
 				/* Dead monster */
+				killed = TRUE;
 			}
 
 			/* No death */
@@ -1999,6 +2050,9 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 					msgt(MSG_FLEE, "%s flees in terror!", m_name);
 				}
 			}
+			
+			/* Affect alignment */
+			hit_alignment(old_faction, old_depth, old_evil, old_unique, old_sleep, killed);
 
 			/* Check for piercing */
 			if ((player_has(PF_PIERCE_SHOT)) && (randint0(2) == 0)
@@ -2338,6 +2392,14 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 			int dice, add;
 			long die_average, temp, sides;
 			int cur_range, base_range, chance2;
+			
+			/* Keep info about a monster for alignment */
+	        u16b old_faction = m_ptr->faction;
+	        int old_depth = r_ptr->level;
+	        bool old_evil = rf_has(r_ptr->flags, RF_EVIL);
+	        bool old_unique = rf_has(r_ptr->flags, RF_UNIQUE);
+	        int old_sleep = m_ptr->csleep;
+	        bool killed = FALSE;
 
 			/* Assume a default death */
 			const char *note_dies = " dies.";
@@ -2501,8 +2563,9 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 				damage = 0;
 
 			/* Hit the monster, check for death */
-			if (mon_take_hit(cave_m_idx[y][x], damage, &fear, note_dies)) {
+			if (mon_take_hit(cave_m_idx[y][x], damage, &fear, note_dies, SOURCE_PLAYER)) {
 				/* Dead monster */
+				killed = TRUE;
 			}
 
 			/* No death */
@@ -2522,6 +2585,9 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 					msg("%s flees in terror!", m_name);
 				}
 			}
+			
+			/* Affect alignment */
+			hit_alignment(old_faction, old_depth, old_evil, old_unique, old_sleep, killed);
 
 
 			/* Object falls to the floor */

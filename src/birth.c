@@ -465,7 +465,23 @@ static void get_money(void)
 	p_ptr->au = gold;
 }
 
-
+static void get_alignment(void)
+{
+    int alignment = cp_ptr->alignment;
+    
+    // TODO: Alignment changes for starting realms
+    
+    //TODO: Alignment changes for Avatar Pacts
+    
+    /* Check for range */
+    if (alignment > PY_MAX_ALIGN)
+        alignment = PY_MAX_ALIGN;
+    else if (alignment < (-1 * PY_MAX_ALIGN))
+        alignment = -1 * PY_MAX_ALIGN;
+        
+    /* Save the alignment */
+    p_ptr->alignment = alignment;
+}
 
 void player_init(struct player *p)
 {
@@ -792,6 +808,9 @@ static void recalculate_stats(int *stats, int points_left)
 
 	/* Update bonuses, hp, etc. */
 	get_bonuses();
+	
+	/* Set alignment */
+	get_alignment();
 
 	/* Tell the UI about all this stuff that's changed. */
 	event_signal(EVENT_GOLD);
@@ -1040,6 +1059,9 @@ void player_generate(struct player *p, player_sex *s,
 	get_ahw();
 
     get_history();
+    
+    /* Make sure starting alignmnet is correct */
+    get_alignment();
 }
 
 

@@ -268,6 +268,28 @@ extern byte spell_desire[RSF_MAX][D_MAX];
 extern byte spell_range[RSF_MAX];
 
 
+/*** Monster factions ***/
+enum monster_faction {
+    F_PLAYER = 0,
+    F_GOOD,
+    F_MONSTER,
+    F_RELEASED_PET
+};
+
+enum faction_reaction {
+    REACT_ALLY = 0,
+    REACT_FRIEND,
+    REACT_ALIGNMENT,  //Friendly if the player is Good, Hostile otherwise
+    REACT_HOSTILE
+};
+
+/*** Maximum range for threat gain ***/
+#define MAX_THREAT_RANGE 30
+
+/*** Special damage sources for threat ***/
+#define SOURCE_ENVIRONMENTAL 0
+#define SOURCE_PLAYER -1
+
 /*** Monster blow constants ***/
 
 
@@ -406,6 +428,8 @@ typedef struct monster_race {
     byte cur_num;	/**< Monster population on current level */
 
     byte spell_power;
+    
+    u16b faction;
 
 } monster_race;
 
@@ -513,6 +537,10 @@ typedef struct monster {
 
     u16b y_terr;	/**< Home for territorial monsters */
     u16b x_terr;
+    
+    s16b target;   /**< The id of the monster's target, 0 for none, or -1 for the player */
+    u16b threat;   /**< Amount of threat on the current target */
+    u16b faction; /**< The faction the monster is part of */
 
 } monster_type;
 
@@ -528,10 +556,12 @@ extern void roff_top(int r_idx);
 extern void screen_roff(int r_idx);
 extern void display_roff(int r_idx);
 extern bool prepare_ghost(int r_idx, monster_type *m_ptr, bool from_savefile);
+extern int get_reaction(int attacker, int defender);
+extern void cause_threat(int y, int x, int source, u16b faction, int amount, int target, bool onlySameFaction);
 
 /* monster2.c */
 extern void monster_death(int m_idx);
-extern bool mon_take_hit(int m_idx, int dam, bool *fear, const char *note);
+extern bool mon_take_hit(int m_idx, int dam, bool *fear, const char *note, int source);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);
@@ -552,15 +582,16 @@ extern s16b monster_carry(int m_idx, object_type *j_ptr);
 extern void monster_swap(int y1, int x1, int y2, int x2);
 extern s16b player_place(int y, int x);
 extern s16b monster_place(int y, int x, monster_type *n_ptr);
-extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp);
+extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, u16b summon_faction);
 extern bool place_monster(int y, int x, bool slp, bool grp, bool quick);
 extern bool alloc_monster(int dis, bool slp, bool quick);
-extern bool summon_specific(int y1, int x1, bool scattered, int lev, int type);
+extern bool summon_specific(int y1, int x1, bool scattered, int lev, int type, u16b faction);
 extern bool summon_questor(int y1, int x1);
 extern int assess_shapechange(int m_idx, monster_type *m_ptr);
 extern bool multiply_monster(int m_idx);
 extern void message_pain(int m_idx, int dam);
 extern void update_smart_learn(int m_idx, int what);
+extern void monster_distance(int m_idx);
 
 /* monattk.c */
 extern bool make_attack_normal(monster_type *m_ptr, int y, int x);

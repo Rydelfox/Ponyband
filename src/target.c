@@ -2127,3 +2127,13 @@ bool target_sighted(void)
 		((!target_who && player_can_see_bold(target_y, target_x))
 		 || (target_who && target_who->ml));
 }
+
+/*
+ * Have a pet aquire the player's target
+ */
+void pet_target(monster_type *m_ptr)
+{
+    m_ptr->tx = target_x;
+    m_ptr->ty = target_y;
+    m_ptr->hostile = cave_m_idx[target_y][target_x];
+}

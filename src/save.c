@@ -185,6 +185,8 @@ static void wr_monster(monster_type * m_ptr)
 	wr_s16b(m_ptr->hostile);
 	wr_u16b(m_ptr->group);
 	wr_u16b(m_ptr->group_leader);
+	wr_u16b(m_ptr->faction);
+	wr_u16b(m_ptr->threat);
 
 	/* Territorial info */
 	wr_u16b(m_ptr->y_terr);
@@ -620,7 +622,8 @@ void wr_player(void)
 	wr_s16b(p_ptr->heighten_power);	/* Specialty Heighten Magic */
 	wr_s16b(p_ptr->sc);
 
-	wr_s16b(p_ptr->food);
+	wr_s16b(p_ptr->alignment);
+    wr_s16b(p_ptr->food);
 	wr_s16b(p_ptr->energy);
 	wr_s16b(p_ptr->word_recall);
 	wr_s16b(p_ptr->state.see_infra);
@@ -737,6 +740,7 @@ void wr_misc(void)
 	wr_u32b(p_ptr->score);
 	wr_u16b(p_ptr->total_winner);
 	wr_u16b(p_ptr->noscore);
+	wr_u16b(follow_distance);
 
 
 	/* Write death */

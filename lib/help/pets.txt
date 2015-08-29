@@ -1,0 +1,32 @@
+===================================== Pets ====================================
+
+     Through the magic of charm spells, as well as a few other ways, it's 
+possible for an adventurer to have a pet monster join them to fight.  While at 
+first glance, this seems great, but a seasoned adventurer will realize that 
+this is both a blessing and a curse.  Obviously, having an extra attacker or 
+even just a warm body to absorb some blows can be a nice boon.  However, one 
+should expect to gain very little experience if they aren't landing a killing 
+blow themselves.
+
+Secondly, your pets can sometimes be so eager for battle that they can ignore 
+you, potentially preventing you from reaching an enemy and blocking your shots.
+If you try to just blow them up with the enemy, they can turn on you, giving 
+you another monster to deal with.
+
+Finally, it takes a good deal of concentration to maintain control over your 
+pets.  The first few monster are free, but having several monsters or a few 
+monsters that are much stronger than you can really hurt your mana regeneration
+rate.  Keep this in mind if you get a pet that can summon more pets.
+
+--- Obtaining a pet ---
+
+You may obtain a pet through a number of ways.  Some spell realms allow ways 
+for you to charm enemies you encounter or to summon monsters to aid you.
+
+--- Commanding your pets ---
+
+Your pets are magically trained to obey your commands.  You can order them to 
+attack a monster, run to a specified position, stay close, or even leave your 
+services.  You can issue commands to your pets through the pet command menu by 
+pressing 'P'.
+

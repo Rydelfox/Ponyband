@@ -253,6 +253,8 @@ static int rd_monster(monster_type * m_ptr)
 	rd_s16b(&m_ptr->hostile);
 	rd_u16b(&m_ptr->group);
 	rd_u16b(&m_ptr->group_leader);
+	rd_u16b(&m_ptr->faction);
+	rd_u16b(&m_ptr->threat);
 
 	/* Territorial info */
 	rd_u16b(&m_ptr->y_terr);
@@ -1149,6 +1151,7 @@ int rd_player_1(void)
 	rd_s16b(&p_ptr->sc);
 
 	/* Read the flags */
+	rd_s16b(&p_ptr->alignment);
 	rd_s16b(&p_ptr->food);
 	rd_s16b(&p_ptr->energy);
 	rd_s16b(&p_ptr->word_recall);
@@ -1615,6 +1618,7 @@ int rd_misc(void)
 	rd_u32b(&p_ptr->score);
 	rd_u16b(&p_ptr->total_winner);
 	rd_u16b(&p_ptr->noscore);
+	rd_u16b(&follow_distance);
 
 
 	/* Read "death" */

@@ -49,7 +49,7 @@ V:1.1.6
 #G: ASCII char used to display the monster: color symbol
 #I: average speed (110 is normal): hit points: range (in squares) of 
 #     monster perception: armour class: how deeply the monster sleeps
-#W: standard monster depth: rarity: maximum mana: experience points
+#W: standard monster depth: rarity: maximum mana: experience points: faction
 #B: up to four monster blows, of the form
 #     blow type: blow effect: direct damage inflicted
 #F: All monster flags (special qualities).
@@ -71,7 +71,7 @@ N:1:Filthy street urchin
 T:townsfolk
 C:D
 I:110:1d4:4:2:40
-W:0:3:0:0
+W:0:3:0:0:2:2
 B:BEG
 B:TOUCH:EAT_GOLD
 F:MALE | MOVE_BODY | 
@@ -83,7 +83,7 @@ N:2:Blubbering idiot
 T:townsfolk
 C:W
 I:110:1d2:6:1:0
-W:0:1:0:0
+W:0:1:0:0:2:2
 B:DROOL
 F:MALE | 
 F:RAND_25 | 
@@ -94,7 +94,7 @@ N:3:Boil-covered wretch
 T:townsfolk
 C:g
 I:110:1d2:6:1:1
-W:0:1:0:0
+W:0:1:0:0:2
 B:DROOL
 F:MALE | 
 F:RAND_25 | MOVE_BODY | 
@@ -105,7 +105,7 @@ N:4:Village idiot
 T:townsfolk
 C:G
 I:120:3d4:6:1:1
-W:0:1:0:0
+W:0:1:0:0:2
 B:DROOL
 F:MALE | 
 F:RAND_25 | 
@@ -116,7 +116,7 @@ N:5:Pitiful looking beggar
 T:townsfolk
 C:U
 I:110:1d4:10:2:40
-W:0:1:0:0
+W:0:1:0:0:2
 B:BEG
 F:MALE | 
 F:RAND_25 | MOVE_BODY | 
@@ -127,7 +127,7 @@ N:6:Mangy looking leper
 T:townsfolk
 C:u
 I:110:1d1:10:2:50
-W:0:1:0:0
+W:0:1:0:0:2
 B:BEG
 F:MALE | 
 F:RAND_25 | 
@@ -138,7 +138,7 @@ N:7:Squint eyed rogue
 T:townsfolk
 C:b
 I:110:2d8:10:10:99
-W:0:1:0:0
+W:0:1:0:0:2
 B:HIT:HURT:1d6
 B:TOUCH:EAT_ITEM
 F:MALE | MOVE_BODY | 
@@ -151,7 +151,7 @@ N:8:Singing, happy drunk
 T:townsfolk
 C:y
 I:110:2d3:10:3:1
-W:0:1:0:0
+W:0:1:0:0:2
 B:BEG
 F:MALE | 
 F:RAND_50 | 
@@ -163,7 +163,7 @@ N:9:Aimless looking merchant
 T:townsfolk
 C:o
 I:110:3d3:10:3:255
-W:0:1:0:0
+W:0:1:0:0:2
 B:HIT:HURT:1d1
 F:MALE | MOVE_BODY | 
 F:RAND_50 | 
@@ -176,7 +176,7 @@ N:10:Mean looking mercenary
 T:townsfolk
 C:r
 I:110:4d8:10:10:250
-W:0:1:0:0
+W:0:1:0:0:2
 B:HIT:HURT:1d10
 F:MALE | MOVE_BODY | 
 F:RAND_50 | DROP_90 | 
@@ -188,7 +188,7 @@ N:11:Battle scarred veteran
 T:townsfolk
 C:B
 I:110:6d8:10:16:250
-W:0:1:0:0
+W:0:1:0:0:2
 B:HIT:HURT:2d6
 F:MALE | MOVE_BODY | 
 F:RAND_50 | DROP_90 | 
@@ -199,7 +199,7 @@ N:12:Scrawny cat
 T:feline
 C:U
 I:110:1d2:15:3:10
-W:0:3:0:0
+W:0:3:0:0:2
 B:CLAW:HURT:1d1
 F:RAND_25
 D:A skinny little furball with sharp claws and a menacing look.
@@ -208,7 +208,7 @@ N:13:Scruffy little dog
 T:canine
 C:U
 I:110:1d3:20:3:5
-W:0:3:0:0
+W:0:3:0:0:2
 B:BITE:HURT:1d1
 F:RAND_25 
 D:A thin flea-ridden mutt, growling as you get close.
@@ -217,7 +217,7 @@ N:14:The Complainer
 T:person
 C:w
 I:110:35d10:40:10:3
-W:0:1:0:0
+W:0:1:0:0:2
 B:SNEER
 B:SNEER
 F:UNIQUE | MALE | SMART | MOVE_BODY | 
@@ -231,23 +231,23 @@ D:He has lots of problems, and seems to think you can fix them.
 
 N:15:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:16:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:17:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:18:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:19:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 
 
@@ -257,7 +257,7 @@ N:20:Small kobold
 T:kobold
 C:y
 I:110:2d7:20:10:10
-W:1:1:0:4
+W:1:1:0:4:2
 B:HIT:HURT:1d4
 F:DROP_60 | MOVE_BODY  
 D:A squat and ugly humanoid figure.
@@ -266,7 +266,7 @@ N:21:Soldier ant
 T:ant
 C:W
 I:110:2d4:10:5:10
-W:1:2:0:2
+W:1:2:0:2:2
 B:BITE:HURT:1d2
 F:FRIEND | TERRITORIAL 
 D:A large ant with powerful mandibles.
@@ -275,7 +275,7 @@ N:22:Fruit bat
 T:bat
 C:o
 I:120:2d2:16:11:10
-W:1:1:0:1
+W:1:1:0:1:2
 B:BITE:HURT:1d1
 F:RAND_25
 D:A fast-moving pest.
@@ -284,7 +284,7 @@ N:23:Giant yellow centipede
 T:centipede
 C:y
 I:110:2d6:8:8:30
-W:1:1:0:2
+W:1:1:0:2:2
 B:BITE:HURT:1d3
 B:STING:HURT:1d3
 D:It is about four feet long and carnivorous.
@@ -293,7 +293,7 @@ N:24:Giant white centipede
 T:centipede
 C:w
 I:110:3d5:8:8:40
-W:1:1:0:2
+W:1:1:0:2:2
 B:BITE:HURT:1d2
 B:STING:HURT:1d2
 F:RAND_50 
@@ -303,7 +303,7 @@ N:25:Rock lizard
 T:reptile
 C:U
 I:110:3d4:20:9:15
-W:1:1:0:2
+W:1:1:0:2:2
 B:BITE:HURT:1d1
 D:A small lizard with a hardened hide.
 
@@ -311,7 +311,7 @@ N:26:Large white snake
 T:snake
 C:w
 I:100:3d6:4:19:99
-W:1:1:0:2
+W:1:1:0:2:2
 B:BITE:HURT:1d1
 B:CRUSH:HURT:1d2
 F:RAND_50 | 
@@ -322,7 +322,7 @@ N:27:Jackal
 T:canine
 C:U
 I:110:1d4:10:5:10
-W:1:2:0:1
+W:1:2:0:1:2
 B:BITE:HURT:1d1
 F:FRIENDS | TERRITORIAL 
 D:A yapping snarling dog, dangerous when in a pack.
@@ -331,7 +331,7 @@ N:28:Giant white mouse
 T:rodent
 C:w
 I:110:1d3:8:4:20
-W:1:1:0:1
+W:1:1:0:1:2
 B:BITE:HURT:1d2
 F:RAND_50 | 
 F:MULTIPLY
@@ -341,7 +341,7 @@ N:29:White worm mass
 T:worm
 C:w
 I:100:3d5:7:3:10
-W:1:1:0:2
+W:1:1:0:2:2
 B:CRAWL:POISON:1d2
 F:RAND_50 | RAND_25 | 
 F:STUPID | WEIRD_MIND | MULTIPLY | 
@@ -352,7 +352,7 @@ N:30:Grey mold
 T:mold
 C:s
 I:110:1d2:2:2:0
-W:1:1:0:3
+W:1:1:0:3:2
 B:SPORE:HURT:1d4
 B:SPORE:HURT:1d4
 F:STUPID | EMPTY_MIND 
@@ -362,7 +362,7 @@ N:31:Grey mushroom patch
 T:mushroom
 C:s
 I:110:1d2:2:2:0
-W:1:1:0:1
+W:1:1:0:1:2
 B:SPORE:CONFUSE:1d4
 F:NEVER_MOVE | 
 F:EMPTY_MIND | 
@@ -373,7 +373,7 @@ N:32:White icky thing
 T:icky thing
 C:w
 I:110:3d5:12:6:10
-W:1:1:0:1
+W:1:1:0:1:2
 B:TOUCH:HURT:1d2
 F:RAND_50 | RAND_25 | 
 F:EMPTY_MIND
@@ -383,7 +383,7 @@ N:33:Clear icky thing
 T:icky thing
 C:w
 I:110:2d5:12:6:10
-W:1:1:0:2
+W:1:1:0:2:2
 B:TOUCH:HURT:1d2
 F:ATTR_CLEAR | 
 F:RAND_50 | RAND_25 | 
@@ -394,7 +394,7 @@ N:34:Floating eye
 T:eye
 C:o
 I:110:1d2:2:6:10
-W:1:1:0:1
+W:1:1:0:1:2
 B:GAZE:PARALYZE
 F:NEVER_MOVE | 
 F:HURT_LIGHT | NO_FEAR
@@ -402,17 +402,17 @@ D:A disembodied eye, floating a few feet above the ground.
 
 N:35:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:36:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:37:Novice warrior
 T:person
 C:u
 I:110:7d4:20:13:15
-W:2:1:0:6
+W:2:1:0:6:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:MALE | MOVE_BODY | RACIAL | 
@@ -423,7 +423,7 @@ N:38:Novice rogue
 T:person
 C:b
 I:110:6d4:20:11:5
-W:2:1:0:6
+W:2:1:0:6:2
 B:HIT:HURT:1d6
 B:TOUCH:EAT_GOLD
 F:MALE | MOVE_BODY | RACIAL | 
@@ -435,7 +435,7 @@ N:39:Novice mage
 T:person
 C:r
 I:110:4d5:20:7:10
-W:2:1:40:6
+W:2:1:40:6:2
 B:HIT:HURT:1d3
 F:MALE | MOVE_BODY | RACIAL | 
 F:FORCE_SLEEP | 
@@ -449,7 +449,7 @@ N:40:Kobold
 T:kobold
 C:G
 I:110:3d6:20:12:10
-W:2:1:0:4
+W:2:1:0:4:2
 B:HIT:HURT:1d6
 F:DROP_60 | MOVE_BODY 
 D:A small, dog-headed humanoid.
@@ -458,7 +458,7 @@ N:41:Blue yeek
 T:yeek
 C:b
 I:110:2d6:18:15:10
-W:2:1:0:4
+W:2:1:0:4:2
 B:HIT:HURT:1d5
 F:DROP_60 | MOVE_BODY
 D:A small humanoid figure.
@@ -467,7 +467,7 @@ N:42:Wild cat
 T:feline
 C:U
 I:120:2d6:25:15:1
-W:2:2:0:7
+W:2:2:0:7:2
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
 F:BASH_DOOR | TERRITORIAL
@@ -478,7 +478,7 @@ N:43:Giant black ant
 T:ant
 C:D
 I:110:2d8:8:12:80
-W:2:2:0:3
+W:2:2:0:3:2
 B:BITE:HURT:1d4
 F:TERRITORIAL | FRIEND
 D:A black ant about three feet long.
@@ -487,7 +487,7 @@ N:44:Giant white ant
 T:ant
 C:w
 I:110:2d7:8:10:80
-W:2:2:0:3
+W:2:2:0:3:2
 B:BITE:HURT:1d3
 F:TERRITORIAL | FRIENDS
 D:A white ant about two feet long.  One by itself is very weak, but you'll 
@@ -497,7 +497,7 @@ N:45:Metallic green centipede
 T:centipede
 C:g
 I:120:3d5:5:10:10
-W:2:1:0:3
+W:2:1:0:3:2
 B:CRAWL:HURT:1d3
 F:RAND_50 
 D:It is about four feet long and carnivorous.
@@ -506,7 +506,7 @@ N:46:Giant green frog
 T:reptile
 C:g
 I:110:2d8:12:8:30
-W:2:1:0:5
+W:2:1:0:5:2
 B:BITE:HURT:1d3
 F:RAND_25 | 
 F:BASH_DOOR
@@ -516,7 +516,7 @@ N:47:Salamander
 T:reptile
 C:o
 I:110:3d7:8:12:80
-W:2:1:0:7
+W:2:1:0:7:2
 B:BITE:FIRE:1d3
 F:RAND_25 | IM_FIRE
 D:A small black and orange lizard.
@@ -525,7 +525,7 @@ N:48:Cave lizard
 T:reptile
 C:u
 I:110:2d7:8:22:50
-W:2:1:0:4
+W:2:1:0:4:2
 B:BITE:HURT:1d7
 F:TERRITORIAL 
 D:An armoured lizard with a powerful bite.
@@ -534,7 +534,7 @@ N:49:Cave spider
 T:spider
 C:p
 I:120:2d4:8:14:80
-W:2:2:0:4
+W:2:2:0:4:2
 B:BITE:HURT:1d4
 F:FRIENDS | 
 F:WEIRD_MIND | ANIMAL
@@ -544,7 +544,7 @@ N:50:Maddened Weasel
 T:rodent
 C:U
 I:120:3d3:15:20:25
-W:2:3:0:9
+W:2:3:0:9:2
 B:BITE:HURT:2d3
 B:CLAW:HURT:2d3
 F:BASH_DOOR | TERRITORIAL 
@@ -555,7 +555,7 @@ N:51:Green worm mass
 T:worm
 C:g
 I:100:4d5:7:3:10
-W:2:1:0:2
+W:2:1:0:2:2
 B:CRAWL:ACID:1d3
 F:RAND_50 | RAND_25 | 
 F:STUPID | WEIRD_MIND | MULTIPLY | 
@@ -567,7 +567,7 @@ N:52:Shrieker mushroom patch
 T:mushroom
 C:R
 I:110:1d1:4:3:0
-W:2:1:5:1
+W:2:1:5:1:2
 F:FORCE_SLEEP | NEVER_MOVE | NEVER_BLOW | 
 F:EMPTY_MIND | 
 F:IM_POIS
@@ -579,7 +579,7 @@ N:53:Yellow mushroom patch
 T:mushroom
 C:y
 I:110:1d1:2:3:0
-W:2:1:0:2
+W:2:1:0:2:2
 B:SPORE:TERRIFY:1d6
 F:NEVER_MOVE | EMPTY_MIND | 
 F:IM_POIS
@@ -589,7 +589,7 @@ N:54:Blubbering icky thing
 T:icky thing
 C:W
 I:110:4d7:14:6:10
-W:2:1:0:7
+W:2:1:0:7:2
 B:CRAWL:POISON:1d4
 B:CRAWL:EAT_FOOD
 F:RAND_50 | DROP_60 | 
@@ -601,7 +601,7 @@ N:55:White jelly
 T:jelly
 C:w
 I:120:6d8:2:1:99
-W:2:1:0:8
+W:2:1:0:8:2
 B:TOUCH:POISON:1d2
 F:NEVER_MOVE | 
 F:IM_POIS | HURT_LIGHT | 
@@ -612,7 +612,7 @@ N:56:White harpy
 T:hybrid
 C:w
 I:110:2d5:16:18:10
-W:2:1:0:3
+W:2:1:0:3:2
 B:CLAW:HURT:1d1
 B:CLAW:HURT:1d1
 B:BITE:HURT:1d2
@@ -623,17 +623,17 @@ D:A flying, screeching bird with a woman's face.
 
 N:57:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:58:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:59:Scruffy looking hobbit
 T:humanoid
 C:b
 I:110:2d6:22:11:10
-W:3:2:0:4
+W:3:2:0:4:2
 B:HIT:HURT:1d4
 B:TOUCH:EAT_GOLD
 F:MALE |
@@ -646,7 +646,7 @@ N:60:Novice priest
 T:person
 C:g
 I:110:6d4:26:9:10
-W:3:1:34:5
+W:3:1:34:5:2
 B:HIT:HURT:1d5
 F:MALE | MOVE_BODY | RACIAL | 
 F:FORCE_SLEEP | 
@@ -660,7 +660,7 @@ N:61:Metallic blue centipede
 T:centipede
 C:b
 I:120:3d5:6:11:15
-W:3:1:0:5
+W:3:1:0:5:2
 B:CRAWL:HURT:1d4
 F:RAND_50 | BASH_DOOR 
 D:It is about four feet long and carnivorous.
@@ -669,7 +669,7 @@ N:62:Large grey snake
 T:snake
 C:s
 I:100:4d9:6:15:50
-W:3:1:0:6
+W:3:1:0:6:2
 B:BITE:HURT:1d5
 B:CRUSH:HURT:1d8
 F:RAND_25 | 
@@ -680,7 +680,7 @@ N:63:Giant white louse
 T:louse
 C:w
 I:120:1d1:6:3:10
-W:3:1:0:1
+W:3:1:0:1:2
 B:BITE:HURT:1d1
 F:RAND_25
 D:It is six inches long.
@@ -689,7 +689,7 @@ N:64:Yellow worm mass
 T:worm
 C:y
 I:100:3d8:7:3:10
-W:3:2:0:2
+W:3:2:0:2:2
 B:CRAWL:LOSE_DEX:1d3
 F:RAND_50 | RAND_25 | 
 F:STUPID | WEIRD_MIND | MULTIPLY | 
@@ -700,7 +700,7 @@ N:65:Yellow mold
 T:mold
 C:y
 I:110:5d9:2:4:99
-W:3:1:0:5
+W:3:1:0:5:2
 B:SPORE:HURT:1d4
 F:STUPID | EMPTY_MIND
 D:A strange slimy yellow growth on the ground.
@@ -709,7 +709,7 @@ N:66:Spotted mushroom patch
 T:mushroom
 C:o
 I:110:1d1:2:3:0
-W:3:1:0:2
+W:3:1:0:2:2
 B:SPORE:POISON:2d4
 F:NEVER_MOVE | EMPTY_MIND | 
 F:IM_POIS 
@@ -719,7 +719,7 @@ N:67:Green ooze
 T:jelly
 C:t
 I:120:3d3:8:12:80
-W:3:2:0:3
+W:3:2:0:3:2
 B:CRAWL:ACID:1d3
 F:RAND_50 | RAND_25 | DROP_60 | 
 F:IM_ACID | IM_POIS | 
@@ -730,7 +730,7 @@ N:68:Silver jelly
 T:jelly
 C:W
 I:120:8d8:2:1:99
-W:3:2:0:11
+W:3:2:0:11:2
 B:TOUCH:EAT_LIGHT:1d3
 B:TOUCH:EAT_LIGHT:1d3
 F:NEVER_MOVE | 
@@ -745,7 +745,7 @@ N:69:Yellow jelly
 T:jelly
 C:y
 I:120:8d8:2:1:99
-W:3:1:0:10
+W:3:1:0:10:2
 B:TOUCH:POISON:1d3
 F:NEVER_MOVE | 
 F:IM_POIS | HURT_LIGHT | 
@@ -758,7 +758,7 @@ N:70:Radiation eye
 T:eye
 C:R
 I:110:2d7:2:5:10
-W:3:1:0:6
+W:3:1:0:6:2
 B:GAZE:LOSE_STR:1d6
 F:NEVER_MOVE | 
 F:HURT_LIGHT | NO_FEAR
@@ -770,7 +770,7 @@ N:71:Black naga
 T:naga
 C:D
 I:110:4d9:16:15:120
-W:3:1:0:15
+W:3:1:0:15:2
 B:CRUSH:HURT:1d8
 F:RAND_25 | DROP_60 
 D:A large black serpent's body with a female torso.
@@ -779,7 +779,7 @@ N:72:Poltergeist
 T:ghost
 C:W
 I:130:2d4:8:13:10
-W:3:1:70:8
+W:3:1:70:8:2
 B:TOUCH:TERRIFY
 F:RAND_50 | RAND_25 | 
 F:DROP_90 | 
@@ -792,17 +792,17 @@ D:It is a ghastly, ghostly form.
 
 N:73:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:74:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:75:Novice paladin
 T:person
 C:w
 I:110:4d9:20:12:5
-W:4:1:20:7
+W:4:1:20:7:2
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 F:MALE | MOVE_BODY | RACIAL | 
@@ -816,7 +816,7 @@ N:76:Novice ranger
 T:person
 C:W
 I:110:4d9:20:10:5
-W:4:1:20:7
+W:4:1:20:7:2
 B:HIT:HURT:1d5
 B:HIT:HURT:1d5
 F:MALE | MOVE_BODY | RACIAL | 
@@ -830,7 +830,7 @@ N:77:Metallic red centipede
 T:centipede
 C:r
 I:120:3d8:8:13:20
-W:4:1:0:9
+W:4:1:0:9:2
 B:CRAWL:HURT:1d6
 F:RAND_25 | BASH_DOOR
 D:It is about four feet long and carnivorous.
@@ -839,7 +839,7 @@ N:78:Giant Anaconda
 T:snake
 C:u
 I:110:6d6:6:15:99
-W:4:2:0:13
+W:4:2:0:13:2
 B:BITE:HURT:1d3
 B:CRUSH:HURT:2d4
 B:CRUSH:HURT:2d4
@@ -853,7 +853,7 @@ N:79:Giant white rat
 T:rodent
 C:W
 I:110:2d2:8:6:30
-W:4:1:0:1
+W:4:1:0:1:2
 B:BITE:POISON:1d3
 F:RAND_25 | 
 F:MULTIPLY
@@ -863,7 +863,7 @@ N:80:Clear worm mass
 T:worm
 C:w
 I:100:3d4:7:3:10
-W:4:2:0:3
+W:4:2:0:3:2
 B:CRAWL:POISON:1d2
 F:ATTR_CLEAR | 
 F:RAND_50 | RAND_25 | 
@@ -875,7 +875,7 @@ N:81:Blue jelly
 T:jelly
 C:b
 I:110:9d8:2:1:99
-W:4:1:0:12
+W:4:1:0:12:2
 B:TOUCH:COLD:1d6
 F:NEVER_MOVE | COLD_BLOOD | 
 F:IM_COLD | HURT_LIGHT | 
@@ -886,7 +886,7 @@ N:82:Creeping copper coins
 T:creeping coins
 C:u
 I:100:5d8:3:20:10
-W:4:2:0:8
+W:4:2:0:8:2
 B:HIT:HURT:1d4
 B:TOUCH:POISON:2d4
 F:DROP_1D2
@@ -894,17 +894,17 @@ D:An animated pile of copper coins.
 
 N:83:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:84:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:85:Large kobold
 T:kobold
 C:b
 I:110:10d9:20:16:30
-W:5:1:0:20
+W:5:1:0:20:2
 B:HIT:HURT:1d10
 F:DROP_60 | MOVE_BODY 
 D:A man-sized figure with the all too recognizable face of a kobold.
@@ -913,7 +913,7 @@ N:86:Copperhead snake
 T:snake
 C:o
 I:110:3d6:6:12:12
-W:5:1:0:15
+W:5:1:0:15:2
 B:BITE:POISON:2d7
 F:RAND_50 | 
 F:TERRITORIAL | IM_POIS
@@ -923,7 +923,7 @@ N:87:Grey icky thing
 T:icky thing
 C:s
 I:110:3d8:14:10:15
-W:5:1:0:10
+W:5:1:0:10:2
 B:TOUCH:HURT:1d5
 F:RAND_50 | 
 F:EMPTY_MIND
@@ -933,7 +933,7 @@ N:88:Blue ooze
 T:jelly
 C:Z
 I:110:2d5:8:11:80
-W:5:1:0:7
+W:5:1:0:7:2
 B:CRAWL:COLD:1d4
 F:RAND_50 | RAND_25 | DROP_60 | 
 F:IM_COLD | 
@@ -944,7 +944,7 @@ N:89:Green jelly
 T:jelly
 C:g
 I:120:17d8:2:1:99
-W:5:1:0:18
+W:5:1:0:18:2
 B:TOUCH:ACID:1d2
 F:NEVER_MOVE | 
 F:IM_ACID | HURT_LIGHT | 
@@ -955,7 +955,7 @@ N:90:Black harpy
 T:hybrid
 C:D
 I:120:2d9:16:11:10
-W:5:1:0:14
+W:5:1:0:14:2
 B:CLAW:HURT:1d2
 B:CLAW:HURT:1d2
 B:BITE:HURT:1d3
@@ -968,7 +968,7 @@ N:91:Bloodshot eye
 T:eye
 C:r
 I:110:3d9:2:6:10
-W:5:3:0:12
+W:5:3:0:12:2
 B:GAZE:BLIND:2d6
 F:NEVER_MOVE | 
 F:HURT_LIGHT | NO_FEAR
@@ -980,7 +980,7 @@ N:92:Green naga
 T:naga
 C:g
 I:110:6d9:18:17:120
-W:5:1:0:25
+W:5:1:0:25:2
 B:CRUSH:HURT:1d8
 B:SPIT:ACID:2d6
 F:RAND_25 | TAKE_ITEM | DROP_60 | 
@@ -992,7 +992,7 @@ N:93:Skeleton kobold
 T:skeleton
 C:w
 I:110:4d9:20:16:40
-W:5:1:0:12
+W:5:1:0:12:2
 B:HIT:HURT:1d5
 F:EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
 F:MOVE_BODY 
@@ -1002,7 +1002,7 @@ N:94:Green glutton ghost
 T:ghost
 C:g
 I:130:2d5:10:12:10
-W:5:1:0:13
+W:5:1:0:13:2
 B:TOUCH:EAT_FOOD:1d1
 F:RAND_50 | RAND_25 | 
 F:DROP_90 | 
@@ -1012,17 +1012,17 @@ D:A very ugly green ghost with a voracious appetite.
 
 N:95:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:96:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:97:Novice warrior
 T:person
 C:u
 I:110:7d4:20:13:15
-W:6:3:0:5
+W:6:3:0:5:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:MALE | MOVE_BODY | RACIAL | 
@@ -1033,7 +1033,7 @@ N:98:Novice rogue
 T:person
 C:b
 I:110:6d4:20:11:5
-W:6:3:0:5
+W:6:3:0:5:2
 B:HIT:HURT:1d6
 B:TOUCH:EAT_GOLD
 F:MALE | MOVE_BODY | RACIAL | 
@@ -1045,7 +1045,7 @@ N:99:Novice mage
 T:person
 C:r
 I:110:5d4:20:7:10
-W:6:3:40:5
+W:6:3:40:5:2
 B:HIT:HURT:1d3
 F:MALE | MOVE_BODY | RACIAL | 
 F:FORCE_SLEEP | 
@@ -1059,7 +1059,7 @@ N:100:Kobold dart-thrower
 T:kobold
 C:g
 I:110:6d9:24:16:20
-W:6:3:0:12
+W:6:3:0:12:2
 B:HIT:HURT:1d8
 F:DROP_60 | MOVE_BODY | FRIEND 
 S:1_IN_6 | POW_3 | 
@@ -1071,7 +1071,7 @@ N:101:Giant brown bat
 T:bat
 C:u
 I:130:2d9:18:12:30
-W:6:1:0:10
+W:6:1:0:10:2
 B:BITE:HURT:1d3
 F:RAND_25
 D:It screeches as it attacks.
@@ -1080,7 +1080,7 @@ N:102:Night lizard
 T:reptile
 C:b
 I:110:4d8:14:16:50
-W:6:2:0:18
+W:6:2:0:18:2
 B:BITE:HURT:1d6
 B:BITE:HURT:1d6
 F:TERRITORIAL 
@@ -1090,7 +1090,7 @@ N:103:Rattlesnake
 T:snake
 C:r
 I:110:4d8:6:12:4
-W:6:1:0:20
+W:6:1:0:20:2
 B:BITE:POISON:2d9
 F:RAND_50 | 
 F:TERRITORIAL | IM_POIS
@@ -1101,7 +1101,7 @@ N:104:Blue worm mass
 T:worm
 C:b
 I:100:4d7:7:4:10
-W:6:1:0:2
+W:6:1:0:2:2
 B:CRAWL:COLD:1d4
 F:RAND_50 | RAND_25 | 
 F:STUPID | WEIRD_MIND | COLD_BLOOD | MULTIPLY | 
@@ -1112,7 +1112,7 @@ N:105:Brown mold
 T:mold
 C:u
 I:110:5d19:2:12:99
-W:6:1:0:20
+W:6:1:0:20:2
 B:SPORE:CONFUSE:1d4
 F:STUPID | EMPTY_MIND
 D:A strange brown growth on the ground.
@@ -1121,7 +1121,7 @@ N:106:Purple mushroom patch
 T:mushroom
 C:P
 I:110:1d1:2:1:0
-W:6:2:0:18
+W:6:2:0:18:2
 B:SPORE:LOSE_CON:1d2
 B:SPORE:LOSE_CON:1d2
 B:SPORE:LOSE_CON:1d2
@@ -1132,7 +1132,7 @@ N:107:Snaga
 T:orc
 C:U
 I:110:9d5:20:16:30
-W:6:2:0:12
+W:6:2:0:12:2
 B:HIT:HURT:1d7
 F:FRIENDS | DROP_60 | 
 F:HURT_LIGHT
@@ -1143,7 +1143,7 @@ N:108:Creeping silver coins
 T:creeping coins
 C:s
 I:100:8d8:4:18:10
-W:6:2:0:8
+W:6:2:0:8:2
 B:HIT:HURT:1d6
 B:TOUCH:POISON:2d6
 F:DROP_60 | DROP_1D2
@@ -1151,17 +1151,17 @@ D:It is a pile of coins, crawling forward on thousands of tiny legs.
 
 N:109:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:110:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:111:Elven thrall
 T:humanoid
 C:D
 I:110:7d6:20:10:20
-W:7:2:25:20
+W:7:2:25:20:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:MALE |
@@ -1178,7 +1178,7 @@ N:112:Novice priest
 T:person
 C:g
 I:110:5d4:20:9:5
-W:7:3:34:5
+W:7:3:34:5:2
 B:HIT:HURT:1d5
 F:MALE | MOVE_BODY | RACIAL | 
 F:FORCE_SLEEP | 
@@ -1192,7 +1192,7 @@ N:113:Giant pink ant
 T:ant
 C:I
 I:110:3d7:12:13:40
-W:7:2:0:22
+W:7:2:0:22:2
 B:BITE:HURT:1d4
 B:STING:LOSE_STR:1d4
 F:TERRITORIAL 
@@ -1202,7 +1202,7 @@ N:114:Crow of Udun
 T:bird
 C:m
 I:120:3d7:25:16:30
-W:7:3:6:20
+W:7:3:6:20:2
 B:BITE:HURT:1d3
 B:CLAW:HURT:1d2
 F:FRIENDS
@@ -1215,7 +1215,7 @@ N:115:Giant pink frog
 T:reptile
 C:I
 I:110:3d9:12:16:50
-W:7:1:0:16
+W:7:1:0:16:2
 B:BITE:LOSE_STR:2d4
 F:RAND_50 | BASH_DOOR 
 D:It looks poisonous.
@@ -1224,7 +1224,7 @@ N:116:Wood spider
 T:spider
 C:U
 I:120:2d7:8:10:60
-W:7:2:0:15
+W:7:2:0:15:2
 B:BITE:HURT:1d4
 B:STING:POISON:1d4
 F:FRIENDS | 
@@ -1236,7 +1236,7 @@ N:117:Green icky thing
 T:icky thing
 C:g
 I:110:3d9:14:8:20
-W:7:2:0:16
+W:7:2:0:16:2
 B:TOUCH:ACID:2d5
 F:RAND_50 | 
 F:EMPTY_MIND | 
@@ -1247,7 +1247,7 @@ N:118:Pink jelly
 T:jelly
 C:I
 I:110:20d8:2:4:99
-W:7:1:0:26
+W:7:1:0:26:2
 B:TOUCH:LOSE_STR:1d5
 F:NEVER_MOVE | 
 F:HURT_LIGHT | 
@@ -1258,7 +1258,7 @@ N:119:Disenchanter eye
 T:eye
 C:v
 I:100:4d9:2:8:10
-W:7:2:0:20
+W:7:2:0:20:2
 B:GAZE:UN_BONUS
 F:ATTR_MULTI | 
 F:NEVER_MOVE | 
@@ -1271,7 +1271,7 @@ N:120:Pink naga
 T:naga
 C:I
 I:110:8d8:20:28:120
-W:7:1:0:34
+W:7:1:0:34:2
 B:CRUSH:HURT:1d10
 B:BITE:LOSE_STR:1d4
 F:RAND_25 | DROP_60 | 
@@ -1282,7 +1282,7 @@ N:121:Cave orc
 T:orc
 C:G
 I:110:9d7:20:18:30
-W:7:2:0:15
+W:7:2:0:15:2
 B:HIT:HURT:1d8
 F:FRIENDS | DROP_60 | 
 F:HURT_LIGHT
@@ -1292,7 +1292,7 @@ N:122:Skeleton orc
 T:skeleton
 C:w
 I:110:6d9:20:18:40
-W:7:1:0:22
+W:7:1:0:22:2
 B:HIT:HURT:2d5
 F:EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
 F:ORC | MOVE_BODY
@@ -1302,7 +1302,7 @@ N:123:Lost soul
 T:ghost
 C:B
 I:110:2d6:12:8:10
-W:7:2:70:18
+W:7:2:70:18:2
 B:HIT:HURT:2d2
 B:TOUCH:LOSE_WIS
 F:RAND_50 | DROP_90 | 
@@ -1317,7 +1317,7 @@ N:124:Manes
 T:minor demon
 C:u
 I:110:6d8:20:16:30
-W:7:2:0:13
+W:7:2:0:13:2
 B:HIT:HURT:1d7
 F:FRIENDS | 
 F:OPEN_DOOR | BASH_DOOR | 
@@ -1326,17 +1326,17 @@ D:A minor but aggressive demon.
 
 N:125:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:126:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:127:Novice paladin
 T:person
 C:w
 I:110:4d9:20:15:5
-W:8:2:20:7
+W:8:2:20:7:2
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 F:MALE | MOVE_BODY | RACIAL | 
@@ -1351,7 +1351,7 @@ N:128:Novice ranger
 T:person
 C:W
 I:110:4d9:20:10:5
-W:8:2:20:7
+W:8:2:20:7:2
 B:HIT:HURT:1d5
 B:HIT:HURT:1d5
 F:MALE | MOVE_BODY | RACIAL | 
@@ -1364,7 +1364,7 @@ N:129:Brown yeek
 T:yeek
 C:u
 I:110:3d7:18:12:10
-W:8:1:0:9
+W:8:1:0:9:2
 B:HIT:HURT:1d6
 F:DROP_60
 D:A strange small humanoid.
@@ -1373,7 +1373,7 @@ N:130:Giant salamander
 T:reptile
 C:y
 I:110:6d8:6:15:3
-W:8:1:0:40
+W:8:1:0:40:2
 B:BITE:FIRE:3d6
 F:FORCE_SLEEP | 
 F:RAND_25 | IM_FIRE
@@ -1385,7 +1385,7 @@ N:131:Red worm mass
 T:worm
 C:r
 I:100:4d7:7:8:10
-W:8:1:0:4
+W:8:1:0:4:2
 B:CRAWL:FIRE:1d6
 F:RAND_50 | RAND_25 | 
 F:STUPID | EMPTY_MIND | MULTIPLY | BASH_DOOR | 
@@ -1396,7 +1396,7 @@ N:132:Green mold
 T:mold
 C:g
 I:110:10d19:2:14:75
-W:8:2:0:26
+W:8:2:0:26:2
 B:SPORE:TERRIFY:1d4
 F:STUPID | EMPTY_MIND | 
 F:IM_ACID 
@@ -1406,7 +1406,7 @@ N:133:Hill orc
 T:orc
 C:u
 I:110:9d8:20:16:30
-W:8:2:0:20
+W:8:2:0:20:2
 B:HIT:HURT:1d10
 F:FRIENDS | DROP_60
 D:A hardy well-weathered survivor.
@@ -1415,7 +1415,7 @@ N:134:Lemure
 T:minor demon
 C:U
 I:110:9d9:20:16:30
-W:8:2:0:14
+W:8:2:0:14:2
 B:HIT:HURT:1d8
 F:FRIENDS | 
 F:OPEN_DOOR | BASH_DOOR | 
@@ -1424,13 +1424,13 @@ D:The larval form of a major demon.
 
 N:135:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:136:Novice shapeshifter
 T:person
 C:Y
 I:110:6d5:20:7:10
-W:9:2:40:6
+W:9:2:40:6:2
 B:HIT:HURT:1d3
 F:ATTR_CLEAR | 
 F:MALE | MOVE_BODY | RACIAL | 
@@ -1445,7 +1445,7 @@ N:137:Hobgoblin
 T:humanoid
 C:U
 I:110:7d7:20:15:20
-W:9:3:0:13
+W:9:3:0:13:2
 B:HIT:HURT:2d4
 F:DROP_60 | FRIENDS |
 F:BASH_DOOR
@@ -1456,7 +1456,7 @@ N:138:Trickster
 T:person
 C:r
 I:110:5d9:20:9:10
-W:9:2:50:25
+W:9:2:50:25:2
 B:HIT:HURT:2d2
 F:MALE | MOVE_BODY | 
 F:FORCE_SLEEP | DROP_90 | 
@@ -1471,7 +1471,7 @@ N:139:Novice archer
 T:person
 C:W
 I:110:5d10:20:8:18
-W:9:2:0:20
+W:9:2:0:20:2
 B:HIT:HURT:1d5
 B:HIT:HURT:1d5
 F:MALE | MOVE_BODY | RACIAL | 
@@ -1486,7 +1486,7 @@ N:140:King cobra
 T:snake
 C:g
 I:110:5d10:8:15:4
-W:9:1:0:28
+W:9:1:0:28:2
 B:SPIT:BLIND:1d2
 B:BITE:POISON:3d4
 F:RAND_50 | 
@@ -1499,7 +1499,7 @@ N:141:Giant grey rat
 T:rodent
 C:s
 I:110:2d2:8:6:20
-W:9:1:0:2
+W:9:1:0:2:2
 B:BITE:POISON:1d4
 F:RAND_25 | 
 F:MULTIPLY | IM_POIS
@@ -1509,7 +1509,7 @@ N:142:Bloodshot icky thing
 T:icky thing
 C:r
 I:110:5d8:14:10:20
-W:9:3:0:21
+W:9:3:0:21:2
 B:TOUCH:HURT:1d4
 B:CRAWL:ACID:2d4
 F:RAND_50 | 
@@ -1523,7 +1523,7 @@ N:143:Yeti
 T:yeti
 C:w
 I:110:10d12:20:24:10
-W:9:3:0:26
+W:9:3:0:26:2
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
 B:BITE:HURT:1d4
@@ -1533,7 +1533,7 @@ N:144:Orc shaman
 T:orc
 C:r
 I:110:7d8:20:10:20
-W:9:1:43:30
+W:9:1:43:30:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:FORCE_SLEEP | DROP_60 | 
@@ -1546,7 +1546,7 @@ N:145:Zombified kobold
 T:zombie
 C:s
 I:110:6d10:20:14:30
-W:9:2:0:14
+W:9:2:0:14:2
 B:HIT:POISON:1d6
 B:HIT:HURT:2d6
 F:EMPTY_MIND | MOVE_BODY
@@ -1556,33 +1556,33 @@ D:shambles forward.
 
 N:146:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:147:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:148:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:149:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:150:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:151:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:152:Petty-Dwarven Rogue
 T:humanoid
 C:Z
 I:120:6d9:20:20:2
-W:10:2:38:23
+W:10:2:38:23:2
 B:HIT:EAT_GOLD:1d3
 F:ONLY_GOLD | DROP_60 | DROP_1D2 |
 F:EVIL | MALE | TAKE_ITEM
@@ -1595,7 +1595,7 @@ N:153:Elven thrall mage
 T:humanoid
 C:r
 I:120:7d9:20:10:20
-W:10:1:50:38
+W:10:1:50:38:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:MALE | 
@@ -1611,7 +1611,7 @@ N:154:Elven thrall warrior
 T:humanoid
 C:u
 I:110:7d14:20:14:20
-W:10:1:0:33
+W:10:1:0:33:2
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 F:MALE | SMART | 
@@ -1624,7 +1624,7 @@ N:155:Panther
 T:feline
 C:u
 I:120:7d8:25:15:2
-W:10:2:0:25
+W:10:2:0:25:2
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
 F:BASH_DOOR | TERRITORIAL 
@@ -1635,7 +1635,7 @@ N:156:Giant spider
 T:spider
 C:v
 I:110:7d12:8:10:80
-W:10:1:0:29
+W:10:1:0:29:2
 B:BITE:HURT:1d10
 B:BITE:POISON:1d6
 B:BITE:POISON:1d6
@@ -1648,7 +1648,7 @@ N:157:Giant white tick
 T:spider
 C:w
 I:100:10d11:12:15:20
-W:10:1:0:25
+W:10:1:0:25:2
 B:BITE:POISON:2d6
 F:WEIRD_MIND | FRIEND | 
 F:ANIMAL | IM_POIS
@@ -1658,7 +1658,7 @@ N:158:Wolf
 T:canine
 C:u
 I:120:4d7:30:15:20
-W:10:2:0:20
+W:10:2:0:20:2
 B:BITE:HURT:1d6
 F:RAND_25 | FRIENDS | BASH_DOOR | TERRITORIAL 
 D:It howls and snaps at you.
@@ -1667,7 +1667,7 @@ N:159:Giant fruit fly
 T:insect
 C:G
 I:120:1d4:8:7:10
-W:10:6:0:3
+W:10:6:0:3:2
 B:BITE:HURT:1d2
 F:RAND_50 | RAND_25 
 D:A fast-breeding, annoying pest.
@@ -1676,7 +1676,7 @@ N:160:Hairy mold
 T:mold
 C:o
 I:110:10d11:2:6:70
-W:10:2:0:32
+W:10:2:0:32:2
 B:SPORE:POISON:1d3
 F:STUPID | EMPTY_MIND
 D:A strange hairy growth on the ground.
@@ -1685,7 +1685,7 @@ N:161:Disenchanter mold
 T:mold
 C:v
 I:110:10d11:2:6:50
-W:10:2:0:40
+W:10:2:0:40:2
 B:TOUCH:UN_BONUS:1d6
 F:STUPID | EMPTY_MIND
 S:1_IN_11 | POW_0 | 
@@ -1696,7 +1696,7 @@ N:162:Clear mushroom patch
 T:mushroom
 C:w
 I:120:1d1:4:1:0
-W:10:2:0:3
+W:10:2:0:3:2
 B:SPORE:HURT:1d1
 F:ATTR_CLEAR | 
 F:NEVER_MOVE | INVISIBLE | COLD_BLOOD | MULTIPLY | 
@@ -1707,7 +1707,7 @@ N:163:Skeleton human
 T:skeleton
 C:w
 I:110:7d12:20:15:30
-W:10:1:0:25
+W:10:1:0:25:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 F:EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
@@ -1718,7 +1718,7 @@ N:164:Pseudo dragon
 T:dragon
 C:o
 I:110:13d10:20:15:40
-W:10:3:35:60
+W:10:3:35:60:2
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
 B:BITE:HURT:1d5
@@ -1733,7 +1733,7 @@ N:165:Tengu
 T:minor demon
 C:R
 I:120:11d9:20:16:30
-W:10:1:43:33
+W:10:1:43:33:2
 B:HIT:HURT:1d8
 F:OPEN_DOOR | BASH_DOOR | FLYING | 
 F:NO_FEAR | 
@@ -1747,7 +1747,7 @@ N:166:Creeping gold coins
 T:creeping coins
 C:y
 I:100:12d8:5:18:10
-W:10:3:0:24
+W:10:3:0:24:2
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
 F:DROP_90 | DROP_1D2 
@@ -1755,17 +1755,17 @@ D:It is a pile of coins, crawling forward on thousands of tiny legs.
 
 N:167:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:168:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:169:Petty-Dwarven mage
 T:humanoid
 C:r
 I:110:6d9:18:10:10
-W:11:2:50:38
+W:11:2:50:38:2
 B:HIT:HURT:1d5
 F:MALE | SMART |
 F:FORCE_SLEEP | DROP_90 | 
@@ -1781,7 +1781,7 @@ N:170:Beastmaster
 T:person
 C:y
 I:110:8d9:18:7:30
-W:11:2:17:50
+W:11:2:17:50:2
 B:HIT:HURT:1d5
 F:MALE | MOVE_BODY | 
 F:FORCE_SLEEP | DROP_90 | 
@@ -1794,13 +1794,13 @@ D:animals.
 
 N:171:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:172:Hippogriff
 T:hybrid
 C:U
 I:110:10d14:12:7:10
-W:11:1:0:30
+W:11:1:0:30:2
 B:CLAW:HURT:2d5
 B:BITE:HURT:2d5
 F:BASH_DOOR | FLYING | 
@@ -1811,7 +1811,7 @@ N:173:Flesh golem
 T:golem
 C:R
 I:110:8d9:12:15:10
-W:11:1:0:24
+W:11:1:0:24:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 D:A shambling humanoid monster with long scars.
@@ -1820,7 +1820,7 @@ N:174:Moaning spirit
 T:ghost
 C:u
 I:120:3d9:15:10:10
-W:11:2:70:35
+W:11:2:70:35:2
 B:WAIL:TERRIFY
 B:TOUCH:LOSE_DEX:1d8
 F:FORCE_SLEEP | RAND_25 | 
@@ -1833,21 +1833,21 @@ D:A ghostly apparition that shrieks horribly.
 
 N:175:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:176:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:177:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:178:Swordsman
 T:person
 C:U
 I:110:10d12:20:20:20
-W:12:1:0:36
+W:12:1:0:36:2
 B:HIT:HURT:2d9
 B:HIT:HURT:2d9
 F:MALE | SMART | MOVE_BODY | RACIAL | 
@@ -1858,7 +1858,7 @@ N:179:Master yeek
 T:yeek
 C:U
 I:110:8d8:18:15:10
-W:12:2:63:33
+W:12:2:63:33:2
 B:HIT:HURT:1d8
 F:FORCE_SLEEP | MOVE_BODY | 
 F:DROP_60 | 
@@ -1873,7 +1873,7 @@ N:180:Stegocentipede
 T:centipede
 C:u
 I:120:10d9:12:28:30
-W:12:2:0:30
+W:12:2:0:30:2
 B:BITE:HURT:2d4
 B:BITE:HURT:2d4
 B:STING:HURT:2d4
@@ -1884,7 +1884,7 @@ N:181:Killer brown beetle
 T:killer beetle
 C:u
 I:110:9d8:10:25:30
-W:12:1:0:30
+W:12:1:0:30:2
 B:BITE:HURT:3d4
 F:WEIRD_MIND
 D:A vicious insect with a tough carapace.
@@ -1893,7 +1893,7 @@ N:182:White wolf
 T:canine
 C:w
 I:120:5d7:30:14:20
-W:12:2:0:26
+W:12:2:0:26:2
 B:BITE:HURT:1d3
 B:BITE:HURT:1d4
 F:RAND_25 | 
@@ -1907,7 +1907,7 @@ N:183:Grape jelly
 T:jelly
 C:P
 I:110:8d37:2:1:99
-W:12:3:0:60
+W:12:3:0:60:2
 B:TOUCH:EXP_10
 F:NEVER_MOVE | 
 F:IM_POIS | HURT_LIGHT | 
@@ -1920,7 +1920,7 @@ N:184:Spotted jelly
 T:jelly
 C:o
 I:120:7d9:12:5:1
-W:12:3:0:30
+W:12:3:0:30:2
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:2d6
 B:TOUCH:ACID:2d6
@@ -1934,7 +1934,7 @@ N:185:Air spirit
 T:elemental
 C:B
 I:130:4d11:12:20:20
-W:12:1:0:30
+W:12:1:0:30:2
 B:HIT:HURT:1d3
 F:RAND_50 | RAND_25 | FLYING | 
 F:INVISIBLE | COLD_BLOOD | BASH_DOOR 
@@ -1942,17 +1942,17 @@ D:A whirlwind of sentient air.
 
 N:186:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:187:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:188:Giant marksman ant
 T:ant
 C:D
 I:110:5d8:16:13:25
-W:13:2:0:30
+W:13:2:0:30:2
 B:SPIT:ACID:2d8
 F:RAND_25 | 
 F:FRIEND | TERRITORIAL 
@@ -1964,7 +1964,7 @@ N:189:Black mamba
 T:snake
 C:D
 I:120:7d10:10:14:4
-W:13:1:0:40
+W:13:1:0:40:2
 B:BITE:POISON:4d9
 F:RAND_50 | 
 F:IM_POIS
@@ -1976,7 +1976,7 @@ N:190:Giant tarantula
 T:spider
 C:o
 I:120:8d15:8:16:80
-W:13:1:0:40
+W:13:1:0:40:2
 B:BITE:POISON:1d6
 B:BITE:POISON:1d6
 B:BITE:POISON:1d6
@@ -1988,7 +1988,7 @@ N:191:Ochre jelly
 T:jelly
 C:U
 I:120:4d9:12:18:1
-W:13:3:0:40
+W:13:3:0:40:2
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:2d6
 B:TOUCH:ACID:2d6
@@ -2003,7 +2003,7 @@ N:192:Black orc
 T:orc
 C:D
 I:110:9d10:20:36:20
-W:13:2:0:37
+W:13:2:0:37:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 F:FRIENDS | DROP_60 | 
@@ -2012,21 +2012,21 @@ D:A large orc with powerful arms and deep black skin.
 
 N:193:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:194:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:195:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:196:Warg
 T:canine
 C:s
 I:120:6d8:20:12:40
-W:14:2:0:38
+W:14:2:0:38:2
 B:BITE:HURT:1d8
 F:RAND_25 | 
 F:FRIENDS | 
@@ -2038,7 +2038,7 @@ N:197:Giant white dragon fly
 T:dragon fly
 C:w
 I:120:2d7:20:15:50
-W:14:1:0:60
+W:14:1:0:60:2
 B:BITE:COLD:1d3
 F:IM_COLD
 S:1_IN_10 | POW_0 | 
@@ -2049,7 +2049,7 @@ N:198:Giant black louse
 T:louse
 C:D
 I:120:1d2:6:3:10
-W:14:1:0:3
+W:14:1:0:3:2
 B:BITE:HURT:1d2
 D:It makes you itch just to look at it.
 
@@ -2057,7 +2057,7 @@ N:199:Blue icky thing
 T:icky thing
 C:b
 I:100:7d6:15:14:20
-W:14:4:30:20
+W:14:4:30:20:2
 B:CRAWL:POISON:1d4
 B:CRAWL:EAT_FOOD
 B:HIT:HURT:1d4
@@ -2075,7 +2075,7 @@ N:200:Water spirit
 T:elemental
 C:b
 I:120:8d9:12:15:40
-W:14:1:0:30
+W:14:1:0:30:2
 B:HIT:HURT:2d4
 B:HIT:HURT:2d4
 F:RAND_25 | 
@@ -2086,7 +2086,7 @@ N:201:Ogre
 T:ogre
 C:U
 I:110:10d11:20:16:30
-W:14:2:0:34
+W:14:2:0:34:2
 B:HIT:HURT:2d8
 F:FRIENDS | DROP_60 
 D:A hideous, smallish giant that is often found near or with orcs.
@@ -2095,7 +2095,7 @@ N:202:Hill giant
 T:giant
 C:U
 I:110:10d13:20:22:50
-W:14:1:0:40
+W:14:1:0:40:2
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 F:DROP_60 | SMART | EVIL
@@ -2105,7 +2105,7 @@ N:203:Skeleton troll
 T:skeleton
 C:w
 I:110:10d10:20:25:20
-W:14:1:0:40
+W:14:1:0:40:2
 B:HIT:HURT:2d6
 B:HIT:HURT:2d6
 B:BITE:HURT:1d4
@@ -2117,7 +2117,7 @@ N:204:Lurker
 T:lurker
 C:w
 I:110:10d15:30:14:10
-W:14:3:0:80
+W:14:3:0:80:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 D:A strange creature that merges with the dungeon floor, trapping its 
@@ -2125,17 +2125,17 @@ D:victims by enveloping them within its perfectly disguised form.
 
 N:205:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:206:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:207:Priest
 T:person
 C:g
 I:110:10d11:20:15:40
-W:15:1:66:44
+W:15:1:66:44:2
 B:HIT:HURT:2d3
 B:HIT:HURT:2d3
 F:MALE | MOVE_BODY | 
@@ -2153,7 +2153,7 @@ N:208:Druid
 T:person
 C:y
 I:110:10d10:20:10:10
-W:15:1:66:50
+W:15:1:66:50:2
 B:PUNCH:HURT:2d4
 B:KICK:HURT:2d4
 F:MALE | MOVE_BODY | RACIAL | 
@@ -2170,7 +2170,7 @@ N:209:Tiger
 T:feline
 C:o
 I:120:10d11:25:10:2
-W:15:2:0:40
+W:15:2:0:40:2
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
 B:BITE:HURT:1d9
@@ -2182,7 +2182,7 @@ N:210:Giant clear centipede
 T:centipede
 C:w
 I:110:5d8:12:30:30
-W:15:2:0:20
+W:15:2:0:20:2
 B:BITE:HURT:2d4
 B:STING:HURT:2d4
 F:ATTR_CLEAR | 
@@ -2193,7 +2193,7 @@ N:211:Drider
 T:spider
 C:b
 I:110:10d8:20:15:80
-W:15:2:30:50
+W:15:2:30:50:2
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
 B:BITE:POISON:1d6
@@ -2207,7 +2207,7 @@ N:212:Giant yellow scorpion
 T:spider
 C:y
 I:110:10d9:12:19:20
-W:15:1:0:30
+W:15:1:0:30:2
 B:BITE:HURT:1d8
 B:STING:POISON:2d5
 F:WEIRD_MIND | 
@@ -2218,7 +2218,7 @@ N:213:Wererat
 T:rodent
 C:D
 I:110:10d14:10:6:10
-W:15:2:45:40
+W:15:2:45:40:2
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
 B:BITE:HURT:2d6
@@ -2235,7 +2235,7 @@ N:214:Magic mushroom patch
 T:mushroom
 C:B
 I:130:1d1:40:10:0
-W:15:3:75:10
+W:15:3:75:10:2
 F:FORCE_SLEEP | NEVER_MOVE | NEVER_BLOW 
 S:1_IN_1 | POW_0 | 
 S:BLINK | SLOW | SCARE | DARKNESS
@@ -2245,7 +2245,7 @@ N:215:Zombified human
 T:zombie
 C:s
 I:110:10d13:20:12:20
-W:15:2:0:34
+W:15:2:0:34:2
 B:HIT:POISON:2d9
 B:HIT:HURT:2d9
 F:EMPTY_MIND | MOVE_BODY
@@ -2255,7 +2255,7 @@ N:216:Ghostly bat
 T:bat
 C:W
 I:120:2d7:14:10:0
-W:15:5:0:15
+W:15:5:0:15:2
 B:BITE:HURT:1d6
 B:BITE:TERRIFY
 F:IM_POIS | PASS_WALL | FRIENDS
@@ -2263,13 +2263,13 @@ D:Ghostly, shimmering apparitions materializing out of solid wall.
 
 N:217:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:218:Petty-Dwarven mage
 T:humanoid
 C:r
 I:110:6d9:20:10:20
-W:16:3:60:30
+W:16:3:60:30:2
 B:HIT:HURT:1d5
 F:MALE |
 F:FORCE_SLEEP | FRIENDS | DROP_60 | 
@@ -2285,7 +2285,7 @@ N:219:Daggerman
 T:person
 C:u
 I:110:10d12:15:20:20
-W:16:2:30:30
+W:16:2:30:30:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 F:MALE | MOVE_BODY | RACIAL | 
@@ -2300,7 +2300,7 @@ N:220:Spider of Nan Dungortheb
 T:spider
 C:g
 I:120:7d9:15:13:80
-W:16:2:0:25
+W:16:2:0:25:2
 B:BITE:HURT:1d8
 B:BITE:POISON:1d4
 B:BITE:POISON:1d4
@@ -2314,7 +2314,7 @@ N:221:Light hound
 T:zephyr hound
 C:o
 I:110:3d9:30:15:0
-W:16:2:0:30
+W:16:2:0:30:2
 B:BITE:HURT:1d6
 F:FORCE_SLEEP | 
 F:BASH_DOOR 
@@ -2326,7 +2326,7 @@ N:222:Dark hound
 T:zephyr hound
 C:D
 I:110:3d9:30:15:0
-W:16:2:0:30
+W:16:2:0:30:2
 B:BITE:HURT:1d6
 F:FORCE_SLEEP | 
 F:BASH_DOOR 
@@ -2339,7 +2339,7 @@ N:223:Clear hound
 T:zephyr hound
 C:w
 I:110:5d9:30:12:0
-W:16:2:0:30
+W:16:2:0:30:2
 B:BITE:HURT:1d6
 B:BITE:HURT:1d6
 B:CLAW:HURT:2d2
@@ -2351,7 +2351,7 @@ N:224:Black ooze
 T:jelly
 C:D
 I:90:6d8:10:6:1
-W:16:2:0:7
+W:16:2:0:7:2
 B:TOUCH:ACID:2d6
 F:RAND_50 | DROP_60 | 
 F:MULTIPLY | 
@@ -2365,7 +2365,7 @@ N:225:Griffon
 T:hybrid
 C:u
 I:110:10d19:12:8:10
-W:16:2:0:50
+W:16:2:0:50:2
 B:CLAW:HURT:3d4
 B:BITE:HURT:2d6
 F:BASH_DOOR | MOVE_BODY | FLYING | FRIEND | 
@@ -2378,7 +2378,7 @@ N:226:Guardian naga
 T:naga
 C:B
 I:110:10d21:20:32:120
-W:16:1:0:40
+W:16:1:0:40:2
 B:CRUSH:HURT:2d8
 B:BITE:HURT:1d8
 B:BITE:HURT:1d8
@@ -2390,7 +2390,7 @@ N:227:Earth spirit
 T:elemental
 C:u
 I:110:10d11:10:25:50
-W:16:2:0:35
+W:16:2:0:35:2
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 F:RAND_25 | 
@@ -2403,7 +2403,7 @@ N:228:Half-orc
 T:orc
 C:s
 I:110:9d13:20:20:20
-W:16:3:0:38
+W:16:3:0:38:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 F:SMART | FRIENDS | DROP_60
@@ -2414,7 +2414,7 @@ N:229:Frost giant
 T:giant
 C:w
 I:110:10d14:20:25:50
-W:16:1:0:55
+W:16:1:0:55:2
 B:HIT:COLD:3d6
 B:HIT:HURT:2d8
 F:DROP_60 |  
@@ -2424,17 +2424,17 @@ D:A twelve foot tall giant covered in furs.
 
 N:230:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:231:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:232:Giant pink scorpion
 T:spider
 C:I
 I:110:10d9:12:44:20
-W:17:1:0:55
+W:17:1:0:55:2
 B:BITE:HURT:2d4
 B:STING:LOSE_STR:1d7
 F:WEIRD_MIND | ANIMAL
@@ -2444,7 +2444,7 @@ N:233:Giant green dragon fly
 T:dragon fly
 C:g
 I:120:2d7:20:16:50
-W:17:1:0:60
+W:17:1:0:60:2
 B:BITE:POISON:1d3
 F:IM_POIS
 S:1_IN_10 | POW_0 | 
@@ -2455,7 +2455,7 @@ N:234:Nether worm mass
 T:worm
 C:D
 I:100:3d9:10:6:8
-W:17:3:0:6
+W:17:3:0:6:2
 B:TOUCH:EXP_10
 F:RAND_50 | RAND_25 | 
 F:STUPID | WEIRD_MIND | MULTIPLY | BASH_DOOR | 
@@ -2467,7 +2467,7 @@ N:235:Gelatinous cube
 T:jelly
 C:G
 I:110:10d28:12:6:1
-W:17:3:0:40
+W:17:3:0:40:2
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
@@ -2485,7 +2485,7 @@ N:236:Clay golem
 T:golem
 C:U
 I:110:10d23:12:25:10
-W:17:2:0:30
+W:17:2:0:30:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 F:COLD_BLOOD |
@@ -2497,7 +2497,7 @@ N:237:Orc captain
 T:orc
 C:o
 I:110:9d21:20:30:20
-W:17:4:0:40
+W:17:4:0:40:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
@@ -2507,17 +2507,17 @@ D:An armoured orc with an air of authority.
 
 N:238:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:239:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:240:Bandit
 T:person
 C:b
 I:120:10d14:20:24:10
-W:18:2:0:26
+W:18:2:0:26:2
 B:HIT:HURT:2d4
 B:HIT:HURT:2d4
 B:TOUCH:EAT_GOLD
@@ -2530,7 +2530,7 @@ N:241:Hummerhorn
 T:insect
 C:y
 I:120:2d2:8:7:10
-W:18:5:0:6
+W:18:5:0:6:2
 B:BITE:CONFUSE:2d2
 F:RAND_50 | RAND_25 | MOVE_BODY 
 D:A giant buzzing wasp with a stinger dripping venom.
@@ -2539,7 +2539,7 @@ N:242:Shambling mound
 T:mushroom
 C:g
 I:110:10d9:20:16:20
-W:18:2:5:30
+W:18:2:5:30:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 F:ONLY_GOLD | DROP_90 | 
@@ -2554,7 +2554,7 @@ N:243:Black ogre
 T:ogre
 C:D
 I:110:10d13:20:17:30
-W:18:2:0:42
+W:18:2:0:42:2
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 F:FRIENDS | DROP_60 
@@ -2564,7 +2564,7 @@ N:244:Fire giant
 T:giant
 C:r
 I:110:10d16:20:30:50
-W:18:2:0:55
+W:18:2:0:55:2
 B:HIT:FIRE:3d7
 B:HIT:HURT:2d9
 F:DROP_60 | SMART |
@@ -2576,7 +2576,7 @@ N:245:Skeleton serpent
 T:skeleton
 C:W
 I:120:10d9:20:25:40
-W:18:3:0:50
+W:18:3:0:50:2
 B:BITE:COLD:4d4
 B:SPIT:EXP_10:1d1
 F:EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
@@ -2588,7 +2588,7 @@ N:246:Giant flea
 T:insect
 C:s
 I:120:1d4:8:6:10
-W:18:1:0:4
+W:18:1:0:4:2
 B:BITE:HURT:1d2
 F:RAND_50 | RAND_25 | BASH_DOOR
 D:It makes you itch just to look at it.
@@ -2597,7 +2597,7 @@ N:247:Skeleton lord
 T:skeleton
 C:W
 I:110:10d10:20:30:20
-W:18:5:5:86
+W:18:5:5:86:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
@@ -2614,7 +2614,7 @@ N:248:Forest wight
 T:wraith
 C:g
 I:110:10d6:20:16:20
-W:18:1:30:80
+W:18:1:30:80:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 B:TOUCH:EXP_20
@@ -2629,7 +2629,7 @@ N:249:Quasit
 T:minor demon
 C:o
 I:110:5d8:20:15:20
-W:18:1:45:45
+W:18:1:45:45:2
 B:BITE:LOSE_DEX:1d6
 B:CLAW:HURT:3d4
 B:CLAW:HURT:3d4
@@ -2647,7 +2647,7 @@ N:250:Creeping mithril coins
 T:creeping coins
 C:B
 I:110:10d15:5:25:10
-W:18:4:0:45
+W:18:4:0:45:2
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
 F:DROP_90 | DROP_2D2 
@@ -2655,17 +2655,17 @@ D:It is a pile of coins, shambling forward on thousands of tiny legs.
 
 N:251:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:252:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:253:Giant grey ant
 T:ant
 C:s
 I:110:10d8:10:15:40
-W:19:2:0:45
+W:19:2:0:45:2
 B:BITE:HURT:2d10
 F:RAND_25 | KILL_BODY | 
 F:TERRITORIAL | FRIEND
@@ -2675,7 +2675,7 @@ N:254:Giant red tick
 T:spider
 C:r
 I:110:10d13:16:27:20
-W:19:1:0:45
+W:19:1:0:45:2
 B:BITE:FIRE:3d6
 F:RAND_25 | 
 F:WEIRD_MIND | 
@@ -2686,7 +2686,7 @@ N:255:Giant black dragon fly
 T:dragon fly
 C:s
 I:120:4d9:12:10:40
-W:19:1:0:60
+W:19:1:0:60:2
 F:NEVER_BLOW | IM_ACID
 S:1_IN_9 | POW_0 | 
 S:BRTH_ACID
@@ -2696,7 +2696,7 @@ N:256:Vorpal Bunny
 T:quadruped
 C:w
 I:130:9d9:4:45:1
-W:19:3:0:80
+W:19:3:0:80:2
 B:BITE:HURT:2d5
 B:BITE:HURT:2d5
 B:BITE:HURT:2d5
@@ -2709,7 +2709,7 @@ N:257:Fire spirit
 T:elemental
 C:r
 I:120:10d7:16:15:20
-W:19:2:0:40
+W:19:2:0:40:2
 B:HIT:FIRE:2d6
 B:HIT:FIRE:2d6
 F:RAND_25 | 
@@ -2721,7 +2721,7 @@ N:258:Forest troll
 T:troll
 C:g
 I:110:10d13:20:25:40
-W:19:2:0:60
+W:19:2:0:60:2
 B:HIT:HURT:1d4
 B:HIT:HURT:1d4
 B:BITE:HURT:1d6
@@ -2734,7 +2734,7 @@ N:259:Zombified troll
 T:zombie
 C:g
 I:110:10d19:16:20:30
-W:19:2:0:78
+W:19:2:0:78:2
 B:HIT:POISON:2d11
 B:HIT:POISON:2d11
 F:EMPTY_MIND | MOVE_BODY | TROLL
@@ -2745,7 +2745,7 @@ N:260:Floating skull
 T:skeleton
 C:B
 I:110:5d5:20:8:5
-W:19:3:60:50
+W:19:3:60:50:2
 F:FORCE_SLEEP | NEVER_MOVE | NEVER_BLOW | 
 F:ONLY_ITEM | DROP_60
 S:1_IN_2 | POW_4 | 
@@ -2756,7 +2756,7 @@ N:261:Apparition of hunger
 T:ghost
 C:G
 I:130:4d7:30:17:0
-W:19:4:40:26
+W:19:4:40:26:2
 B:TOUCH:EAT_FOOD
 B:TOUCH:EAT_FOOD
 F:RAND_25 | RAND_50 | 
@@ -2770,7 +2770,7 @@ N:262:Imp
 T:minor demon
 C:g
 I:110:6d8:20:15:20
-W:19:1:45:55
+W:19:1:45:55:2
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 F:FORCE_SLEEP | 
@@ -2785,17 +2785,17 @@ D:The Lawful evil master's favourite pet.
 
 N:263:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:264:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:265:Blue dragon bat
 T:bat
 C:b
 I:130:2d6:12:13:50
-W:20:1:0:54
+W:20:1:0:54:2
 B:BITE:ELEC:1d3
 F:FORCE_SLEEP | 
 F:RAND_50 | MOVE_BODY |
@@ -2808,7 +2808,7 @@ N:266:Blink dog
 T:canine
 C:B
 I:120:6d6:20:30:10
-W:20:2:30:50
+W:20:2:30:50:2
 B:BITE:HURT:1d8
 F:RAND_25 | 
 F:FRIENDS | 
@@ -2822,7 +2822,7 @@ N:267:Werewolf
 T:canine
 C:D
 I:110:10d31:15:18:20
-W:20:1:0:100
+W:20:1:0:100:2
 B:BITE:HURT:1d6
 B:BITE:HURT:1d6
 B:BITE:HURT:1d10
@@ -2835,7 +2835,7 @@ N:268:Fire hound
 T:zephyr hound
 C:r
 I:110:5d9:30:15:0
-W:20:2:0:50
+W:20:2:0:50:2
 B:BITE:FIRE:1d8
 B:CLAW:FIRE:2d3
 F:FORCE_SLEEP | 
@@ -2850,7 +2850,7 @@ N:269:Cold hound
 T:zephyr hound
 C:w
 I:110:5d9:30:15:0
-W:20:2:0:50
+W:20:2:0:50:2
 B:BITE:COLD:1d8
 B:CLAW:COLD:2d3
 F:FORCE_SLEEP | 
@@ -2865,7 +2865,7 @@ N:270:Energy hound
 T:zephyr hound
 C:b
 I:110:5d9:30:15:0
-W:20:2:0:50
+W:20:2:0:50:2
 B:BITE:ELEC:1d8
 B:CLAW:ELEC:2d3
 F:FORCE_SLEEP | 
@@ -2880,7 +2880,7 @@ N:271:Gazing eye
 T:eye
 C:s
 I:110:4d9:6:6:0
-W:20:1:75:40
+W:20:1:75:40:2
 F:NEVER_MOVE | 
 F:NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_1 | POW_8 | 
@@ -2891,7 +2891,7 @@ N:272:Uruk
 T:orc
 C:B
 I:110:9d15:20:25:20
-W:20:2:0:68
+W:20:2:0:68:2
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 F:SMART | 
@@ -2904,7 +2904,7 @@ N:273:Blue worm
 T:dragon
 C:b
 I:110:17d10:20:30:70
-W:20:2:49:180
+W:20:2:49:180:2
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:ELEC:3d4
@@ -2921,7 +2921,7 @@ N:274:White worm
 T:dragon
 C:w
 I:110:17d10:20:30:70
-W:20:2:49:180
+W:20:2:49:180:2
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:COLD:3d4
@@ -2939,7 +2939,7 @@ N:275:Black worm
 T:dragon
 C:s
 I:110:17d10:20:30:70
-W:20:2:49:180
+W:20:2:49:180:2
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:ACID:3d4
@@ -2956,7 +2956,7 @@ N:276:Homunculus
 T:minor demon
 C:y
 I:110:6d8:20:16:70
-W:20:3:0:40
+W:20:3:0:40:2
 B:HIT:PARALYZE:1d2
 B:HIT:HURT:1d8
 F:OPEN_DOOR | BASH_DOOR | 
@@ -2968,7 +2968,7 @@ T:mimic
 G:!
 C:w
 I:110:7d10:25:15:1
-W:20:3:75:60
+W:20:3:75:60:2
 B:HIT:POISON:3d4
 B:HIT:HURT:2d3
 B:HIT:HURT:2d3
@@ -2982,17 +2982,17 @@ D:unsuspecting adventurers within reach of its venomous claws.
 
 N:278:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:279:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:280:Huntslady
 T:person
 C:y
 I:110:10d15:20:20:20
-W:21:2:35:130
+W:21:2:35:130:2
 B:HIT:HURT:2d6
 B:HIT:HURT:2d6
 F:FEMALE | MOVE_BODY | RACIAL | 
@@ -3007,7 +3007,7 @@ N:281:Berserker
 T:person
 C:M
 I:120:10d16:20:15:10
-W:21:2:35:140
+W:21:2:35:140:2
 B:HIT:HURT:2d9
 B:HIT:HURT:2d9
 F:MALE | MOVE_BODY | RACIAL | 
@@ -3023,7 +3023,7 @@ N:282:Giant gold dragon fly
 T:dragon fly
 C:y
 I:120:2d8:12:10:50
-W:21:2:0:70
+W:21:2:0:70:2
 B:BITE:HURT:1d3
 F:IM_FIRE
 S:1_IN_9 | POW_0 | 
@@ -3035,7 +3035,7 @@ N:283:Stone giant
 T:giant
 C:W
 I:110:10d18:20:35:50
-W:21:1:0:90
+W:21:1:0:90:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 F:DROP_60 |
@@ -3047,7 +3047,7 @@ N:284:Green worm
 T:dragon
 C:g
 I:110:17d10:20:30:70
-W:21:2:49:200
+W:21:2:49:200:2
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:POISON:3d4
@@ -3062,17 +3062,17 @@ D:are a deep green in hue.  Foul gas seeps through its scales.
 
 N:285:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:286:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:287:Hashishin
 T:person
 C:s
 I:120:10d16:20:22:10
-W:22:2:35:70
+W:22:2:35:70:2
 B:HIT:POISON:2d8
 B:HIT:HURT:2d6
 F:FORCE_SLEEP | MOVE_BODY | 
@@ -3088,7 +3088,7 @@ N:288:Elven thrall priest
 T:humanoid
 C:g
 I:120:10d14:20:15:30
-W:22:1:59:170
+W:22:1:59:170:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 F:MALE |
@@ -3106,7 +3106,7 @@ N:289:Halfling slinger
 T:humanoid
 C:u
 I:110:10d22:22:16:20
-W:22:2:35:170
+W:22:2:35:170:2
 B:HIT:HURT:2d5
 B:HIT:HURT:2d5
 F:MALE | SMART | FRIEND | 
@@ -3122,7 +3122,7 @@ N:290:Killer stag beetle
 T:killer beetle
 C:g
 I:110:10d26:12:20:30
-W:22:1:0:80
+W:22:1:0:80:2
 B:CLAW:HURT:2d12
 B:CLAW:HURT:2d12
 F:RAND_25 | 
@@ -3133,7 +3133,7 @@ N:291:Red mold
 T:mold
 C:r
 I:110:10d7:2:8:70
-W:22:1:0:64
+W:22:1:0:64:2
 B:TOUCH:FIRE:4d4
 F:STUPID | EMPTY_MIND | 
 F:IM_FIRE 
@@ -3143,7 +3143,7 @@ N:292:Stone golem
 T:golem
 C:W
 I:100:10d24:12:35:10
-W:22:2:0:100
+W:22:2:0:100:2
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 F:COLD_BLOOD |
@@ -3155,7 +3155,7 @@ N:293:White wraith
 T:wraith
 C:w
 I:110:10d9:20:20:20
-W:22:1:35:140
+W:22:1:35:140:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 B:TOUCH:EXP_20
@@ -3168,17 +3168,17 @@ D:It is a tangible but ghostly form made of white fog.
 
 N:294:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:295:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:296:Elven thrall lord
 T:humanoid
 C:s
 I:120:10d20:20:28:30
-W:23:2:53:300
+W:23:2:53:300:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 F:MALE | SMART | 
@@ -3194,7 +3194,7 @@ N:297:Sabre-tooth tiger
 T:feline
 C:y
 I:120:10d20:25:20:2
-W:23:2:0:120
+W:23:2:0:120:2
 B:CLAW:HURT:1d10
 B:CLAW:HURT:1d10
 B:BITE:HURT:1d10
@@ -3207,7 +3207,7 @@ N:298:Red dragon bat
 T:bat
 C:r
 I:130:2d9:12:14:50
-W:23:1:0:70
+W:23:1:0:70:2
 B:BITE:FIRE:1d3
 F:FORCE_SLEEP | RAND_50 | 
 F:BASH_DOOR | MOVE_BODY | IM_FIRE
@@ -3219,7 +3219,7 @@ N:299:Corvid of Shadow
 T:bird
 C:s
 I:120:5d15:30:25:5
-W:23:2:35:75
+W:23:2:35:75:2
 B:WAIL:TERRIFY
 B:BITE:HURT:2d4
 B:CLAW:HURT:2d4
@@ -3234,7 +3234,7 @@ N:300:Phase spider
 T:spider
 C:B
 I:120:3d9:15:13:80
-W:23:3:35:60
+W:23:3:35:60:2
 B:BITE:HURT:1d8
 B:BITE:POISON:1d6
 B:BITE:POISON:1d6
@@ -3250,7 +3250,7 @@ N:301:Earth hound
 T:zephyr hound
 C:u
 I:110:10d10:30:15:0
-W:23:2:0:120
+W:23:2:0:120:2
 B:BITE:HURT:1d7
 B:BITE:HURT:1d7
 B:CLAW:HURT:3d3
@@ -3265,7 +3265,7 @@ N:302:Air hound
 T:zephyr hound
 C:g
 I:110:10d9:30:15:0
-W:23:2:0:120
+W:23:2:0:120:2
 B:BITE:HURT:1d7
 B:BITE:HURT:1d7
 B:CLAW:HURT:3d3
@@ -3281,7 +3281,7 @@ N:303:Water hound
 T:zephyr hound
 C:s
 I:110:10d9:30:15:0
-W:23:2:0:120
+W:23:2:0:120:2
 B:BITE:ACID:1d7
 B:BITE:ACID:1d7
 B:CLAW:HURT:3d3
@@ -3297,7 +3297,7 @@ N:304:Chimera
 T:hybrid
 C:r
 I:110:10d21:12:13:10
-W:23:1:0:190
+W:23:1:0:190:2
 B:BUTT:HURT:2d6
 B:BITE:HURT:2d8
 B:BITE:FIRE:2d6
@@ -3313,7 +3313,7 @@ N:305:Sasquatch
 T:yeti
 C:g
 I:120:20d13:15:20:10
-W:23:3:0:180
+W:23:3:0:180:2
 B:CLAW:HURT:1d10
 B:CLAW:HURT:1d10
 B:BITE:HURT:2d8
@@ -3323,7 +3323,7 @@ N:306:Quylthulg
 T:quylthulg
 C:y
 I:110:4d8:10:1:2
-W:23:2:105:250
+W:23:2:105:250:2
 S:1_IN_4 | POW_0 | 
 S:S_MONSTER 
 D:It is a strange pulsing mound of flesh.
@@ -3332,7 +3332,7 @@ N:307:Cave ogre
 T:ogre
 C:u
 I:110:10d19:20:17:30
-W:23:2:0:75
+W:23:2:0:75:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 F:FRIENDS | DROP_60 
@@ -3342,7 +3342,7 @@ N:308:Bronze worm
 T:dragon
 C:U
 I:110:18d10:20:30:70
-W:23:3:49:210
+W:23:3:49:210:2
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:HURT:3d5
@@ -3357,17 +3357,17 @@ D:are a rich bronze hue, and its shape masks its true form.
 
 N:309:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:310:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:311:Killer pink beetle
 T:killer beetle
 C:I
 I:110:10d13:14:15:30
-W:24:1:0:85
+W:24:1:0:85:2
 B:BITE:LOSE_STR:4d4
 F:RAND_25 | 
 F:WEIRD_MIND
@@ -3377,7 +3377,7 @@ N:312:Black pudding
 T:jelly
 C:D
 I:110:10d9:12:12:6
-W:24:3:0:65
+W:24:3:0:65:2
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
@@ -3395,7 +3395,7 @@ N:313:Umber hulk
 T:xorn
 C:U
 I:110:10d13:20:25:10
-W:24:2:0:75
+W:24:2:0:75:2
 B:GAZE:CONFUSE
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
@@ -3411,7 +3411,7 @@ N:314:Shadow drake
 T:dragon
 C:D
 I:110:16d10:25:30:30
-W:24:3:66:300
+W:24:3:66:300:2
 B:CLAW:HURT:2d4
 B:CLAW:HURT:2d4
 B:BITE:COLD:3d4
@@ -3429,7 +3429,7 @@ N:315:Gold worm
 T:dragon
 C:y
 I:110:19d10:20:30:120
-W:24:3:49:230
+W:24:3:49:230:2
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:HURT:5d2
@@ -3446,7 +3446,7 @@ N:316:Red worm
 T:dragon
 C:r
 I:110:20d10:20:30:70
-W:24:2:49:220
+W:24:2:49:220:2
 B:CLAW:HURT:2d6
 B:CLAW:FIRE:2d6
 B:BITE:HURT:3d6
@@ -3461,17 +3461,17 @@ D:are a deepest red hue.  Heat radiates from its body.
 
 N:317:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:318:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:319:Illusionist
 T:person
 C:r
 I:110:10d19:20:11:10
-W:25:2:70:200
+W:25:2:70:200:2
 B:HIT:HURT:2d3
 F:MALE | MOVE_BODY | 
 F:FORCE_SLEEP | DROP_90 | 
@@ -3486,7 +3486,7 @@ N:320:Giant blue ant
 T:ant
 C:b
 I:110:5d13:10:18:60
-W:25:2:0:70
+W:25:2:0:70:2
 B:BITE:ELEC:5d5
 F:RAND_25 | 
 F:IM_ELEC | FRIEND
@@ -3496,7 +3496,7 @@ N:321:Giant black scorpion
 T:spider
 C:s
 I:120:10d22:20:25:40
-W:25:1:0:90
+W:25:1:0:90:2
 B:CLAW:HURT:1d11
 B:CLAW:HURT:1d11
 B:STING:POISON:3d4
@@ -3509,7 +3509,7 @@ N:322:Dark naga
 T:naga
 C:D
 I:110:10d19:60:32:60
-W:25:1:70:120
+W:25:1:70:120:2
 B:CRUSH:HURT:1d10
 B:BITE:HURT:1d10
 F:RAND_25 | DROP_1D2 | 
@@ -3525,7 +3525,7 @@ N:323:Fire vortex
 T:vortex
 C:r
 I:110:6d8:24:12:0
-W:25:1:0:80
+W:25:1:0:80:2
 B:ENGULF:FIRE:3d3
 F:FORCE_SLEEP | RAND_50 | 
 F:BASH_DOOR | IM_FIRE
@@ -3537,7 +3537,7 @@ N:324:Water vortex
 T:vortex
 C:s
 I:110:6d8:24:12:0
-W:25:1:0:85
+W:25:1:0:85:2
 B:ENGULF:ACID:3d3
 F:FORCE_SLEEP | RAND_50 | 
 F:BASH_DOOR | IM_ACID
@@ -3549,7 +3549,7 @@ N:325:Cold vortex
 T:vortex
 C:w
 I:110:6d8:24:12:0
-W:25:1:0:80
+W:25:1:0:80:2
 B:ENGULF:COLD:3d3
 F:FORCE_SLEEP | RAND_50 | 
 F:BASH_DOOR | IM_COLD
@@ -3561,7 +3561,7 @@ N:326:Ogre shaman
 T:ogre
 C:G
 I:110:10d13:20:25:30
-W:25:2:77:200
+W:25:2:77:200:2
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
@@ -3576,7 +3576,7 @@ N:327:Stone troll
 T:troll
 C:W
 I:110:10d18:20:20:50
-W:25:2:0:100
+W:25:2:0:100:2
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 B:BITE:HURT:3d4
@@ -3592,7 +3592,7 @@ N:328:Cloud giant
 T:giant
 C:b
 I:110:10d25:20:30:50
-W:25:1:0:220
+W:25:1:0:220:2
 B:HIT:ELEC:3d8
 B:HIT:ELEC:3d8
 F:DROP_60 | SMART |
@@ -3604,7 +3604,7 @@ N:329:Ghoul
 T:zombie
 C:U
 I:110:10d19:16:20:30
-W:25:3:0:165
+W:25:3:0:165:2
 B:HIT:POISON:3d9
 B:TOUCH:PARALYZE:1d4
 B:TOUCH:LOSE_CON:1d4
@@ -3617,7 +3617,7 @@ N:330:Banshee
 T:ghost
 C:b
 I:120:10d6:20:16:10
-W:25:2:70:80
+W:25:2:70:80:2
 B:WAIL:TERRIFY
 B:TOUCH:EXP_20
 F:FEMALE | SMART | 
@@ -3632,7 +3632,7 @@ N:331:Nruling
 T:minor demon
 C:R
 I:120:10d9:20:16:8
-W:25:2:59:75
+W:25:2:59:75:2
 B:HIT:FIRE:2d8
 F:FORCE_SLEEP | FRIENDS | 
 F:OPEN_DOOR | RAND_50 | 
@@ -3648,7 +3648,7 @@ N:332:Mimic (scroll)
 T:mimic
 C:w
 I:110:10d10:20:16:1
-W:25:4:105:60
+W:25:4:105:60:2
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:HURT:2d3
@@ -3664,17 +3664,17 @@ D:unsuspecting adventurers within reach of its venomous claws.
 
 N:333:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:334:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:335:Brigand
 T:person
 C:b
 I:120:10d24:20:16:10
-W:26:2:0:190
+W:26:2:0:190:2
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 B:TOUCH:EAT_ITEM
@@ -3690,7 +3690,7 @@ N:336:Giant army ant
 T:ant
 C:o
 I:115:10d8:10:30:40
-W:26:3:0:90
+W:26:3:0:90:2
 B:BITE:HURT:2d12
 F:RAND_25 | KILL_BODY | FRIENDS | 
 F:TERRITORIAL 
@@ -3701,7 +3701,7 @@ N:337:Killer red beetle
 T:killer beetle
 C:r
 I:110:10d28:14:22:30
-W:26:1:0:95
+W:26:1:0:95:2
 B:BITE:HURT:3d4
 B:SPIT:FIRE:4d5
 F:WEIRD_MIND | IM_FIRE
@@ -3711,7 +3711,7 @@ N:338:Wolf Chieftain
 T:canine
 C:D
 I:120:10d15:20:20:5
-W:26:4:35:120
+W:26:4:35:120:2
 B:CLAW:HURT:2d6
 B:BITE:HURT:2d6
 B:WAIL:TERRIFY
@@ -3728,7 +3728,7 @@ N:339:Abyss worm mass
 T:worm
 C:D
 I:105:4d9:10:9:6
-W:26:3:0:7
+W:26:3:0:7:2
 B:CRAWL:EXP_10:1d5
 F:RAND_50 | RAND_25 | 
 F:WEIRD_MIND | MULTIPLY | BASH_DOOR | KILL_WALL | 
@@ -3741,7 +3741,7 @@ N:340:Iron golem
 T:golem
 C:s
 I:110:10d69:12:40:10
-W:26:2:35:180
+W:26:2:35:180:2
 B:HIT:HURT:1d12
 F:FORCE_SLEEP | 
 F:COLD_BLOOD |
@@ -3754,7 +3754,7 @@ N:341:Troll priest
 T:troll
 C:G
 I:110:10d15:20:25:30
-W:26:2:59:145
+W:26:2:59:145:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 B:BITE:HURT:2d6
@@ -3770,7 +3770,7 @@ N:342:Mummified orc
 T:mummy
 C:w
 I:110:10d10:20:14:75
-W:26:1:0:80
+W:26:1:0:80:2
 B:HIT:HURT:2d9
 B:HIT:HURT:2d9
 F:DROP_60 | 
@@ -3780,17 +3780,17 @@ D:An orcish figure covered in wrappings.
 
 N:343:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:344:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:345:Necromancer
 T:person
 C:R
 I:115:10d21:20:16:20
-W:27:3:88:170
+W:27:3:88:170:2
 B:PUNCH:HURT:1d1
 F:MALE | EVIL | MOVE_BODY | RACIAL | 
 F:SMART | REGENERATE | 
@@ -3805,7 +3805,7 @@ N:346:Hardened warrior
 T:person
 C:u
 I:110:10d35:20:25:30
-W:27:1:0:90
+W:27:1:0:90:2
 B:HIT:HURT:3d10
 B:HIT:HURT:3d10
 F:MALE | SMART | RACIAL | 
@@ -3819,7 +3819,7 @@ N:347:Giant bronze dragon fly
 T:dragon fly
 C:U
 I:120:2d9:12:12:50
-W:27:2:0:90
+W:27:2:0:90:2
 F:NEVER_BLOW | NO_CONF
 S:1_IN_9 | POW_0 | 
 S:BRTH_CONFU
@@ -3829,7 +3829,7 @@ N:348:Shimmering mold
 T:mold
 C:b
 I:110:10d34:2:8:70
-W:27:1:0:140
+W:27:1:0:140:2
 B:TOUCH:ELEC:5d4
 B:TOUCH:ELEC:5d4
 F:STUPID | EMPTY_MIND | 
@@ -3840,7 +3840,7 @@ N:349:Grave wight
 T:wraith
 C:b
 I:110:10d12:20:20:10
-W:27:1:35:280
+W:27:1:35:280:2
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 B:TOUCH:EXP_20
@@ -3853,17 +3853,17 @@ D:It is a ghostly form with eyes that haunt you.
 
 N:350:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:351:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:352:Bat of Utumno
 T:bat
 C:g
 I:120:7d10:20:30:30
-W:28:3:35:200
+W:28:3:35:200:2
 B:BITE:POISON:1d10
 B:CLAW:HURT:1d4
 F:DROP_60 | RAND_25 | MOVE_BODY | 
@@ -3878,7 +3878,7 @@ N:353:Vampire bat
 T:bat
 C:D
 I:120:7d9:12:20:50
-W:28:1:0:150
+W:28:1:0:150:2
 B:BITE:EXP_40:1d4
 B:BITE:EXP_40:1d4
 F:RAND_50 | COLD_BLOOD | REGENERATE | MOVE_BODY | 
@@ -3890,7 +3890,7 @@ N:354:Pukelman
 T:golem
 C:m
 I:110:10d69:12:40:10
-W:28:2:53:350
+W:28:2:53:350:2
 B:HIT:HURT:1d12
 B:HIT:HURT:3d6
 F:FORCE_SLEEP | 
@@ -3906,7 +3906,7 @@ N:355:Mummified human
 T:mummy
 C:w
 I:110:10d29:20:17:60
-W:28:1:0:90
+W:28:1:0:90:2
 B:HIT:HURT:2d11
 B:HIT:HURT:2d11
 F:ONLY_ITEM | DROP_60 | MOVE_BODY | 
@@ -3915,17 +3915,17 @@ D:It is a human form encased in mouldy wrappings.
 
 N:356:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:357:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:358:Elven thrall druid
 T:humanoid
 C:y
 I:115:10d22:15:20:10
-W:29:2:77:300
+W:29:2:77:300:2
 B:PUNCH:HURT:1d7
 B:PUNCH:HURT:1d7
 B:KICK:HURT:3d8
@@ -3945,7 +3945,7 @@ N:359:Carrion crawler
 T:centipede
 C:o
 I:110:10d17:15:20:10
-W:29:2:0:60
+W:29:2:0:60:2
 B:STING:PARALYZE:2d6
 B:STING:PARALYZE:2d6
 F:RAND_25 | BASH_DOOR | 
@@ -3957,7 +3957,7 @@ N:360:Algroth
 T:troll
 C:o
 I:110:10d18:20:30:40
-W:29:2:0:150
+W:29:2:0:150:2
 B:CLAW:POISON:2d4
 B:CLAW:POISON:2d4
 B:BITE:HURT:1d6
@@ -3971,7 +3971,7 @@ N:361:Vampire
 T:vampire
 C:W
 I:110:10d22:20:22:10
-W:29:1:70:255
+W:29:1:70:255:2
 B:HIT:HURT:2d6
 B:HIT:HURT:2d6
 B:BITE:EXP_20:1d4
@@ -3986,13 +3986,13 @@ D:teeth.
 
 N:362:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:363:Animist
 T:person
 C:y
 I:115:10d20:20:10:10
-W:30:1:66:50
+W:30:1:66:50:2
 B:PUNCH:HURT:4d4
 B:KICK:HURT:4d4
 B:KICK:HURT:4d4
@@ -4009,7 +4009,7 @@ N:364:Energy vortex
 T:vortex
 C:b
 I:110:7d8:24:12:0
-W:30:1:52:80
+W:30:1:52:80:2
 B:ENGULF:ELEC:3d3
 F:FORCE_SLEEP | RAND_50 | 
 F:BASH_DOOR | IM_ELEC
@@ -4022,7 +4022,7 @@ N:365:Nightstalker
 T:feline
 C:D
 I:120:10d19:28:20:20
-W:30:2:35:200
+W:30:2:35:200:2
 B:CLAW:EAT_FOOD:1d5
 B:CLAW:EAT_FOOD:1d5
 B:BITE:HURT:2d9
@@ -4037,7 +4037,7 @@ N:366:Death watch beetle
 T:killer beetle
 C:D
 I:110:10d40:16:30:30
-W:30:1:0:190
+W:30:1:0:190:2
 B:BITE:HURT:5d4
 B:WAIL:TERRIFY:5d6
 F:WEIRD_MIND
@@ -4047,7 +4047,7 @@ N:367:Gorgimera
 T:hybrid
 C:o
 I:110:10d49:12:30:10
-W:30:2:0:200
+W:30:2:0:200:2
 B:BUTT:HURT:2d10
 B:BITE:FIRE:2d10
 B:GAZE:PARALYZE:2d6
@@ -4064,7 +4064,7 @@ N:368:Multi-hued worm
 T:dragon
 C:v
 I:110:24d10:20:35:60
-W:30:2:49:260
+W:30:2:49:260:2
 B:CLAW:HURT:2d7
 B:CLAW:HURT:2d7
 B:BITE:HURT:3d6
@@ -4081,17 +4081,17 @@ D:shimmering and magical colours cover it.
 
 N:369:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:370:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:371:Serpent of the Brownlands
 T:snake
 C:G
 I:120:20d10:10:20:15
-W:31:2:35:270
+W:31:2:35:270:2
 B:SPIT:BLIND:1d6
 B:BITE:ACID:2d12
 B:BITE:POISON:2d12
@@ -4108,7 +4108,7 @@ N:372:Vibration hound
 T:zephyr hound
 C:y
 I:110:10d16:30:15:0
-W:31:2:0:200
+W:31:2:0:200:2
 B:BITE:HURT:4d2
 B:BITE:HURT:4d2
 B:CLAW:HURT:5d1
@@ -4123,7 +4123,7 @@ N:373:Nexus hound
 T:zephyr hound
 C:P
 I:110:10d16:30:15:0
-W:31:2:0:200
+W:31:2:0:200:2
 B:BITE:HURT:1d12
 B:BITE:HURT:1d12
 B:CLAW:HURT:3d3
@@ -4138,7 +4138,7 @@ N:374:Giant Paladin
 T:giant
 C:w
 I:110:10d39:30:40:90
-W:31:2:60:260
+W:31:2:60:260:2
 B:HIT:HURT:3d7
 B:HIT:HURT:3d7
 F:MALE | SMART | 
@@ -4151,7 +4151,7 @@ N:375:Creeping adamantite coins
 T:creeping coins
 C:G
 I:120:10d36:5:25:10
-W:31:4:0:45
+W:31:4:0:45:2
 B:BITE:POISON:3d4
 B:TOUCH:POISON:3d5
 B:HIT:HURT:1d12
@@ -4161,17 +4161,17 @@ D:It is a pile of coins, slithering forward on thousands of tiny legs.
 
 N:376:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:377:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:378:Champion
 T:person
 C:M
 I:115:10d32:20:35:20
-W:32:2:60:260
+W:32:2:60:260:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 F:MALE | MOVE_BODY | TERRITORIAL | RACIAL | 
@@ -4186,7 +4186,7 @@ N:379:Giant purple worm
 T:worm
 C:v
 I:110:5d74:14:30:30
-W:32:2:0:400
+W:32:2:0:400:2
 B:HIT:HURT:1d8
 B:BITE:ACID:2d8
 B:STING:POISON:1d8
@@ -4198,7 +4198,7 @@ N:380:Colbran
 T:golem
 C:b
 I:120:10d74:12:40:10
-W:32:2:60:300
+W:32:2:60:300:2
 B:HIT:ELEC:3d8
 B:HIT:ELEC:3d8
 F:FORCE_SLEEP | 
@@ -4214,7 +4214,7 @@ N:381:Ice troll
 T:troll
 C:w
 I:110:10d22:20:25:50
-W:32:2:0:210
+W:32:2:0:210:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
@@ -4231,7 +4231,7 @@ N:382:Barrow wight
 T:wraith
 C:P
 I:110:10d10:20:25:10
-W:32:2:40:325
+W:32:2:40:325:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 B:TOUCH:EXP_40
@@ -4245,7 +4245,7 @@ N:383:Ethereal drake
 T:dragon
 C:o
 I:115:26d10:25:30:35
-W:32:3:56:600
+W:32:3:56:600:2
 B:CLAW:HURT:2d6
 B:CLAW:HURT:2d6
 B:BITE:HURT:3d6
@@ -4261,17 +4261,17 @@ D:ethereal drake's eyes glare with white hatred from the shadows.
 
 N:384:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:385:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:386:Black knight
 T:person
 C:s
 I:115:10d39:20:35:10
-W:33:1:40:280
+W:33:1:40:280:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
@@ -4287,7 +4287,7 @@ N:387:Mage
 T:person
 C:r
 I:110:10d29:20:20:10
-W:33:1:80:275
+W:33:1:80:275:2
 B:HIT:HURT:2d5
 B:HIT:HURT:2d5
 F:MALE | MOVE_BODY | 
@@ -4304,7 +4304,7 @@ N:388:Killer slicer beetle
 T:killer beetle
 C:y
 I:110:10d46:14:38:30
-W:33:1:0:200
+W:33:1:0:200:2
 B:BITE:HURT:5d8
 B:BITE:HURT:5d8
 F:WEIRD_MIND
@@ -4315,7 +4315,7 @@ N:389:Bear Chieftain
 T:quadruped
 C:W
 I:120:6d49:14:25:40
-W:33:2:0:220
+W:33:2:0:220:2
 B:BITE:HURT:5d6
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
@@ -4327,7 +4327,7 @@ N:390:Spirit naga
 T:naga
 C:w
 I:115:10d38:20:37:120
-W:33:2:100:240
+W:33:2:100:240:2
 B:CRUSH:HURT:2d8
 B:CRUSH:HURT:2d8
 B:BITE:HURT:1d8
@@ -4344,17 +4344,17 @@ D:most powerful of its kind.
 
 N:391:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:392:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:393:Mind flayer
 T:humanoid
 C:P
 I:110:10d11:20:25:10
-W:34:1:80:200
+W:34:1:80:200:2
 B:GAZE:LOSE_INT:2d6
 B:GAZE:LOSE_INT:2d6
 F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
@@ -4371,7 +4371,7 @@ N:394:Sharpshooter
 T:person
 C:W
 I:110:10d36:20:18:15
-W:34:2:0:300
+W:34:2:0:300:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 F:MALE | SMART | RACIAL | 
@@ -4386,7 +4386,7 @@ N:395:Basilisk
 T:reptile
 C:s
 I:120:20d21:15:40:30
-W:34:3:0:300
+W:34:3:0:300:2
 B:GAZE:PARALYZE
 B:BITE:HURT:2d12
 B:BITE:HURT:2d12
@@ -4401,7 +4401,7 @@ N:396:Abyss spider
 T:spider
 C:G
 I:120:10d35:20:28:100
-W:34:2:60:360
+W:34:2:60:360:2
 B:CLAW:HURT:1d8
 B:STING:POISON:3d5
 B:STING:POISON:3d5
@@ -4418,7 +4418,7 @@ N:397:Giant firefly
 T:insect
 C:r
 I:120:3d2:8:12:10
-W:34:4:0:4
+W:34:4:0:4:2
 B:BITE:BLIND:1d2
 F:RAND_50 | RAND_25 
 D:Clouds of these monsters light up the area so brightly that you can 
@@ -4428,7 +4428,7 @@ N:398:Ghost
 T:ghost
 C:w
 I:120:10d12:20:20:10
-W:34:2:40:350
+W:34:2:40:350:2
 B:WAIL:TERRIFY
 B:TOUCH:EXP_20
 B:CLAW:LOSE_INT:1d6
@@ -4445,7 +4445,7 @@ N:399:Shapeshifter
 T:person
 C:Y
 I:120:11d35:20:7:10
-W:35:2:100:300
+W:35:2:100:300:2
 B:HIT:HURT:2d6
 B:HIT:HURT:2d6
 F:ATTR_CLEAR | 
@@ -4459,13 +4459,13 @@ D:He exists only to change.
 
 N:400:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:401:Giant red ant
 T:ant
 C:r
 I:110:10d11:14:25:40
-W:35:2:0:220
+W:35:2:0:220:2
 B:BITE:FIRE:3d12
 B:BITE:FIRE:3d12
 F:FORCE_MAXHP | KILL_BODY | FRIENDS | 
@@ -4476,7 +4476,7 @@ N:402:Catoblepas
 T:quadruped
 C:g
 I:110:10d24:15:25:40
-W:35:2:0:300
+W:35:2:0:300:2
 B:GAZE:TERRIFY:2d4
 B:GAZE:BLIND:2d4
 B:BUTT:HURT:2d6
@@ -4490,7 +4490,7 @@ N:403:Invisible stalker
 T:elemental
 C:y
 I:130:10d21:20:25:20
-W:35:3:0:300
+W:35:3:0:300:2
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
@@ -4503,7 +4503,7 @@ N:404:Shardstorm
 T:vortex
 C:u
 I:120:8d12:24:12:0
-W:35:1:0:130
+W:35:1:0:130:2
 B:ENGULF:HURT:6d6
 F:FORCE_SLEEP | RAND_50 | 
 F:BASH_DOOR 
@@ -4516,7 +4516,7 @@ N:405:Cave troll
 T:troll
 C:u
 I:110:10d29:20:30:50
-W:35:2:0:255
+W:35:2:0:255:2
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
@@ -4534,7 +4534,7 @@ T:mimic
 G:=
 C:w
 I:120:10d24:30:25:20
-W:35:3:120:200
+W:35:3:120:200:2
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
@@ -4550,17 +4550,17 @@ D:unsuspecting adventurers within reach of its venomous claws.
 
 N:407:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:408:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:409:Demonologist
 T:person
 C:i
 I:120:10d31:20:15:30
-W:36:2:100:320
+W:36:2:100:320:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:MALE | MOVE_BODY | 
@@ -4578,7 +4578,7 @@ N:410:Wereworm
 T:worm
 C:D
 I:110:10d60:15:35:20
-W:36:2:0:500
+W:36:2:0:500:2
 B:GAZE:EXP_20
 B:CRAWL:ACID:2d4
 B:BITE:HURT:1d10
@@ -4591,7 +4591,7 @@ N:411:Manticore
 T:hybrid
 C:y
 I:120:10d36:20:20:10
-W:36:2:0:300
+W:36:2:0:300:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
@@ -4608,7 +4608,7 @@ N:412:Xorn
 T:xorn
 C:u
 I:110:10d39:20:30:10
-W:36:2:0:400
+W:36:2:0:400:2
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
@@ -4624,7 +4624,7 @@ N:413:Ogre mage
 T:ogre
 C:r
 I:110:10d42:20:20:30
-W:36:2:80:400
+W:36:2:80:400:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
@@ -4639,7 +4639,7 @@ N:414:Mummified troll
 T:mummy
 C:s
 I:110:10d56:20:30:50
-W:36:1:0:380
+W:36:1:0:380:2
 B:HIT:HURT:3d14
 B:HIT:HURT:3d14
 F:FORCE_MAXHP | 
@@ -4651,17 +4651,17 @@ D:fists.
 
 N:415:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:416:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:417:Falcon of Ered Engrin
 T:bird
 C:U
 I:130:10d22:25:30:20
-W:37:3:0:225
+W:37:3:0:225:2
 B:BITE:HURT:6d2
 B:CLAW:HURT:1d5
 B:CLAW:HURT:1d5
@@ -4673,7 +4673,7 @@ N:418:Grey wraith
 T:wraith
 C:s
 I:110:10d38:20:30:20
-W:37:1:40:485
+W:37:1:40:485:2
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 B:TOUCH:EXP_40
@@ -4687,17 +4687,17 @@ D:deathly cold.
 
 N:419:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:420:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:421:Ninja
 T:person
 C:Y
 I:120:10d39:26:20:10
-W:38:2:0:300
+W:38:2:0:300:2
 B:PUNCH:POISON:3d4
 B:KICK:LOSE_STR:3d4
 B:PUNCH:LOSE_STR:3d4
@@ -4710,7 +4710,7 @@ N:422:Master rogue
 T:person
 C:b
 I:120:10d39:25:18:20
-W:38:2:40:310
+W:38:2:40:310:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:EAT_GOLD
@@ -4727,7 +4727,7 @@ N:423:Thunder giant
 T:giant
 C:B
 I:110:45d10:20:28:40
-W:38:1:100:400
+W:38:1:100:400:2
 B:HIT:ELEC:4d4
 B:HIT:ELEC:4d4
 B:HIT:ELEC:4d4
@@ -4743,7 +4743,7 @@ N:424:Venom mold
 T:mold
 C:G
 I:120:10d45:6:11:30
-W:38:1:0:95
+W:38:1:0:95:2
 B:TOUCH:POISON:4d10
 B:TOUCH:POISON:4d10
 F:STUPID | EMPTY_MIND
@@ -4753,7 +4753,7 @@ N:425:Nexus quylthulg
 T:quylthulg
 C:P
 I:110:10d8:10:1:1
-W:38:2:100:350
+W:38:2:100:350:2
 S:1_IN_1 | POW_0 | 
 S:TELE_AWAY
 S:S_MONSTER
@@ -4763,7 +4763,7 @@ N:426:Lightning drake
 T:dragon
 C:b
 I:115:36d10:20:40:70
-W:38:2:56:600
+W:38:2:56:600:2
 B:CLAW:HURT:2d7
 B:CLAW:HURT:2d7
 B:BITE:ELEC:3d6
@@ -4780,7 +4780,7 @@ N:427:Cold drake
 T:dragon
 C:w
 I:115:36d10:20:40:70
-W:38:2:56:600
+W:38:2:56:600:2
 B:CLAW:HURT:2d7
 B:CLAW:HURT:2d7
 B:BITE:COLD:3d6
@@ -4797,7 +4797,7 @@ N:428:Corrosive drake
 T:dragon
 C:s
 I:115:36d10:20:40:70
-W:38:2:56:600
+W:38:2:56:600:2
 B:CLAW:HURT:2d7
 B:CLAW:ACID:2d7
 B:BITE:HURT:3d6
@@ -4812,17 +4812,17 @@ D:A large dragon, with scales of deepest black.
 
 N:429:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:430:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:431:Memory moss
 T:mushroom
 C:r
 I:110:1d2:30:1:5
-W:39:3:40:110
+W:39:3:40:110:2
 B:HIT:CONFUSE:1d4
 B:HIT:CONFUSE:1d4
 F:FORCE_SLEEP | NEVER_MOVE | 
@@ -4836,7 +4836,7 @@ N:432:Mithril golem
 T:golem
 C:B
 I:110:9d99:12:45:10
-W:39:4:0:500
+W:39:4:0:500:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:HURT:5d5
@@ -4850,7 +4850,7 @@ N:433:Half-troll
 T:troll
 C:U
 I:110:10d35:20:30:50
-W:39:2:0:290
+W:39:2:0:290:2
 B:CLAW:HURT:1d6
 B:CLAW:HURT:1d6
 B:CLAW:HURT:1d6
@@ -4868,7 +4868,7 @@ N:434:Fire elemental
 T:elemental
 C:r
 I:110:10d35:14:25:30
-W:39:2:60:350
+W:39:2:60:350:2
 B:HIT:FIRE:1d6
 B:ENGULF:FIRE:4d6
 F:FORCE_SLEEP | RAND_25 | 
@@ -4883,7 +4883,7 @@ N:435:Shade
 T:ghost
 C:D
 I:130:10d15:20:20:10
-W:39:2:40:350
+W:39:2:40:350:2
 B:WAIL:TERRIFY
 B:TOUCH:EXP_40
 B:CLAW:LOSE_INT:2d10
@@ -4901,7 +4901,7 @@ N:436:Spectre
 T:ghost
 C:U
 I:120:10d24:20:20:10
-W:39:2:40:350
+W:39:2:40:350:2
 B:WAIL:TERRIFY
 B:TOUCH:EXP_40
 B:CLAW:LOSE_WIS:5d5
@@ -4919,7 +4919,7 @@ N:437:Venom drake
 T:dragon
 C:g
 I:115:36d10:20:40:70
-W:39:2:56:650
+W:39:2:56:650:2
 B:CLAW:HURT:2d6
 B:CLAW:HURT:2d6
 B:BITE:POISON:3d6
@@ -4934,17 +4934,17 @@ D:A large dragon, scales tinted deep green.
 
 N:438:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:439:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:440:Chieftain
 T:person
 C:U
 I:115:10d57:20:40:20
-W:40:3:60:500
+W:40:3:60:500:2
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 F:FEMALE | MOVE_BODY | RACIAL | 
@@ -4960,7 +4960,7 @@ N:441:Mystic
 T:person
 C:o
 I:120:10d38:30:25:10
-W:40:2:80:520
+W:40:2:80:520:2
 B:KICK:HURT:9d2
 B:KICK:HURT:9d2
 B:KICK:HURT:9d2
@@ -4982,7 +4982,7 @@ N:442:Killer iridescent beetle
 T:killer beetle
 C:v
 I:110:14d19:16:24:30
-W:40:1:0:550
+W:40:1:0:550:2
 B:CLAW:ELEC:2d12
 B:CLAW:ELEC:2d12
 B:BITE:PARALYZE
@@ -4995,7 +4995,7 @@ N:443:Mesmer drake
 T:dragon
 C:U
 I:115:40d10:20:40:70
-W:40:3:56:700
+W:40:3:56:700:2
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d8
@@ -5012,7 +5012,7 @@ N:444:Swamp quylthulg
 T:quylthulg
 C:m
 I:110:10d14:15:0:1
-W:40:2:120:900
+W:40:2:120:900:2
 S:1_IN_2 | POW_0 |
 S:TPORT |
 S:S_SWAMP
@@ -5020,13 +5020,13 @@ D:It is a squishy, stinking mound of flesh.
 
 N:445:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:446:Water elemental
 T:elemental
 C:b
 I:110:10d37:15:20:30
-W:41:2:60:325
+W:41:2:60:325:2
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 B:ENGULF:HURT:10d1
@@ -5042,7 +5042,7 @@ N:447:Water troll
 T:troll
 C:B
 I:110:10d46:20:35:50
-W:41:2:0:350
+W:41:2:0:350:2
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 B:HIT:HURT:2d3
@@ -5059,7 +5059,7 @@ N:448:Clamour drake
 T:dragon
 C:y
 I:115:40d10:20:40:150
-W:41:3:56:800
+W:41:3:56:800:2
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:11d1
@@ -5073,17 +5073,17 @@ D:A large dragon with scales of gleaming gold.
 
 N:449:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:450:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:451:Petty-Dwarven wizard
 T:humanoid
 C:i
 I:120:10d39:20:15:10
-W:42:3:90:550
+W:42:3:90:550:2
 B:HIT:HURT:2d5
 F:MALE | SMART | 
 F:FORCE_SLEEP | DROP_60 | DROP_1D2 | 
@@ -5099,7 +5099,7 @@ N:452:Carrion crawler
 T:centipede
 C:o
 I:110:10d17:15:20:10
-W:42:3:0:160
+W:42:3:0:160:2
 B:STING:PARALYZE:2d6
 B:STING:PARALYZE:2d6
 F:RAND_25 | FRIENDS | BASH_DOOR | 
@@ -5111,7 +5111,7 @@ N:453:Gnawing Bug
 T:insect
 C:i
 I:120:1d4:20:1:0
-W:42:9:45:16
+W:42:9:45:16:2
 B:BITE:HURT:1d3
 F:OPEN_DOOR | BASH_DOOR | KILL_WALL 
 S:1_IN_3 | POW_0 | 
@@ -5123,7 +5123,7 @@ N:454:Earth elemental
 T:elemental
 C:u
 I:100:10d57:14:35:50
-W:42:2:60:475
+W:42:2:60:475:2
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
@@ -5140,7 +5140,7 @@ N:455:Fire drake
 T:dragon
 C:r
 I:115:38d10:20:40:70
-W:42:2:56:750
+W:42:2:56:750:2
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:FIRE:3d8
@@ -5154,17 +5154,17 @@ D:A large dragon, scales tinted deep red.
 
 N:456:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:457:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:458:Lich
 T:lich
 C:o
 I:110:26d10:20:30:60
-W:43:2:90:800
+W:43:2:90:800:2
 B:TOUCH:EXP_40
 B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:1d8
@@ -5181,7 +5181,7 @@ N:459:Master vampire
 T:vampire
 C:g
 I:115:21d10:20:30:10
-W:43:2:90:750
+W:43:2:90:750:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:BITE:EXP_40:1d4
@@ -5199,7 +5199,7 @@ N:460:Bodak
 T:minor demon
 C:r
 I:110:10d24:20:30:70
-W:43:1:67:650
+W:43:1:67:650:2
 B:HIT:FIRE:4d6
 B:HIT:FIRE:4d6
 B:GAZE:EXP_20
@@ -5216,7 +5216,7 @@ T:mimic
 G:|
 C:R
 I:130:10d10:17:35:15
-W:43:4:45:670
+W:43:4:45:670:2
 B:HIT:HURT:6d4
 B:HIT:HURT:6d4
 B:HIT:HURT:6d4
@@ -5230,17 +5230,17 @@ D:utterly untamable: destroy it, flee, or die.
 
 N:462:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:463:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:464:Giant Chieftain
 T:giant
 C:u
 I:115:55d10:20:30:50
-W:44:4:40:850
+W:44:4:40:850:2
 B:HIT:ELEC:4d6
 B:HIT:ELEC:4d6
 B:HIT:ELEC:4d6
@@ -5258,7 +5258,7 @@ N:465:Dagashi
 T:person
 C:Y
 I:120:10d49:26:25:10
-W:44:3:0:500
+W:44:3:0:500:2
 B:PUNCH:POISON:3d4
 B:PUNCH:LOSE_STR:3d4
 B:PUNCH:LOSE_STR:3d4
@@ -5272,7 +5272,7 @@ N:466:Hell hound
 T:canine
 C:r
 I:120:27d10:25:32:4
-W:44:2:0:400
+W:44:2:0:400:2
 B:BITE:FIRE:3d12
 B:BITE:FIRE:3d12
 B:BITE:FIRE:3d12
@@ -5288,7 +5288,7 @@ N:467:Gravity hound
 T:zephyr hound
 C:W
 I:110:10d21:30:16:0
-W:44:3:0:360
+W:44:3:0:360:2
 B:BITE:HURT:2d7
 B:BITE:HURT:2d7
 B:CLAW:HURT:3d4
@@ -5304,7 +5304,7 @@ N:468:Inertia hound
 T:zephyr hound
 C:M
 I:110:10d21:30:16:0
-W:44:2:0:360
+W:44:2:0:360:2
 B:BITE:HURT:2d11
 B:BITE:HURT:2d11
 B:CLAW:HURT:3d5
@@ -5319,7 +5319,7 @@ N:469:Impact hound
 T:zephyr hound
 C:m
 I:110:10d21:30:16:0
-W:44:2:0:360
+W:44:2:0:360:2
 B:BITE:HURT:2d11
 B:BITE:HURT:2d11
 B:CLAW:HURT:3d5
@@ -5335,7 +5335,7 @@ N:470:Acidic cytoplasm
 T:jelly
 C:s
 I:120:24d10:12:12:1
-W:44:2:0:180
+W:44:2:0:180:2
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
@@ -5351,7 +5351,7 @@ N:471:Eog golem
 T:golem
 C:u
 I:100:15d99:12:50:10
-W:44:4:0:1200
+W:44:4:0:1200:2
 B:HIT:HURT:8d6
 B:HIT:HURT:8d6
 B:HIT:HURT:6d6
@@ -5367,7 +5367,7 @@ N:472:Air elemental
 T:elemental
 C:B
 I:120:10d35:22:25:20
-W:44:2:60:390
+W:44:2:60:390:2
 B:HIT:HURT:1d11
 B:ENGULF:CONFUSE:2d12
 F:FORCE_SLEEP | RAND_25 | 
@@ -5383,7 +5383,7 @@ N:473:Olog
 T:troll
 C:y
 I:110:10d56:20:35:50
-W:44:2:0:325
+W:44:2:0:325:2
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
 B:BITE:HURT:2d4
@@ -5400,7 +5400,7 @@ N:474:Crystal drake
 T:dragon
 C:v
 I:120:40d10:25:45:30
-W:44:2:63:900
+W:44:2:63:900:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:HURT:3d12
@@ -5419,7 +5419,7 @@ N:475:Elemental drake
 T:dragon
 C:v
 I:115:41d10:20:40:70
-W:44:2:56:900
+W:44:2:56:900:2
 B:CLAW:ACID:2d8
 B:CLAW:ELEC:2d8
 B:CLAW:FIRE:2d8
@@ -5437,17 +5437,17 @@ D:A large dragon, scales shimmering many colours.
 
 N:476:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:477:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:478:Mûmak
 T:quadruped
 C:s
 I:110:11d49:20:30:100
-W:45:3:0:1600
+W:45:3:0:1600:2
 B:BUTT:HURT:4d6
 B:BUTT:HURT:4d6
 B:CRUSH:HURT:4d4
@@ -5458,7 +5458,7 @@ N:479:Beholder
 T:eye
 C:U
 I:120:6d100:20:25:10
-W:45:4:90:1100
+W:45:4:90:1100:2
 B:GAZE:EXP_20
 B:GAZE:PARALYZE
 B:GAZE:LOSE_INT:2d6
@@ -5475,7 +5475,7 @@ N:480:Bile elemental
 T:elemental
 C:g
 I:110:10d61:10:40:90
-W:45:2:80:400
+W:45:2:80:400:2
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
@@ -5493,7 +5493,7 @@ N:481:Eldrak
 T:troll
 C:r
 I:115:60d10:20:45:50
-W:45:2:0:650
+W:45:2:0:650:2
 B:HIT:HURT:2d9
 B:HIT:HURT:2d9
 B:HIT:HURT:2d9
@@ -5511,7 +5511,7 @@ N:482:Dread
 T:ghost
 C:o
 I:120:15d19:20:25:10
-W:45:2:45:600
+W:45:2:45:600:2
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 B:HIT:LOSE_STR:3d4
@@ -5530,7 +5530,7 @@ N:483:Chaos drake
 T:dragon
 C:v
 I:115:50d10:25:45:120
-W:45:3:63:1050
+W:45:3:63:1050:2
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d10
@@ -5548,17 +5548,17 @@ D:as its form shimmers and changes in front of your eyes.
 
 N:484:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:485:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:486:Archpriest
 T:person
 C:G
 I:120:10d59:22:30:25
-W:46:2:99:1000
+W:46:2:99:1000:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
@@ -5579,7 +5579,7 @@ N:487:Colossus
 T:golem
 C:G
 I:100:18d100:12:60:10
-W:46:4:0:850
+W:46:4:0:850:2
 B:HIT:HURT:10d10
 B:HIT:HURT:10d10
 B:HIT:HURT:6d6
@@ -5596,7 +5596,7 @@ N:488:Ice elemental
 T:elemental
 C:w
 I:110:10d46:20:30:90
-W:46:2:68:700
+W:46:2:68:700:2
 B:BITE:COLD:2d8
 B:HIT:HURT:2d6
 B:BITE:COLD:2d8
@@ -5613,7 +5613,7 @@ N:489:Phantom
 T:ghost
 C:P
 I:120:10d26:30:25:20
-W:46:2:45:500
+W:46:2:45:500:2
 B:TOUCH:EXP_80
 B:TOUCH:EXP_40
 B:CLAW:LOSE_INT:1d10
@@ -5631,7 +5631,7 @@ N:490:Law drake
 T:dragon
 C:B
 I:115:55d10:25:45:120
-W:46:3:63:1250
+W:46:3:63:1250:2
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d10
@@ -5649,7 +5649,7 @@ N:491:Erinyes
 T:major demon
 C:u
 I:110:26d10:20:30:50
-W:46:1:54:700
+W:46:1:54:700:2
 B:HIT:HURT:3d4
 B:TOUCH:LOSE_STR:1d5
 F:FEMALE | SMART | 
@@ -5666,7 +5666,7 @@ N:492:Trapper
 T:lurker
 C:w
 I:120:36d10:30:35:10
-W:46:3:0:580
+W:46:3:0:580:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:PARALYZE:15d1
@@ -5676,17 +5676,17 @@ D:and paralyzes them, to be slowly digested later.
 
 N:493:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:494:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:495:Magician
 T:person
 C:v
 I:120:10d50:20:16:10
-W:47:2:90:1050
+W:47:2:90:1050:2
 B:HIT:HURT:2d6
 F:MALE | SMART | 
 F:FORCE_SLEEP | DROP_90 | DROP_1D2 | 
@@ -5703,7 +5703,7 @@ N:496:Emperor wight
 T:wraith
 C:r
 I:120:10d49:20:40:10
-W:47:1:90:1300
+W:47:1:90:1300:2
 B:HIT:PARALYZE:1d12
 B:HIT:BLIND:1d12
 B:TOUCH:EXP_80
@@ -5720,7 +5720,7 @@ N:497:Nexus vortex
 T:vortex
 C:P
 I:120:10d18:28:15:0
-W:47:1:0:400
+W:47:1:0:400:2
 B:ENGULF:HURT:5d5
 F:FORCE_SLEEP | 
 F:RAND_50 | RAND_25 | 
@@ -5733,7 +5733,7 @@ N:498:Plasma vortex
 T:vortex
 C:R
 I:120:10d23:25:15:0
-W:47:1:0:400
+W:47:1:0:400:2
 B:ENGULF:FIRE:8d8
 F:FORCE_SLEEP | 
 F:RAND_50 | RAND_25 | 
@@ -5746,7 +5746,7 @@ N:499:Will o' the wisp
 T:will o wisp
 C:y
 I:130:12d10:30:60:0
-W:47:4:68:500
+W:47:4:68:500:2
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
@@ -5758,17 +5758,17 @@ D:strange dancing motion.
 
 N:500:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:501:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:502:Death knight
 T:person
 C:D
 I:120:10d69:20:40:20
-W:48:1:90:1000
+W:48:1:90:1000:2
 B:HIT:HURT:6d6
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
@@ -5787,7 +5787,7 @@ N:503:Time vortex
 T:vortex
 C:B
 I:130:10d23:30:15:0
-W:48:4:0:500
+W:48:4:0:500:2
 B:ENGULF:HURT:5d5
 F:FORCE_SLEEP | 
 F:RAND_50 | RAND_25 | 
@@ -5800,7 +5800,7 @@ N:504:Shimmering vortex
 T:vortex
 C:v
 I:140:10d9:40:15:0
-W:48:2:5:200
+W:48:2:5:200:2
 F:ATTR_MULTI | 
 F:FORCE_SLEEP | NEVER_BLOW | 
 F:RAND_50 | RAND_25 | 
@@ -5815,7 +5815,7 @@ N:505:Black wraith
 T:wraith
 C:D
 I:120:10d59:20:30:20
-W:48:1:67:1300
+W:48:1:67:1300:2
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
 B:TOUCH:EXP_40
@@ -5832,7 +5832,7 @@ N:506:Balance drake
 T:dragon
 C:v
 I:120:60d10:25:45:120
-W:48:3:63:1450
+W:48:3:63:1450:2
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d10
@@ -5850,17 +5850,17 @@ D:to destroy evil.
 
 N:507:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:508:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:509:Night mare
 T:quadruped
 C:G
 I:120:9d100:30:30:0
-W:49:3:0:2100
+W:49:3:0:2100:2
 B:BITE:EXP_80:2d6
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
@@ -5876,7 +5876,7 @@ N:510:Magma elemental
 T:elemental
 C:o
 I:110:10d49:10:30:90
-W:49:2:68:800
+W:49:2:68:800:2
 B:HIT:FIRE:3d7
 B:ENGULF:FIRE:11d19
 F:FORCE_SLEEP | 
@@ -5891,7 +5891,7 @@ N:511:Vrock
 T:major demon
 C:s
 I:110:21d10:20:25:50
-W:49:1:45:1000
+W:49:1:45:1000:2
 B:HIT:HURT:3d4
 B:CLAW:HURT:7d12
 B:CLAW:HURT:7d12
@@ -5907,7 +5907,7 @@ T:xorn
 G:#
 C:W
 I:110:50d10:20:48:100
-W:49:5:0:900
+W:49:5:0:900:2
 B:CRUSH:HURT:4d10
 B:HIT:SHATTER:4d10
 F:FORCE_MAXHP | DUNGEON | 
@@ -5920,17 +5920,17 @@ D:rid the dungeon of all who breathe.
 
 N:513:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:514:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:515:Enchantress
 T:person
 C:i
 I:120:10d64:20:25:10
-W:50:4:112:1800
+W:50:4:112:1800:2
 B:HIT:HURT:2d5
 B:HIT:HURT:2d5
 F:FEMALE | 
@@ -5950,7 +5950,7 @@ N:516:Giant roc
 T:bird
 C:u
 I:110:10d79:20:30:10
-W:50:2:0:1000
+W:50:2:0:1000:2
 B:CLAW:HURT:8d12
 B:CRUSH:HURT:8d12
 B:HIT:ELEC:12d12
@@ -5963,7 +5963,7 @@ N:517:Disenchanter worm mass
 T:worm
 C:v
 I:105:5d9:7:5:10
-W:50:3:0:30
+W:50:3:0:30:2
 B:CRAWL:UN_BONUS:1d4
 F:RAND_50 | 
 F:STUPID | WEIRD_MIND | MULTIPLY | BASH_DOOR | 
@@ -5976,7 +5976,7 @@ N:518:Minotaur
 T:hybrid
 C:s
 I:130:10d54:13:25:10
-W:50:2:0:1100
+W:50:2:0:1100:2
 B:BUTT:HURT:4d6
 B:BUTT:HURT:4d6
 B:BUTT:HURT:2d6
@@ -5989,7 +5989,7 @@ N:519:Xaren
 T:xorn
 C:s
 I:120:10d64:20:35:10
-W:50:2:0:1200
+W:50:2:0:1200:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
@@ -6004,7 +6004,7 @@ N:520:Rotting quylthulg
 T:quylthulg
 C:u
 I:120:10d23:20:1:0
-W:50:2:135:1500
+W:50:2:135:1500:2
 F:FORCE_MAXHP | EVIL 
 S:1_IN_2 | POW_0 | 
 S:TPORT | 
@@ -6015,7 +6015,7 @@ N:521:Demonic quylthulg
 T:quylthulg
 C:r
 I:120:10d23:20:1:0
-W:50:2:135:1500
+W:50:2:135:1500:2
 F:FORCE_MAXHP | EVIL 
 S:1_IN_2 | POW_0 | 
 S:TPORT | 
@@ -6027,7 +6027,7 @@ N:522:Draconic quylthulg
 T:quylthulg
 C:g
 I:120:10d23:20:1:0
-W:50:3:135:1500
+W:50:3:135:1500:2
 F:FORCE_MAXHP | EVIL 
 S:1_IN_2 | POW_0 | 
 S:TPORT | 
@@ -6039,7 +6039,7 @@ N:523:Ettin
 T:troll
 C:b
 I:115:9d100:20:55:30
-W:50:2:0:1050
+W:50:2:0:1050:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
@@ -6057,7 +6057,7 @@ N:524:Spirit troll
 T:troll
 C:V
 I:120:6d100:20:36:5
-W:50:3:0:900
+W:50:3:0:900:2
 B:HIT:HURT:2d6
 B:HIT:HURT:2d5
 B:HIT:HURT:2d5
@@ -6072,7 +6072,7 @@ N:525:Death quasit
 T:minor demon
 C:D
 I:130:27d10:20:32:0
-W:50:2:99:1000
+W:50:2:99:1000:2
 B:BITE:LOSE_DEX:3d6
 B:CLAW:HURT:3d3
 B:CLAW:HURT:3d3
@@ -6089,17 +6089,17 @@ D:lightning speed and its powers make it a tornado of death and destruction.
 
 N:526:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:527:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:528:Elven thrall sorcerer
 T:humanoid
 C:R
 I:130:10d56:20:25:10
-W:51:2:113:1850
+W:51:2:113:1850:2
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
@@ -6120,7 +6120,7 @@ N:529:Master thief
 T:person
 C:B
 I:130:10d74:26:25:15
-W:51:2:45:1750
+W:51:2:45:1750:2
 B:HIT:HURT:3d13
 B:HIT:HURT:3d13
 B:HIT:EAT_GOLD
@@ -6137,7 +6137,7 @@ N:530:Shadow
 T:ghost
 C:D
 I:120:10d33:30:25:20
-W:51:2:45:800
+W:51:2:45:800:2
 B:TOUCH:EXP_80
 B:TOUCH:EXP_40
 B:CLAW:LOSE_INT:3d10
@@ -6156,7 +6156,7 @@ N:531:Blue dragon
 T:dragon
 C:Z
 I:120:70d10:25:40:120
-W:51:1:63:2200
+W:51:1:63:2200:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:ELEC:4d8
@@ -6173,7 +6173,7 @@ N:532:White dragon
 T:dragon
 C:W
 I:120:70d10:25:40:120
-W:51:1:63:2200
+W:51:1:63:2200:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:COLD:4d8
@@ -6190,7 +6190,7 @@ N:533:Black dragon
 T:dragon
 C:D
 I:120:70d10:25:40:120
-W:51:1:63:2200
+W:51:1:63:2200:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:ACID:4d8
@@ -6205,13 +6205,13 @@ D:A huge draconic form.  Pools of acid melt the floor around it.
 
 N:534:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:535:Nether hound
 T:zephyr hound
 C:G
 I:120:10d41:30:40:0
-W:52:2:0:1350
+W:52:2:0:1350:2
 B:BITE:HURT:2d17
 B:BITE:HURT:2d17
 B:CLAW:HURT:4d4
@@ -6226,7 +6226,7 @@ N:536:Dread
 T:ghost
 C:o
 I:120:15d19:20:22:10
-W:52:3:45:800
+W:52:3:45:800:2
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 B:HIT:LOSE_STR:3d4
@@ -6246,7 +6246,7 @@ N:537:Green dragon
 T:dragon
 C:t
 I:120:70d10:25:40:120
-W:52:2:63:2500
+W:52:2:63:2500:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:POISON:3d8
@@ -6261,17 +6261,17 @@ D:A huge draconic form enveloped in clouds of poisonous vapour.
 
 N:538:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:539:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:540:Assassin
 T:person
 C:D
 I:120:10d79:25:25:10
-W:53:2:45:1700
+W:53:2:45:1700:2
 B:HIT:POISON:3d12
 B:HIT:BLIND:2d12
 B:HIT:HURT:2d12
@@ -6290,7 +6290,7 @@ N:541:Mûmak
 T:quadruped
 C:s
 I:110:11d49:20:30:100
-W:53:2:0:1600
+W:53:2:0:1600:2
 B:BUTT:HURT:4d6
 B:BUTT:HURT:4d6
 B:CRUSH:HURT:4d4
@@ -6301,7 +6301,7 @@ N:542:Storm Troll
 T:troll
 C:Z
 I:120:9d100:20:50:100
-W:53:2:68:2500
+W:53:2:68:2500:2
 B:HIT:ELEC:3d8
 B:BITE:HURT:1d20
 B:HIT:COLD:3d8
@@ -6320,7 +6320,7 @@ N:543:Hezrou
 T:major demon
 C:g
 I:100:75d10:20:40:50
-W:53:3:76:2250
+W:53:3:76:2250:2
 B:CLAW:HURT:3d4
 B:BITE:ACID:3d10
 B:BITE:BLIND:3d10
@@ -6334,13 +6334,13 @@ D:acid froth and sizzle.
 
 N:544:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:545:Wraith's Steed
 T:bird
 C:D
 I:120:10d49:20:20:10
-W:54:2:45:2500
+W:54:2:45:2500:2
 B:WAIL:TERRIFY
 B:BITE:HURT:3d15
 B:CLAW:HURT:3d15
@@ -6356,7 +6356,7 @@ N:546:Dreadmaster
 T:ghost
 C:y
 I:130:5d100:20:40:10
-W:54:2:90:3000
+W:54:2:90:3000:2
 B:HIT:HURT:5d6
 B:HIT:HURT:5d6
 B:HIT:LOSE_STR:3d4
@@ -6376,7 +6376,7 @@ N:547:Nether wraith
 T:wraith
 C:G
 I:120:3d100:25:30:5
-W:54:2:68:2500
+W:54:2:68:2500:2
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
 B:TOUCH:EXP_80
@@ -6394,7 +6394,7 @@ N:548:Glabrezu
 T:major demon
 C:U
 I:110:36d10:20:25:80
-W:54:1:99:1750
+W:54:1:99:1750:2
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
 F:SMART | 
@@ -6409,17 +6409,17 @@ D:can hear it mumbling hellish incantations.
 
 N:549:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:550:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:551:Lord of misrule
 T:person
 C:D
 I:120:10d80:20:35:10
-W:55:3:68:1900
+W:55:3:68:1900:2
 B:HIT:BLIND:2d6
 B:TOUCH:EAT_GOLD:3d6
 B:TOUCH:EAT_ITEM:3d6
@@ -6436,7 +6436,7 @@ N:552:Bronze dragon
 T:dragon
 C:M
 I:120:73d10:25:45:140
-W:55:3:63:2700
+W:55:3:63:2700:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:HURT:4d8
@@ -6453,7 +6453,7 @@ N:553:Red dragon
 T:dragon
 C:R
 I:120:78d10:25:45:120
-W:55:1:63:2800
+W:55:1:63:2800:2
 B:CLAW:HURT:3d7
 B:CLAW:HURT:3d7
 B:BITE:FIRE:4d10
@@ -6468,13 +6468,13 @@ D:extreme heat surrounding it makes you gasp for breath.
 
 N:554:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:555:Death drake
 T:dragon
 C:G
 I:120:75d10:25:45:80
-W:56:3:67:3200
+W:56:3:67:3200:2
 B:CLAW:HURT:1d18
 B:CLAW:HURT:1d18
 B:BITE:EXP_80:1d6
@@ -6494,7 +6494,7 @@ N:556:Nalfeshnee
 T:major demon
 C:r
 I:120:43d10:20:20:80
-W:56:1:47:2900
+W:56:1:47:2900:2
 B:HIT:HURT:5d2
 B:HIT:HURT:5d2
 B:HIT:HURT:5d2
@@ -6510,17 +6510,17 @@ D:are razor-sharp.
 
 N:557:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:558:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:559:Death mold
 T:mold
 C:D
 I:140:20d59:10:24:0
-W:57:2:0:3000
+W:57:2:0:3000:2
 B:SPORE:UN_BONUS:7d7
 B:SPORE:UN_BONUS:7d7
 B:SPORE:UN_BONUS:7d7
@@ -6535,7 +6535,7 @@ N:560:Gold dragon
 T:dragon
 C:Y
 I:120:75d10:25:45:250
-W:57:3:63:3000
+W:57:3:63:3000:2
 B:CLAW:HURT:3d7
 B:CLAW:HURT:3d7
 B:BITE:HURT:4d9
@@ -6552,7 +6552,7 @@ N:561:Child of Ungoliant
 T:spider
 C:P
 I:110:12d80:8:40:80
-W:57:3:134:3500
+W:57:3:134:3500:2
 B:BITE:HURT:2d8
 B:STING:POISON:3d10
 B:STING:POISON:3d10
@@ -6574,7 +6574,7 @@ N:562:Necromancer
 T:person
 C:R
 I:120:10d79:20:25:30
-W:58:2:125:2500
+W:58:2:125:2500:2
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 F:MALE | MOVE_BODY | 
@@ -6592,7 +6592,7 @@ N:563:Undead beholder
 T:eye
 C:u
 I:120:12d100:20:40:10
-W:58:4:100:6000
+W:58:4:100:6000:2
 B:GAZE:EXP_40
 B:GAZE:PARALYZE
 B:GAZE:LOSE_INT:2d6
@@ -6614,7 +6614,7 @@ N:564:Vampire lord
 T:vampire
 C:b
 I:120:9d100:20:28:10
-W:58:2:90:4400
+W:58:2:90:4400:2
 B:HIT:HURT:4d10
 B:HIT:HURT:4d10
 B:BITE:EXP_80:1d6
@@ -6633,17 +6633,17 @@ D:onto yours.
 
 N:565:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:566:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:567:Master lich
 T:lich
 C:r
 I:120:8d100:20:36:50
-W:59:2:125:5250
+W:59:2:125:5250:2
 B:TOUCH:EXP_80
 B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:2d8
@@ -6663,7 +6663,7 @@ N:568:Marilith
 T:major demon
 C:y
 I:120:6d100:20:35:80
-W:59:1:110:4100
+W:59:1:110:4100:2
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
@@ -6681,7 +6681,7 @@ N:569:Wolf of Sauron
 T:canine
 C:G
 I:120:50d10:25:32:4
-W:60:2:0:4000
+W:60:2:0:4000:2
 B:BITE:EXP_20:2d4
 B:CLAW:POISON:4d10
 B:CLAW:POISON:4d10
@@ -6701,7 +6701,7 @@ N:570:Master mystic
 T:person
 C:o
 I:120:60d10:30:24:10
-W:60:2:100:4000
+W:60:2:100:4000:2
 B:PUNCH:HURT:10d2
 B:KICK:HURT:20d2
 B:HIT:POISON:10d1
@@ -6724,7 +6724,7 @@ N:571:Great crystal drake
 T:dragon
 C:v
 I:120:9d100:25:50:90
-W:60:3:70:5000
+W:60:3:70:5000:2
 B:CLAW:HURT:4d10
 B:CLAW:HURT:4d10
 B:BITE:HURT:4d12
@@ -6743,7 +6743,7 @@ N:572:Multi-hued dragon
 T:dragon
 C:v
 I:120:14d100:25:45:120
-W:60:2:70:5000
+W:60:2:70:5000:2
 B:CLAW:ACID:3d9
 B:CLAW:FIRE:3d9
 B:CLAW:COLD:3d9
@@ -6761,13 +6761,13 @@ D:massive frame.  Few live to see another.
 
 N:573:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:574:Time hound
 T:zephyr hound
 C:B
 I:130:20d17:30:40:0
-W:61:4:0:4000
+W:61:4:0:4000:2
 B:BITE:HURT:2d11
 B:BITE:HURT:2d11
 B:CLAW:HURT:3d4
@@ -6783,7 +6783,7 @@ N:575:Plasma hound
 T:zephyr hound
 C:R
 I:120:20d45:30:40:0
-W:61:2:0:3000
+W:61:2:0:3000:2
 B:BITE:ELEC:2d17
 B:BITE:FIRE:2d17
 B:CLAW:HURT:3d5
@@ -6800,7 +6800,7 @@ N:576:Hand druj
 T:skeleton
 C:y
 I:130:3d100:20:15:10
-W:61:4:125:5500
+W:61:4:125:5500:2
 F:FORCE_SLEEP | FORCE_MAXHP | NEVER_MOVE | NEVER_BLOW | 
 F:SMART | NO_CONF
 S:1_IN_1 | POW_20 | 
@@ -6810,13 +6810,13 @@ D:fingers.
 
 N:577:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:578:Patriarch
 T:person
 C:G
 I:120:70d10:22:35:25
-W:62:2:110:5000
+W:62:2:110:5000:2
 B:HIT:HURT:3d7
 B:HIT:HURT:3d7
 B:HIT:HURT:3d7
@@ -6836,7 +6836,7 @@ N:579:Ethereal dragon
 T:dragon
 C:o
 I:120:13d100:25:45:30
-W:62:3:70:7300
+W:62:3:70:7300:2
 B:CLAW:HURT:4d5
 B:CLAW:HURT:4d5
 B:BITE:HURT:4d12
@@ -6856,7 +6856,7 @@ N:580:Barbazu
 T:major demon
 C:G
 I:120:17d50:20:38:80
-W:62:1:45:5500
+W:62:1:45:5500:2
 B:HIT:HURT:3d10
 B:HIT:HURT:3d10
 B:HIT:LOSE_CON:10d2
@@ -6871,13 +6871,13 @@ D:of the fiery pit, capable of a terrifying berserk fury.
 
 N:581:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:582:Living dungeon
 T:xorn
 C:D
 I:110:28d100:14:68:5
-W:63:2:0:6500
+W:63:2:0:6500:2
 B:CRUSH:ACID:5d20
 B:BUTT:HURT:10d3
 B:TOUCH:LOSE_CHR:1d15
@@ -6894,13 +6894,13 @@ D:with rudeness, and now awake in wrath.
 
 N:583:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:584:Jabberwock
 T:hybrid
 C:v
 I:130:16d100:28:37:35
-W:64:5:0:10000
+W:64:5:0:10000:2
 B:CLAW:HURT:10d10
 B:CLAW:HURT:10d10
 B:BITE:HURT:10d10
@@ -6916,13 +6916,13 @@ D:Run and run quickly, for death incarnate chases behind you!
 
 N:585:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:586:Legendary hobbit rogue
 T:humanoid
 C:B
 I:140:20d59:30:45:0
-W:65:3:50:8750
+W:65:3:50:8750:2
 B:HIT:BLIND:4d11
 B:HIT:PARALYZE:4d11
 B:TOUCH:EAT_GOLD
@@ -6939,13 +6939,13 @@ D:pockets of Smaug himself.
 
 N:587:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:588:Chaos vortex
 T:vortex
 C:v
 I:140:12d29:22:30:0
-W:65:1:0:3500
+W:65:1:0:3500:2
 F:ATTR_MULTI | 
 F:FORCE_SLEEP | NEVER_BLOW | 
 F:RAND_50 | RAND_25 | 
@@ -6958,7 +6958,7 @@ N:589:Lesser titan
 T:giant
 C:y
 I:120:6d100:30:35:15
-W:65:3:100:5000
+W:65:3:100:5000:2
 B:HIT:CONFUSE:6d6
 B:HIT:CONFUSE:6d6
 B:HIT:CONFUSE:6d6
@@ -6977,7 +6977,7 @@ N:590:Nightwing
 T:wraith
 C:v
 I:120:11d100:20:48:15
-W:65:1:100:6000
+W:65:1:100:6000:2
 B:TOUCH:POISON:3d5
 B:TOUCH:POISON:3d5
 B:HIT:HURT:4d8
@@ -6997,7 +6997,7 @@ N:591:Dracolich
 T:dragon
 C:T
 I:120:17d100:25:48:30
-W:65:4:100:11000
+W:65:4:100:11000:2
 B:CLAW:HURT:3d10
 B:CLAW:HURT:3d10
 B:BITE:EXP_80:1d6
@@ -7019,7 +7019,7 @@ N:592:Dracolisk
 T:dragon
 C:i
 I:120:17d100:25:48:30
-W:65:4:100:11000
+W:65:4:100:11000:2
 B:CLAW:HURT:3d10
 B:CLAW:HURT:3d10
 B:BITE:HURT:6d8
@@ -7035,21 +7035,21 @@ D:piercing eyes, its evil breath burning the ground where it stands.
 
 N:593:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:594:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:595:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:596:Nightcrawler
 T:snake
 C:D
 I:120:24d100:20:60:45
-W:66:4:75:8000
+W:66:4:75:8000:2
 B:STING:LOSE_CON:6d8
 B:STING:LOSE_CON:6d8
 B:BITE:ACID:8d10
@@ -7070,17 +7070,17 @@ D:down your spine as you face it.
 
 N:597:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:598:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:599:Warlord
 T:person
 C:M
 I:120:12d100:20:60:30
-W:68:2:0:9000
+W:68:2:0:9000:2
 B:HIT:HURT:7d12
 B:HIT:HURT:7d12
 B:HIT:HURT:7d12
@@ -7098,7 +7098,7 @@ N:600:Chaos hound
 T:zephyr hound
 C:v
 I:120:20d39:30:40:0
-W:68:2:0:5000
+W:68:2:0:5000:2
 B:BITE:HURT:2d15
 B:BITE:HURT:2d15
 B:CLAW:HURT:3d6
@@ -7115,7 +7115,7 @@ N:601:Balor
 T:major demon
 C:p
 I:120:13d100:20:45:80
-W:68:1:120:10000
+W:68:1:120:10000:2
 B:HIT:FIRE:4d7
 B:HIT:HURT:4d7
 B:HIT:FIRE:4d7
@@ -7134,21 +7134,21 @@ D:blazing sword and burning lash.
 
 N:602:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:603:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:604:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:605:Drolem
 T:golem
 C:g
 I:120:19d100:25:52:30
-W:70:3:50:22000
+W:70:3:50:22000:2
 B:BITE:HURT:3d8
 B:BITE:HURT:3d8
 B:CLAW:POISON:2d3
@@ -7167,17 +7167,17 @@ D:but it has been instructed to destroy all it meets.
 
 N:606:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:607:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:608:Aether vortex
 T:vortex
 C:v
 I:130:12d29:25:35:0
-W:71:1:0:4500
+W:71:1:0:4500:2
 B:ENGULF:ELEC:5d5
 B:ENGULF:FIRE:3d3
 B:ENGULF:ACID:3d3
@@ -7197,7 +7197,7 @@ N:609:Eye druj
 T:skeleton
 C:r
 I:130:5d100:20:22:10
-W:71:4:150:13000
+W:71:4:150:13000:2
 B:GAZE:EXP_80
 B:GAZE:EXP_80
 F:FORCE_SLEEP | FORCE_MAXHP | NEVER_MOVE | 
@@ -7211,13 +7211,13 @@ D:harmless.
 
 N:610:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:611:Dreadlord
 T:ghost
 C:r
 I:120:12d100:20:45:10
-W:72:2:125:20000
+W:72:2:125:20000:2
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 B:HIT:LOSE_STR:4d6
@@ -7239,17 +7239,17 @@ D:the stench of death.  Flee its hunger!
 
 N:612:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:613:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:614:Greater titan
 T:giant
 C:o
 I:120:20d100:30:50:15
-W:74:3:100:17500
+W:74:3:100:17500:2
 B:HIT:CONFUSE:12d12
 B:HIT:CONFUSE:12d12
 B:HIT:CONFUSE:12d12
@@ -7267,21 +7267,21 @@ D:defiance.
 
 N:615:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:616:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:617:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:618:Sorcerer
 T:person
 C:R
 I:130:105d10:20:27:10
-W:75:2:150:15150
+W:75:2:150:15150:2
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 F:MALE | 
@@ -7301,7 +7301,7 @@ N:619:Serpent of Chaos
 T:snake
 C:v
 I:130:17d100:26:60:150
-W:75:3:55:16000
+W:75:3:55:16000:2
 B:CRUSH:HURT:15d10
 B:CRUSH:CONFUSE:15d10
 F:ATTR_MULTI | 
@@ -7317,7 +7317,7 @@ N:620:Winged Dragon of Bile
 T:flying dragon
 C:s
 I:130:19d100:25:58:100
-W:75:2:95:10000
+W:75:2:95:10000:2
 B:CLAW:HURT:3d12
 B:CLAW:ACID:3d12
 B:CLAW:ACID:3d12
@@ -7333,13 +7333,13 @@ D:Your courage seems to melt away as you feel you fear and nausea rising.
 
 N:621:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:622:Master quylthulg
 T:quylthulg
 C:B
 I:120:10d100:20:1:0
-W:76:4:165:11000
+W:76:4:165:11000:2
 F:FORCE_MAXHP | EVIL 
 S:1_IN_2 | POW_0 | 
 S:S_MONSTER | S_MONSTERS | S_DRAGON | S_DEMON | 
@@ -7348,13 +7348,13 @@ D:A pulsating mound of flesh, shining with silver pulses of throbbing light.
 
 N:623:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:624:Hound of Tindalos
 T:zephyr hound
 C:t
 I:130:10d69:30:40:0
-W:77:3:0:7000
+W:77:3:0:7000:2
 B:BITE:HURT:1d18
 B:BITE:HURT:1d18
 B:CLAW:HURT:2d6
@@ -7368,7 +7368,7 @@ N:625:Winged Dragon of Ice
 T:flying dragon
 C:w
 I:130:19d100:25:58:100
-W:77:2:95:10000
+W:77:2:95:10000:2
 B:CLAW:HURT:3d12
 B:CLAW:COLD:3d12
 B:CLAW:COLD:3d12
@@ -7386,7 +7386,7 @@ N:626:Greater draconic quylthulg
 T:quylthulg
 C:G
 I:120:8d100:20:1:0
-W:78:4:165:14500
+W:78:4:165:14500:2
 F:FORCE_MAXHP | EVIL | ANGBAND 
 S:1_IN_2 | POW_0 | 
 S:TPORT | 
@@ -7398,7 +7398,7 @@ N:627:Black reaver
 T:lich
 C:D
 I:120:20d100:26:55:50
-W:78:4:500:26000
+W:78:4:500:26000:2
 B:HIT:HURT:5d12
 B:HIT:UN_BONUS:4d7
 B:HIT:LOSE_STR:3d7
@@ -7415,17 +7415,17 @@ D:magic, advancing steadily and unstoppably.  Flee!
 
 N:628:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:629:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:630:Aether hound
 T:zephyr hound
 C:v
 I:130:10d89:30:40:0
-W:80:2:0:8000
+W:80:2:0:8000:2
 B:BITE:HURT:2d13
 B:BITE:HURT:2d13
 B:CLAW:HURT:3d4
@@ -7446,7 +7446,7 @@ N:631:Winged Dragon of Storms
 T:flying dragon
 C:b
 I:130:19d100:25:58:100
-W:80:2:95:10000
+W:80:2:95:10000:2
 B:CLAW:HURT:3d12
 B:CLAW:ELEC:3d12
 B:CLAW:ELEC:3d12
@@ -7464,7 +7464,7 @@ N:632:Skull druj
 T:skeleton
 C:o
 I:130:7d100:20:25:10
-W:81:4:165:16000
+W:81:4:165:16000:2
 B:BITE:EXP_80:4d4
 B:BITE:PARALYZE:4d4
 B:BITE:LOSE_INT:4d4
@@ -7481,13 +7481,13 @@ D:merely blast you with mighty magic.
 
 N:633:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:634:Grand master mystic
 T:person
 C:o
 I:130:14d100:30:26:10
-W:82:2:110:19000
+W:82:2:110:19000:2
 B:KICK:HURT:25d3
 B:PUNCH:HURT:25d3
 B:HIT:POISON:15d1
@@ -7508,14 +7508,14 @@ D:creatures with disdainful ease.
 
 N:635:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:636:Mimic (large jeweled chest)
 T:mimic
 G:~
 C:v
 I:130:10d100:30:20:100
-W:83:6:165:15000
+W:83:6:165:15000:2
 B:GAZE:CONFUSE
 B:CLAW:BLIND:1d19
 B:CLAW:PARALYZE:1d19
@@ -7533,7 +7533,7 @@ N:637:Winged Dragon of Fire
 T:flying dragon
 C:r
 I:130:23d100:30:58:100
-W:83:2:95:11000
+W:83:2:95:11000:2
 B:CLAW:HURT:3d13
 B:CLAW:FIRE:3d13
 B:CLAW:FIRE:3d13
@@ -7549,13 +7549,13 @@ D:you truly realize how insignificant you are.
 
 N:638:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:639:Nightwalker
 T:wraith
 C:D
 I:130:17d100:25:60:10
-W:85:4:127:18000
+W:85:4:127:18000:2
 B:HIT:UN_BONUS:7d7
 B:HIT:UN_BONUS:7d7
 B:HIT:UN_BONUS:7d7
@@ -7579,7 +7579,7 @@ N:640:Sky Dragon
 T:flying dragon
 C:B
 I:130:21d100:30:65:120
-W:85:5:70:15000
+W:85:5:70:15000:2
 B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
@@ -7596,13 +7596,13 @@ D:of the ethereal planes; fewer live to tell the tale.
 
 N:641:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:642:Balrog
 T:major demon
 C:P
 I:130:26d100:26:50:80
-W:87:5:132:27500
+W:87:5:132:27500:2
 B:ENGULF:FIRE:9d25
 B:HIT:HURT:4d10
 B:HIT:HURT:4d10
@@ -7622,13 +7622,13 @@ D:of peril and a whip of sudden death.
 
 N:643:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:644:Winged Dragon of Chaos
 T:flying dragon
 C:v
 I:130:22d100:30:60:100
-W:88:2:121:18000
+W:88:2:121:18000:2
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
@@ -7647,7 +7647,7 @@ N:645:Winged Dragon of Law
 T:flying dragon
 C:B
 I:130:22d100:30:60:100
-W:88:2:121:18000
+W:88:2:121:18000:2
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
@@ -7663,13 +7663,13 @@ D:insects to be crushed underfoot.
 
 N:646:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:647:Winged Dragon of Ilmen
 T:flying dragon
 C:Z
 I:130:22d100:30:60:100
-W:88:2:121:18000
+W:88:2:121:18000:2
 B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
@@ -7687,13 +7687,13 @@ D:you have?
 
 N:648:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:649:Winged Dragon of Balance
 T:flying dragon
 C:v
 I:130:25d100:30:60:100
-W:92:4:121:19000
+W:92:4:121:19000:2
 B:CLAW:HURT:5d14
 B:CLAW:HURT:5d14
 B:CLAW:HURT:5d14
@@ -7710,17 +7710,17 @@ D:destroy you.
 
 N:650:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:651:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:652:Storm of Unmagic
 T:vortex
 C:v
 I:140:9d100:40:40:0
-W:95:3:0:17000
+W:95:3:0:17000:2
 B:ENGULF:EXP_80:4d9
 B:ENGULF:UN_POWER:4d9
 B:ENGULF:UN_BONUS:4d9
@@ -7737,17 +7737,17 @@ D:Unmagic rips the enchantments from everything it touches.
 
 N:653:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:654:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:655:Winged Dragon of Power
 T:flying dragon
 C:v
 I:135:35d100:30:65:160
-W:97:4:144:34000
+W:97:4:144:34000:2
 B:CLAW:HURT:6d12
 B:CLAW:HURT:6d12
 B:CLAW:HURT:6d12
@@ -7771,35 +7771,35 @@ D:possibly be your doom.
 
 N:656:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:657:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:658:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:659:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:660:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:661:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:662:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:663:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 
 ######################## Dungeon Monsters - Uniques #######################
@@ -7808,7 +7808,7 @@ N:664:Pongo the Devious
 T:humanoid
 C:M
 I:110:4d10:20:20:20
-W:2:2:24:30
+W:2:2:24:30:2
 B:HIT:HURT:2d3
 B:HIT:HURT:2d3
 F:UNIQUE |
@@ -7824,7 +7824,7 @@ N:665:The Desperate Adventurer
 T:person
 C:s
 I:110:5d10:5:20:0
-W:3:1:0:30
+W:3:1:0:30:2
 B:REQUEST
 F:UNIQUE | MALE | SMART | FORCE_DEPTH | 
 F:FORCE_MAXHP | MOVE_BODY | 
@@ -7836,7 +7836,7 @@ N:666:The Thief of the Mountains
 T:humanoid
 C:b
 I:120:4d12:20:12:10
-W:5:3:0:90
+W:5:3:0:90:2
 B:HIT:HURT:1d6
 B:TOUCH:EAT_ITEM
 B:TOUCH:EAT_GOLD
@@ -7851,7 +7851,7 @@ N:667:The Ickiness
 T:icky thing
 C:U
 I:110:9d10:20:10:20
-W:7:3:40:100
+W:7:3:40:100:2
 B:TOUCH:ACID:1d3
 B:TOUCH:POISON:1d3
 B:TOUCH:LOSE_CHR:1d3
@@ -7868,7 +7868,7 @@ N:668:Mughâsh the Kobold Lord
 T:kobold
 C:v
 I:110:12d10:20:15:20
-W:7:3:0:100
+W:7:3:0:100:2
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
@@ -7883,7 +7883,7 @@ N:669:Ulfast, son of Ulfang
 T:person
 C:t
 I:110:19d10:20:15:20
-W:8:1:45:150
+W:8:1:45:150:2
 B:HIT:HURT:1d5
 B:HIT:HURT:1d5
 B:TOUCH:EAT_GOLD
@@ -7900,7 +7900,7 @@ N:670:Balcmeg, the Cave Orc
 T:orc
 C:T
 I:110:14d10:20:20:30
-W:8:2:0:80
+W:8:2:0:80:2
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 B:HIT:HURT:1d9
@@ -7916,7 +7916,7 @@ N:671:Brodda, the Easterling
 T:person
 C:U
 I:110:15d10:20:20:20
-W:9:2:0:100
+W:9:2:0:100:2
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
@@ -7930,7 +7930,7 @@ N:672:Orfax, Son of Boldor
 T:yeek
 C:B
 I:120:8d10:18:16:10
-W:10:3:75:80
+W:10:3:75:80:2
 B:HIT:HURT:1d9
 B:HIT:HURT:1d8
 B:INSULT
@@ -7951,7 +7951,7 @@ N:673:Lug, the Hill Orc
 T:orc
 C:m
 I:110:16d10:20:20:20
-W:10:3:0:160
+W:10:3:0:160:2
 B:HIT:HURT:1d12
 B:HIT:HURT:1d10
 B:HIT:HURT:1d12
@@ -7965,21 +7965,21 @@ D:He is a cunning and devious orc with a chaotic nature.
 
 N:674:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:675:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:676:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:677:Boldor, King of the Yeeks
 T:yeek
 C:P
 I:120:13d10:18:20:10
-W:13:3:90:200
+W:13:3:90:200:2
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 B:HIT:HURT:1d8
@@ -7996,17 +7996,17 @@ D:A great yeek, powerful in magic and sorcery, but a yeek all the same.
 
 N:678:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:679:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:680:Ulwarth, son of Ulfang
 T:person
 C:U
 I:110:33d10:25:35:25
-W:19:2:54:250
+W:19:2:54:250:2
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
@@ -8021,17 +8021,17 @@ D:A treacherous Easterling, running errands for his brother Uldor.
 
 N:681:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:682:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:683:Othrod, Lord of the Orcs
 T:orc
 C:g
 I:110:28d10:20:30:20
-W:21:2:0:300
+W:21:2:0:300:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:HURT:3d5
@@ -8046,13 +8046,13 @@ D:but then he doesn't think much at all.
 
 N:684:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:685:Orcogar, Son of Orcobal
 T:orc
 C:P
 I:120:33d10:20:25:20
-W:23:3:0:320
+W:23:3:0:320:2
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
@@ -8067,17 +8067,17 @@ D:fast, but fortunately blessed with orcish brains.
 
 N:686:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:687:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:688:Ibun, Son of Mîm
 T:humanoid
 C:I
 I:110:49d10:20:40:10
-W:27:2:63:300
+W:27:2:63:300:2
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
@@ -8096,7 +8096,7 @@ N:689:Khîm, Son of Mîm
 T:humanoid
 C:I
 I:110:70d7:20:40:10
-W:27:2:63:300
+W:27:2:63:300:2
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
@@ -8115,7 +8115,7 @@ N:690:Orcobal the Mighty
 T:orc
 C:R
 I:120:63d10:20:40:20
-W:27:5:0:550
+W:27:5:0:550:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
@@ -8129,19 +8129,19 @@ D:leers and swaggers as he approaches you.
 
 N:691:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:692:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:693:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:694:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 # Mim only appears on level 30 of Amon Rudh
 
@@ -8149,7 +8149,7 @@ N:695:Mîm, Betrayer of Turin
 T:humanoid
 C:o
 I:120:10d65:100:40:0
-W:30:4:72:1100
+W:30:4:72:1100:2
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
@@ -8169,7 +8169,7 @@ N:696:Ulfang the Black
 T:person
 C:U
 I:110:6d100:20:35:40
-W:33:4:0:600
+W:33:4:0:600:2
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
@@ -8185,7 +8185,7 @@ N:697:Draebor, the Imp
 T:minor demon
 C:G
 I:120:52d7:20:30:20
-W:34:5:120:750
+W:34:5:120:750:2
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:HURT:3d4
@@ -8204,33 +8204,33 @@ D:An intensely irritating git of a monster.
 
 N:698:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:699:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:700:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:701:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:702:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:703:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:704:Uldor the Accursed
 T:person
 C:U
 I:120:10d80:20:45:40
-W:42:5:0:1200
+W:42:5:0:1200:2
 B:HIT:HURT:5d6
 B:HIT:HURT:5d6
 B:HIT:HURT:5d6
@@ -8246,7 +8246,7 @@ N:705:The Queen Ant
 T:ant
 C:g
 I:120:8d100:30:45:15
-W:42:2:96:1000
+W:42:2:96:1000:2
 B:BITE:HURT:2d12
 B:BITE:HURT:2d12
 B:BITE:HURT:2d8
@@ -8264,7 +8264,7 @@ N:706:Lokkak, the Ogre Chieftain
 T:ogre
 C:g
 I:120:15d70:20:45:20
-W:45:2:0:2500
+W:45:2:0:2500:2
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
@@ -8280,7 +8280,7 @@ N:707:Rogrog the Black Troll
 T:troll
 C:D
 I:120:9d100:20:50:50
-W:46:5:0:2000
+W:46:5:0:2000:2
 B:HIT:HURT:6d6
 B:BITE:HURT:2d10
 B:BITE:HURT:2d3
@@ -8299,17 +8299,17 @@ D:bulk, he strikes with stunning speed.
 
 N:708:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:709:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:710:Shelob, Spider of Darkness
 T:spider
 C:D
 I:110:12d70:8:40:80
-W:48:3:134:1750
+W:48:3:134:1750:2
 B:BITE:HURT:2d8
 B:STING:POISON:3d10
 B:STING:POISON:3d10
@@ -8332,7 +8332,7 @@ N:711:Vargo, Tyrant of Fire
 T:elemental
 C:R
 I:120:9d100:12:35:50
-W:48:3:81:3000
+W:48:3:81:3000:2
 B:HIT:FIRE:4d6
 B:HIT:FIRE:4d6
 B:HIT:FIRE:4d6
@@ -8349,7 +8349,7 @@ N:712:Waldern, King of Water
 T:elemental
 C:Z
 I:120:10d100:12:40:50
-W:49:3:81:3250
+W:49:3:81:3250:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
@@ -8367,7 +8367,7 @@ N:713:Kavlax the Many-Headed
 T:dragon
 C:v
 I:120:8d100:20:40:30
-W:49:3:0:3000
+W:49:3:0:3000:2
 B:BITE:HURT:2d14
 B:BITE:HURT:2d14
 B:BITE:HURT:2d14
@@ -8385,21 +8385,21 @@ D:look for prey, but each with its own deadly breath weapon.
 
 N:714:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:715:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:716:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:717:Eöl, the Dark Elven Smith
 T:humanoid
 C:v
 I:120:11d100:25:55:5
-W:50:3:84:5000
+W:50:3:84:5000:2
 B:GAZE:PARALYZE
 B:HIT:HURT:4d12
 B:HIT:HURT:4d12
@@ -8418,7 +8418,7 @@ N:718:Lorgan, Chief of the Easterlings
 T:person
 C:P
 I:120:11d100:25:40:10
-W:51:2:108:4200
+W:51:2:108:4200:2
 B:HIT:HURT:5d6
 B:HIT:HURT:5d6
 B:HIT:HURT:3d8
@@ -8437,7 +8437,7 @@ N:719:The Phantom of Eilenel
 T:ghost
 C:v
 I:120:8d100:30:12:20
-W:51:6:101:1200
+W:51:6:101:1200:2
 B:TOUCH:EXP_80:1d8
 B:TOUCH:EXP_80:1d8
 B:CLAW:LOSE_INT:2d8
@@ -8459,7 +8459,7 @@ N:720:Quaker, Master of Earth
 T:elemental
 C:U
 I:110:15d100:10:50:90
-W:53:3:81:7000
+W:53:3:81:7000:2
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
@@ -8479,7 +8479,7 @@ N:721:Ariel, Queen of Air
 T:elemental
 C:T
 I:130:9d100:12:65:50
-W:54:3:81:8000
+W:54:3:81:8000:2
 B:HIT:HURT:4d6
 B:HIT:CONFUSE:1d4
 B:HIT:HURT:4d6
@@ -8499,7 +8499,7 @@ N:722:Itangast the Fire Drake
 T:dragon
 C:i
 I:120:15d100:20:60:40
-W:54:4:130:9500
+W:54:4:130:9500:2
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:HURT:4d12
@@ -8521,7 +8521,7 @@ N:723:Glaurung, Father of the Dragons
 T:dragon
 C:p
 I:120:32d100:100:60:0
-W:55:1:158:31000
+W:55:1:158:31000:2
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:BITE:FIRE:8d14
@@ -8542,13 +8542,13 @@ D:dragonfire, and his poison is agonizing.
 
 N:724:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:725:Uvatha the Horseman
 T:wraith
 C:D
 I:120:10d100:90:30:10
-W:60:5:108:11000
+W:60:5:108:11000:2
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 B:HIT:EXP_80:4d6
@@ -8569,7 +8569,7 @@ N:726:Baphomet the Minotaur Lord
 T:hybrid
 C:v
 I:130:19d100:30:48:30
-W:61:4:108:11000
+W:61:4:108:11000:2
 B:BUTT:HURT:12d13
 B:BUTT:HURT:12d13
 B:HIT:HURT:10d10
@@ -8589,7 +8589,7 @@ N:727:Harowen the Black Hand
 T:person
 C:Z
 I:140:15d100:30:36:0
-W:62:3:108:12000
+W:62:3:108:12000:2
 B:TOUCH:EAT_GOLD:5d5
 B:TOUCH:EAT_ITEM:5d5
 B:HIT:BLIND:10d5
@@ -8608,7 +8608,7 @@ N:728:Adunaphel the Quiet
 T:wraith
 C:D
 I:120:10d100:90:35:10
-W:63:3:168:12000
+W:63:3:168:12000:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:TOUCH:EXP_80
@@ -8628,7 +8628,7 @@ N:729:Evil Iggy
 T:person
 C:D
 I:130:23d100:20:50:30
-W:65:4:120:14000
+W:65:4:120:14000:2
 B:HIT:HURT:7d6
 B:HIT:CONFUSE:7d6
 B:HIT:BLIND:7d6
@@ -8648,7 +8648,7 @@ N:730:Thuringwethil
 T:vampire
 C:v
 I:130:22d100:20:55:10
-W:65:4:150:13500
+W:65:4:150:13500:2
 B:BITE:HURT:5d8
 B:BITE:EXP_80:6d6
 B:HIT:CONFUSE:6d6
@@ -8670,7 +8670,7 @@ N:731:Akhorahil the Blind
 T:wraith
 C:D
 I:120:13d100:90:35:10
-W:65:5:168:13000
+W:65:5:168:13000:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:GAZE:EXP_80
@@ -8693,7 +8693,7 @@ N:732:Scatha the Worm
 T:dragon
 C:W
 I:120:23d100:30:65:45
-W:65:3:85:16000
+W:65:3:85:16000:2
 B:CLAW:HURT:4d9
 B:CLAW:HURT:4d9
 B:BITE:COLD:6d14
@@ -8714,7 +8714,7 @@ N:733:Calcollo Greencloak
 T:humanoid
 C:G
 I:130:27d100:25:65:10
-W:66:2:132:16000
+W:66:2:132:16000:2
 B:HIT:HURT:10d10
 B:HIT:HURT:8d6
 B:HIT:HURT:8d6
@@ -8735,7 +8735,7 @@ N:734:Ren the Unclean
 T:wraith
 C:D
 I:120:15d100:90:35:10
-W:67:5:168:13500
+W:67:5:168:13500:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:TOUCH:EXP_80
@@ -8758,7 +8758,7 @@ N:735:The Phoenix
 T:bird
 C:r
 I:120:20d100:40:52:0
-W:68:3:90:20000
+W:68:3:90:20000:2
 B:BITE:FIRE:12d6
 B:BITE:FIRE:12d6
 B:HIT:FIRE:9d12
@@ -8778,7 +8778,7 @@ N:736:The Defiler
 T:killer beetle
 C:D
 I:120:38d100:20:60:70
-W:68:3:90:20000
+W:68:3:90:20000:2
 B:CLAW:ACID:5d12
 B:CLAW:ACID:6d12
 B:CLAW:HURT:8d12
@@ -8798,7 +8798,7 @@ N:737:Ji Indur Dawndeath
 T:wraith
 C:D
 I:120:16d100:90:35:10
-W:68:5:168:15000
+W:68:5:168:15000:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:TOUCH:EXP_40
@@ -8818,17 +8818,17 @@ D:Sauron's power.
 
 N:738:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:739:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:740:Errata the Mage
 T:person
 C:w
 I:120:23d100:30:40:10
-W:69:4:175:18000
+W:69:4:175:18000:2
 B:HIT:HURT:8d5
 B:HIT:HURT:8d5
 F:UNIQUE | FEMALE | SPEAKING | 
@@ -8848,17 +8848,17 @@ D:you stand in her way.  Defend yourself!
 
 N:741:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:742:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:743:Draugluin, Sire of All Werewolves
 T:canine
 C:m
 I:130:24d100:36:36:10
-W:70:3:90:23000
+W:70:3:90:23000:2
 B:CLAW:HURT:3d5
 B:CLAW:HURT:3d5
 B:BITE:POISON:2d9
@@ -8880,7 +8880,7 @@ N:744:Maeglin, Betrayer of Gondolin
 T:humanoid
 C:p
 I:120:32d100:20:50:20
-W:71:5:120:20000
+W:71:5:120:20000:2
 B:HIT:LOSE_WIS:4d11
 B:HIT:LOSE_INT:4d11
 B:HIT:SHATTER:10d10
@@ -8900,7 +8900,7 @@ N:745:Dwar, Dog Lord of Waw
 T:wraith
 C:D
 I:120:18d100:90:36:10
-W:71:5:168:18500
+W:71:5:168:18500:2
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:BITE:EXP_40:2d4
@@ -8922,7 +8922,7 @@ N:746:Feagwath the Undead Sorceror
 T:lich
 C:v
 I:130:23d100:100:40:0
-W:73:3:165:24500
+W:73:3:165:24500:2
 B:HIT:UN_BONUS:6d8
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
@@ -8943,7 +8943,7 @@ N:747:Hoarmurath of Dir
 T:wraith
 C:D
 I:120:19d100:40:40:10
-W:73:5:185:22000
+W:73:5:185:22000:2
 B:HIT:HURT:10d10
 B:HIT:HURT:5d5
 B:TOUCH:EXP_80
@@ -8963,17 +8963,17 @@ D:lost for a life of everlasting torment.
 
 N:748:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:749:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:750:Tevildo, Prince of Cats
 T:feline
 C:r
 I:130:25d100:100:75:0
-W:74:5:99:30000
+W:74:5:99:30000:2
 B:HIT:CONFUSE:12d12
 B:TOUCH:LOSE_DEX:2d12
 B:HIT:BLIND:10d5
@@ -8994,7 +8994,7 @@ N:751:Krotus, the Dark Lord
 T:major demon
 C:D
 I:130:32d100:40:70:10
-W:75:5:125:30000
+W:75:5:125:30000:2
 B:TOUCH:EXP_80
 B:HIT:FIRE:8d10
 B:HIT:FIRE:8d10
@@ -9018,7 +9018,7 @@ N:752:Lungorthin, the Balrog of White Fire
 T:major demon
 C:w
 I:130:40d100:20:50:80
-W:75:2:158:31000
+W:75:2:158:31000:2
 B:HIT:FIRE:7d12
 B:HIT:FIRE:7d12
 B:CRUSH:HURT:7d12
@@ -9043,7 +9043,7 @@ N:753:Carcharoth, the Jaws of Thirst
 T:canine
 C:p
 I:130:40d100:36:44:10
-W:79:2:99:28000
+W:79:2:99:28000:2
 B:CLAW:HURT:3d20
 B:CLAW:HURT:3d20
 B:BITE:HURT:7d25
@@ -9062,17 +9062,17 @@ D:deadly opponent in combat.
 
 N:754:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:755:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:756:Wiruin, the Maelstrom
 T:vortex
 C:z
 I:140:30d100:50:10:10
-W:80:2:70:15000 
+W:80:2:70:15000:2 
 B:ENGULF:COLD:3d6
 B:ENGULF:CONFUSE:3d6
 B:ENGULF:HURT:3d6
@@ -9090,7 +9090,7 @@ N:757:Ungoliant, the Unlight
 T:spider
 C:D
 I:120:65d100:100:62:0
-W:70:1:152:35000
+W:70:1:152:35000:2
 B:BITE:POISON:3d9
 B:BITE:POISON:3d9
 B:STING:POISON:2d5
@@ -9115,7 +9115,7 @@ N:758:Omarax the Eye Tyrant
 T:eye
 C:v
 I:130:33d100:30:32:10
-W:80:4:165:16000
+W:80:4:165:16000:2
 B:GAZE:EXP_40:2d6
 B:GAZE:PARALYZE:2d6
 B:GAZE:UN_POWER:2d6
@@ -9137,7 +9137,7 @@ N:759:The Emperor Quylthulg
 T:quylthulg
 C:w
 I:130:22d100:30:1:0
-W:80:4:198:18000
+W:80:4:198:18000:2
 F:UNIQUE | ATTR_MULTI | ANGBAND | 
 F:FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_4D2 | 
@@ -9152,7 +9152,7 @@ N:760:Tselakus, the Dreadlord
 T:ghost
 C:R
 I:130:33d100:20:55:15
-W:80:2:165:35000
+W:80:2:165:35000:2
 B:HIT:HURT:10d10
 B:HIT:HURT:10d10
 B:HIT:LOSE_STR:4d6
@@ -9176,17 +9176,17 @@ D:annihilates all in his path to your soul!
 
 N:761:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:762:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:763:Pazuzu, Lord of Air
 T:major demon
 C:T
 I:140:27d100:40:50:10
-W:87:2:145:30000
+W:87:2:145:30000:2
 B:HIT:ELEC:12d12
 B:HIT:ELEC:12d12
 B:HIT:ELEC:12d12
@@ -9204,13 +9204,13 @@ D:as he decides your fate.
 
 N:764:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:765:The Tarrasque
 T:reptile
 C:v
 I:130:42d100:50:75:20
-W:88:2:0:35000
+W:88:2:0:35000:2
 B:HIT:HURT:10d10
 B:HIT:HURT:10d10
 B:TOUCH:UN_POWER
@@ -9231,7 +9231,7 @@ N:766:Vecna, the Emperor Lich
 T:lich
 C:p
 I:130:34d100:20:43:50
-W:88:2:185:45000
+W:88:2:185:45000:2
 B:TOUCH:EXP_80:8d8
 B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:4d18
@@ -9254,7 +9254,7 @@ N:767:Smaug the Golden
 T:flying dragon
 C:R
 I:135:21d100:30:50:55
-W:90:3:144:20000
+W:90:3:144:20000:2
 B:CLAW:HURT:5d13
 B:CLAW:HURT:5d13
 B:BITE:FIRE:8d12
@@ -9274,7 +9274,7 @@ N:768:Cantoras, the Skeletal Lord
 T:skeleton
 C:D
 I:140:30d100:20:48:80
-W:91:2:180:45000
+W:91:2:180:45000:2
 B:GAZE:EXP_80
 B:GAZE:EXP_80
 B:TOUCH:POISON:3d5
@@ -9298,7 +9298,7 @@ N:769:Qlzqqlzuup, the Lord of Flesh
 T:quylthulg
 C:o
 I:130:28d100:30:1:0
-W:92:4:216:25000
+W:92:4:216:25000:2
 F:UNIQUE | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_4D2 | 
 F:EVIL 
@@ -9314,7 +9314,7 @@ N:770:Ancalagon the Black
 T:flying dragon
 C:D
 I:140:50d100:40:70:60
-W:95:4:158:45000
+W:95:4:158:45000:2
 B:CLAW:HURT:8d12
 B:CLAW:HURT:8d12
 B:CLAW:HURT:8d12
@@ -9336,7 +9336,7 @@ N:771:Gothmog, the High Captain of Balrogs
 T:major demon
 C:R
 I:130:57d100:60:56:0
-W:95:1:173:43000
+W:95:1:173:43000:2
 B:HIT:FIRE:9d12
 B:HIT:FIRE:9d12
 B:CRUSH:HURT:8d12
@@ -9362,7 +9362,7 @@ N:772:Wolf-Sauron
 T:canine
 C:p
 I:140:68d100:100:64:0
-W:85:1:202:50000
+W:85:1:202:50000:2
 B:BITE:POISON:6d10
 B:BITE:POISON:6d10
 B:CLAW:CONFUSE:4d8
@@ -9383,7 +9383,7 @@ N:773:Serpent-Sauron
 T:snake
 C:p
 I:130:68d100:100:64:0
-W:85:1:202:50000
+W:85:1:202:50000:2
 B:BITE:POISON:7d12
 B:BITE:POISON:7d12
 B:CRUSH:HURT:8d12
@@ -9406,7 +9406,7 @@ N:774:Vampire-Sauron
 T:vampire
 C:p
 I:130:68d100:100:64:0
-W:85:1:202:50000
+W:85:1:202:50000:2
 B:BITE:EXP_80:6d12
 B:CLAW:TERRIFY:8d12
 B:TOUCH:UN_POWER
@@ -9430,7 +9430,7 @@ N:775:Sauron, the Sorcerer
 T:person
 C:p
 I:130:68d100:100:64:0
-W:85:1:202:50000
+W:85:1:202:50000:2
 B:HIT:UN_BONUS:10d12
 B:HIT:UN_BONUS:10d12
 B:TOUCH:UN_POWER
@@ -9459,7 +9459,7 @@ N:776:Morgoth, Lord of Darkness
 T:Morgoth
 C:D
 I:135:100d100:100:60:0
-W:100:1:250:60000
+W:100:1:250:60000:2
 B:HIT:SHATTER:25d10
 B:HIT:SHATTER:25d10
 B:HIT:LOSE_ALL:15d12
@@ -9495,7 +9495,7 @@ N:777:Skeleton
 T:skeleton
 C:m
 I:110:11d10:20:14:0
-W:6:3:30:30
+W:6:3:30:30:2
 B:HIT:HURT:2d5
 B:HIT:HURT:2d5
 F:UNIQUE | PLAYER_GHOST | 
@@ -9512,7 +9512,7 @@ N:778:Zombie
 T:zombie
 C:m
 I:110:22d10:20:14:0
-W:12:4:43:90
+W:12:4:43:90:2
 B:HIT:HURT:3d7
 B:HIT:POISON:3d7
 F:UNIQUE | PLAYER_GHOST | 
@@ -9527,7 +9527,7 @@ N:779:Spirit
 T:ghost
 C:m
 I:120:18d10:20:14:0
-W:18:4:55:120
+W:18:4:55:120:2
 B:TOUCH:HURT:3d6
 B:TOUCH:TERRIFY:1d2
 B:TOUCH:LOSE_DEX:1d2
@@ -9546,7 +9546,7 @@ N:780:Mummy
 T:mummy
 C:m
 I:110:45d10:20:16:0
-W:24:4:67:150
+W:24:4:67:150:2
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 B:HIT:POISON:3d8
@@ -9564,7 +9564,7 @@ N:781:Wight
 T:wraith
 C:m
 I:115:35d10:20:20:0
-W:30:5:75:210
+W:30:5:75:210:2
 B:WAIL:TERRIFY
 B:TOUCH:HURT:4d14
 B:TOUCH:EXP_40:1d5
@@ -9583,7 +9583,7 @@ N:782:Ghost
 T:ghost
 C:m
 I:120:42d10:20:12:0
-W:36:5:83:350
+W:36:5:83:350:2
 B:WAIL:TERRIFY
 B:TOUCH:EXP_20:1d6
 B:CLAW:LOSE_INT:3d7
@@ -9603,7 +9603,7 @@ N:783:Vampire
 T:vampire
 C:m
 I:115:7d100:20:18:0
-W:42:5:92:600
+W:42:5:92:600:2
 B:HIT:HURT:5d8
 B:HIT:HURT:5d8
 B:BITE:EXP_20:2d9
@@ -9621,7 +9621,7 @@ N:784:Phantom
 T:ghost
 C:V
 I:120:8d100:30:12:20
-W:46:6:101:1200
+W:46:6:101:1200:2
 B:TOUCH:EXP_80:1d15
 B:TOUCH:EXP_80:1d15
 B:CLAW:LOSE_INT:3d8
@@ -9642,7 +9642,7 @@ N:785:Lich
 T:lich
 C:I
 I:120:12d100:20:24:0
-W:56:6:109:3000
+W:56:6:109:3000:2
 B:TOUCH:EXP_40
 B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:4d9
@@ -9662,7 +9662,7 @@ N:786:Nether Wraith
 T:wraith
 C:T
 I:120:15d100:20:22:0
-W:65:6:120:8000
+W:65:6:120:8000:2
 B:HIT:HURT:4d15
 B:HIT:HURT:4d15
 B:TOUCH:EXP_80:2d9
@@ -9683,7 +9683,7 @@ N:787:Deathlord
 T:wraith
 C:p
 I:130:20d100:20:40:0
-W:74:6:133:20000
+W:74:6:133:20000:2
 B:HIT:HURT:7d12
 B:HIT:UN_BONUS:4d8
 B:WAIL:PARALYZE:4d8
@@ -9703,50 +9703,50 @@ D:undead comes to claim your soul.  You feel you know it and it knows you.
 
 N:788:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:789:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:790:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:791:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:792:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:793:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:794:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:795:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:796:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:797:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 N:798:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2
 
 # This entry is used as a dummy for player ghosts, and should never be used
 
 N:799:()
 I:110:1d1:0:0:0
-W:0:0:0:0
+W:0:0:0:0:2

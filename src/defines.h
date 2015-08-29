@@ -67,7 +67,7 @@
 */
 
 /*
- * Current FAangband version numbers.
+ * Current Ponyband version numbers.
  */
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	1
@@ -146,6 +146,11 @@
  * Maximum number of player "sex" types (see "table.c", etc)
  */
 #define MAX_SEXES            2
+
+/**
+ * Number of monster factions.
+ */
+#define NUM_FACTIONS         4
 
 /*
  * Hack -- first normal and random artifact in the artifact list.  

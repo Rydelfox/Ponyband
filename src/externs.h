@@ -252,6 +252,8 @@ extern bool angband_keymap_flag;
 extern void (*sound_hook)(int);
 extern autoinscription *inscriptions;
 extern u16b inscriptions_count;
+extern const int reaction_matrix[NUM_FACTIONS][NUM_FACTIONS];
+extern u16b follow_distance;
 
 /* util.c */
 extern struct keypress *inkey_next;

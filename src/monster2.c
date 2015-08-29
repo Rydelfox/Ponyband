@@ -1694,30 +1694,11 @@ void update_mon(int m_idx, bool full)
 
 	/* Compute distance */
 	if (full) {
-		int py = p_ptr->py;
-		int px = p_ptr->px;
-
-		/* Distance components */
-		int dy = (py > fy) ? (py - fy) : (fy - py);
-		int dx = (px > fx) ? (px - fx) : (fx - px);
-
-		/* Approximate distance */
-		d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
-
-		/* Restrict distance */
-		if (d > 255)
-			d = 255;
-
-		/* Save the distance */
-		m_ptr->cdis = d;
+		monster_distance(m_idx);
 	}
 
 	/* Extract distance */
-	else {
-		/* Extract the distance */
-		d = m_ptr->cdis;
-	}
-
+	d = m_ptr->cdis;
 
 	/* Detected */
 	if (m_ptr->mflag & (MFLAG_MARK))
@@ -2203,7 +2184,11 @@ s16b monster_place(int y, int x, monster_type * n_ptr)
 		if (rf_has(r_ptr->flags, RF_MULTIPLY))
 			num_repro++;
 
-		/* Count racial occurances */
+        /* Make sure a new good monster's not hostile to good characters */
+        if((m_ptr->faction == F_GOOD) && (p_ptr->alignment > PY_ALIGN_CHANGE))
+            m_ptr->hostile = -1;
+            
+        /* Count racial occurances */
 		r_ptr->cur_num++;
 	}
 
@@ -2259,7 +2244,7 @@ static bool get_racial_monster(int r_idx)
  * This is the only function which may place a monster in the dungeon,
  * except for the savefile loading code.
  */
-static bool place_monster_one(int y, int x, int r_idx, bool slp)
+static bool place_monster_one(int y, int x, int r_idx, bool slp, u16b summon_faction)
 {
 	int i, r1_idx;
 
@@ -2449,6 +2434,9 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
 	/* Set the group leader, if there is one */
 	n_ptr->group_leader = group_leader;
+	
+	/* Set the group faction */
+	n_ptr->faction = summon_faction;
 
 	/* Initialize racial monster */
 	if (rf_has(r_ptr->flags, RF_RACIAL)) {
@@ -2567,7 +2555,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
  * level rating.
  */
 static bool place_monster_group(int y, int x, int r_idx, bool slp,
-								s16b group_size)
+								s16b group_size, u16b summon_faction)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2624,7 +2612,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp,
 				continue;
 
 			/* Attempt to place another monster */
-			if (place_monster_one(my, mx, r_idx, slp)) {
+			if (place_monster_one(my, mx, r_idx, slp, summon_faction)) {
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
 				hack_x[hack_n] = mx;
@@ -2684,7 +2672,7 @@ static bool place_monster_okay(int r_idx)
 /**
  * Attempt to place an escort of monsters around the given location
  */
-static void place_monster_escort(int y, int x, int leader_idx, bool slp)
+static void place_monster_escort(int y, int x, int leader_idx, bool slp, u16b summon_faction)
 {
 	int escort_size, escort_idx;
 	int n, i;
@@ -2758,7 +2746,7 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
 			escort_idx = get_mon_num_quick(r_ptr->level);
 
 			/* Attempt to place another monster */
-			if (place_monster_one(my, mx, escort_idx, slp)) {
+			if (place_monster_one(my, mx, escort_idx, slp, summon_faction)) {
 				/* Add grid to the "hack" set */
 				hack_y[hack_n] = my;
 				hack_x[hack_n] = mx;
@@ -2770,11 +2758,11 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
 			if (rf_has(r_info[escort_idx].flags, RF_FRIENDS)) {
 				/* Place a group of monsters */
 				(void) place_monster_group(my, mx, escort_idx, slp,
-										   (s16b) (5 + randint1(10)));
+										   (s16b) (5 + randint1(10)), summon_faction);
 			} else if (rf_has(r_info[escort_idx].flags, RF_FRIEND)) {
 				/* Place a group of monsters */
 				(void) place_monster_group(my, mx, escort_idx, slp,
-										   (s16b) (1 + randint1(2)));
+										   (s16b) (1 + randint1(2)), summon_faction);
 			}
 		}
 	}
@@ -2800,12 +2788,12 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to legal escort types.
  */
-bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp)
+bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, u16b summon_faction)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(y, x, r_idx, slp)) {
+	if (!place_monster_one(y, x, r_idx, slp, summon_faction)) {
 		/* Hack - cancel group mode */
 		group_mode = FALSE;
 		group_race = NON_RACIAL;
@@ -2826,18 +2814,18 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp)
 	/* Friends for certain monsters */
 	if (rf_has(r_ptr->flags, RF_FRIENDS)) {
 		/* Attempt to place a large group */
-		(void) place_monster_group(y, x, r_idx, slp, (s16b) damroll(3, 7));
+		(void) place_monster_group(y, x, r_idx, slp, (s16b) damroll(3, 7), summon_faction);
 	}
 
 	else if (rf_has(r_ptr->flags, RF_FRIEND)) {
 		/* Attempt to place a small group */
-		(void) place_monster_group(y, x, r_idx, slp, (s16b) randint1(3));
+		(void) place_monster_group(y, x, r_idx, slp, (s16b) randint1(3), summon_faction);
 	}
 
 	/* Escorts for certain monsters */
 	if ((rf_has(r_ptr->flags, RF_ESCORT))
 		|| (rf_has(r_ptr->flags, RF_ESCORTS))) {
-		place_monster_escort(y, x, r_idx, slp);
+		place_monster_escort(y, x, r_idx, slp, summon_faction);
 	}
 
 	/* Cancel group leader */
@@ -2872,7 +2860,7 @@ bool place_monster(int y, int x, bool slp, bool grp, bool quick)
 		return (FALSE);
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(y, x, r_idx, slp, grp))
+	if (place_monster_aux(y, x, r_idx, slp, grp, r_info[r_idx].faction))
 		return (TRUE);
 
 	/* Oops */
@@ -2946,7 +2934,7 @@ bool alloc_monster(int dis, bool slp, bool quick)
 	}
 
 	/* Attempt to place the monster, allow groups */
-	if (place_monster_aux(y, x, r_idx, slp, TRUE))
+	if (place_monster_aux(y, x, r_idx, slp, TRUE, r_ptr->faction))
 		return (TRUE);
 
 	/* Nope */
@@ -2960,6 +2948,11 @@ bool alloc_monster(int dis, bool slp, bool quick)
  * Hack -- the "type" of the current "summon specific"
  */
 static int summon_specific_type = 0;
+
+/**
+ * Hack -- the "faction" of the current "summon specific"
+ */
+static u16b summon_faction = F_MONSTER;
 
 
 /**
@@ -3162,7 +3155,7 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
+bool summon_specific(int y1, int x1, bool scattered, int lev, int type, u16b faction)
 {
 	int i, j, x, y, d, r_idx;
 
@@ -3211,6 +3204,9 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 
 	/* Save the "summon" type */
 	summon_specific_type = type;
+	
+	/* Save the "summon" faction */
+	summon_faction = faction;
 
 
 	/* Require "okay" monsters */
@@ -3238,7 +3234,7 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 		return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(y, x, r_idx, FALSE, TRUE))
+	if (!place_monster_aux(y, x, r_idx, FALSE, TRUE, faction))
 		return (FALSE);
 
 	/* Success */
@@ -3256,6 +3252,8 @@ bool summon_questor(int y1, int x1)
 {
 	int i, x, y, d;
 	feature_type *f_ptr;
+	
+	summon_faction = F_MONSTER;
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i) {
@@ -3292,7 +3290,7 @@ bool summon_questor(int y1, int x1)
 		if ((rf_has(r_ptr->flags, RF_QUESTOR)) && (r_ptr->cur_num < 1)
 			&& (r_ptr->max_num)) {
 			/* Place the questor */
-			place_monster_aux(y, x, i, FALSE, TRUE);
+			place_monster_aux(y, x, i, FALSE, TRUE, summon_faction);
 
 			/* Success */
 			return (TRUE);
@@ -3533,6 +3531,10 @@ bool multiply_monster(int m_idx)
 	int i, y, x;
 
 	bool result = FALSE;
+	
+	/* Bob Barker says "Spay and neuter your pets." */
+	if(m_ptr->faction == F_PLAYER)
+	    return (FALSE);
 
 	/* Try up to 18 times */
 	for (i = 0; i < 18; i++) {
@@ -3546,7 +3548,7 @@ bool multiply_monster(int m_idx)
 			continue;
 
 		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE);
+		result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->faction);
 
 		/* Done */
 		break;
@@ -4398,105 +4400,110 @@ void monster_death(int m_idx)
 			drop_near(i_ptr, -1, y, x, TRUE);
 		}
 	}
+	
+	/* Pets don't drop additional treasure */
+	if(m_ptr->faction != F_PLAYER) {
+	
 
-	/* Determine how much we can drop */
-	if (rf_has(r_ptr->flags, RF_DROP_60) && (randint0(100) < 60))
-		number++;
-	if (rf_has(r_ptr->flags, RF_DROP_90) && (randint0(100) < 90))
-		number++;
+	    /* Determine how much we can drop */
+	    if (rf_has(r_ptr->flags, RF_DROP_60) && (randint0(100) < 60))
+		    number++;
+	    if (rf_has(r_ptr->flags, RF_DROP_90) && (randint0(100) < 90))
+		    number++;
 
-	/* Hack -- nothing's more annoying than a chest that doesn't appear. */
-	if (rf_has(r_ptr->flags, RF_DROP_CHEST)
-		&& rf_has(r_ptr->flags, RF_DROP_90))
-		number = 1;
+	    /* Hack -- nothing's more annoying than a chest that doesn't appear. */
+	    if (rf_has(r_ptr->flags, RF_DROP_CHEST)
+		    && rf_has(r_ptr->flags, RF_DROP_90))
+		    number = 1;
 
-	if (rf_has(r_ptr->flags, RF_DROP_1D2))
-		number += damroll(1, 2);
-	if (rf_has(r_ptr->flags, RF_DROP_2D2))
-		number += damroll(2, 2);
-	if (rf_has(r_ptr->flags, RF_DROP_3D2))
-		number += damroll(3, 2);
-	if (rf_has(r_ptr->flags, RF_DROP_4D2))
-		number += damroll(4, 2);
+	    if (rf_has(r_ptr->flags, RF_DROP_1D2))
+		    number += damroll(1, 2);
+	    if (rf_has(r_ptr->flags, RF_DROP_2D2))
+		    number += damroll(2, 2);
+	    if (rf_has(r_ptr->flags, RF_DROP_3D2))
+		    number += damroll(3, 2);
+	    if (rf_has(r_ptr->flags, RF_DROP_4D2))
+		    number += damroll(4, 2);
 
-	/* Hack -- handle creeping coins */
-	coin_type = force_coin;
+	    /* Hack -- handle creeping coins */
+	    coin_type = force_coin;
 
-	/* Average dungeon and monster levels */
-	object_level = (p_ptr->depth + r_ptr->level) / 2;
+	    /* Average dungeon and monster levels */
+	    object_level = (p_ptr->depth + r_ptr->level) / 2;
 
-	/* Drop some objects */
-	for (j = 0; j < number; j++) {
-		/* Get local object */
-		i_ptr = &object_type_body;
+	    /* Drop some objects */
+	    for (j = 0; j < number; j++) {
+		    /* Get local object */
+		    i_ptr = &object_type_body;
 
-		/* Wipe the object */
-		object_wipe(i_ptr);
+		    /* Wipe the object */
+		    object_wipe(i_ptr);
 
-		/* Make Gold.  Reduced to 30% chance instead of 50%. */
-		if (do_gold && (!do_item || (randint0(100) < 30))) {
+		    /* Make Gold.  Reduced to 30% chance instead of 50%. */
+		    if (do_gold && (!do_item || (randint0(100) < 30))) {
 
-			/* Make some gold */
-			if (make_gold(i_ptr)) {
+			    /* Make some gold */
+			    if (make_gold(i_ptr)) {
 
-				/* Assume seen XXX XXX XXX */
-				dump_gold++;
+				    /* Assume seen XXX XXX XXX */
+				    dump_gold++;
 
-				/* Drop it in the dungeon */
-				drop_near(i_ptr, -1, y, x, TRUE);
-			}
-		}
+				    /* Drop it in the dungeon */
+				    drop_near(i_ptr, -1, y, x, TRUE);
+			    }
+		    }
 
-		/* Make chest. */
-		else if (rf_has(r_ptr->flags, RF_DROP_CHEST)) {
-			required_tval = TV_CHEST;
-			if (make_object(i_ptr, FALSE, FALSE, TRUE)) {
-				/* Origin */
-				i_ptr->origin =
-					(visible ? ORIGIN_DROP : ORIGIN_DROP_UNKNOWN);
-				i_ptr->origin_xtra = m_ptr->r_idx;
-				i_ptr->origin_stage = p_ptr->stage;
+		    /* Make chest. */
+		    else if (rf_has(r_ptr->flags, RF_DROP_CHEST)) {
+			    required_tval = TV_CHEST;
+			    if (make_object(i_ptr, FALSE, FALSE, TRUE)) {
+				    /* Origin */
+				    i_ptr->origin =
+					    (visible ? ORIGIN_DROP : ORIGIN_DROP_UNKNOWN);
+				    i_ptr->origin_xtra = m_ptr->r_idx;
+				    i_ptr->origin_stage = p_ptr->stage;
 
-				/* Assume seen */
-				dump_item++;
+				    /* Assume seen */
+				    dump_item++;
 
-				/* Drop it in the dungeon */
-				drop_near(i_ptr, -1, y, x, TRUE);
-			}
-			required_tval = 0;
-		}
+				    /* Drop it in the dungeon */
+				    drop_near(i_ptr, -1, y, x, TRUE);
+			    }
+			    required_tval = 0;
+		    }
 
-		/* Make Object */
-		else {
-			/* Make an object */
-			if (make_object(i_ptr, good, great, FALSE)) {
-				/* Origin */
-				i_ptr->origin =
-					(visible ? ORIGIN_DROP : ORIGIN_DROP_UNKNOWN);
-				i_ptr->origin_stage = p_ptr->stage;
-				i_ptr->origin_xtra = m_ptr->r_idx;
+		    /* Make Object */
+		    else {
+			    /* Make an object */
+			    if (make_object(i_ptr, good, great, FALSE)) {
+				    /* Origin */
+				    i_ptr->origin =
+					    (visible ? ORIGIN_DROP : ORIGIN_DROP_UNKNOWN);
+				    i_ptr->origin_stage = p_ptr->stage;
+				    i_ptr->origin_xtra = m_ptr->r_idx;
 
-				/* Assume seen */
-				dump_item++;
+				    /* Assume seen */
+				    dump_item++;
 
-				/* Drop it in the dungeon */
-				drop_near(i_ptr, -1, y, x, TRUE);
-			}
-		}
+				    /* Drop it in the dungeon */
+				    drop_near(i_ptr, -1, y, x, TRUE);
+			    }
+		    }
 
-	}
+	    }
 
-	/* Reset the object level */
-	object_level = p_ptr->depth;
+	    /* Reset the object level */
+	    object_level = p_ptr->depth;
 
-	/* Reset "coin" type */
-	coin_type = 0;
+	    /* Reset "coin" type */
+	    coin_type = 0;
 
 
-	/* Take note of any dropped treasure */
-	if (visible && (dump_item || dump_gold)) {
-		/* Take notes on treasure */
-		lore_treasure(m_idx, dump_item, dump_gold);
+	    /* Take note of any dropped treasure */
+	    if (visible && (dump_item || dump_gold)) {
+		    /* Take notes on treasure */
+		    lore_treasure(m_idx, dump_item, dump_gold);
+	    }
 	}
 
 	/* Update monster, item list windows */
@@ -4525,7 +4532,7 @@ void monster_death(int m_idx)
  *
  * Hack -- we "delay" fear messages by passing around a "fear" flag.
  */
-bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
+bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note, int source)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -4534,6 +4541,8 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
 	s32b div, new_exp, new_exp_frac;
+	
+	u16b source_faction;
 
 	char path[1024];
 
@@ -4564,6 +4573,15 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 
 	/* Hurt it */
 	m_ptr->hp -= dam;
+	
+	/* Handle threat before we risk getting rid of the data */
+	if(source != SOURCE_ENVIRONMENTAL) {
+	    if(source == SOURCE_PLAYER)
+	        source_faction = F_PLAYER;
+        else
+            source_faction = m_list[source].faction;
+	    cause_threat(m_ptr->fy, m_ptr->fx, source, source_faction, dam, m_idx, FALSE);
+	}
 
 	/* It is dead now */
 	if (m_ptr->hp < 0) {
@@ -4645,6 +4663,10 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 
 		/* Give some experience for the kill */
 		new_exp = ((long) r_ptr->mexp * r_ptr->level) / div;
+		
+		/* Reduce experience if not killed by the player */
+		if (source > 0)
+		    new_exp /= 10;
 
 		/* Handle fractional experience */
 		new_exp_frac = ((((long) r_ptr->mexp * r_ptr->level) % div)
@@ -4796,4 +4818,36 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 
 	/* Not dead yet */
 	return (FALSE);
+}
+
+void monster_distance(int m_idx)
+{
+    monster_type *m_ptr = &m_list[m_idx];
+    
+    int py = p_ptr->py;
+	int px = p_ptr->px;
+	
+	int fy = m_ptr->fy;
+	int fx = m_ptr->fx;
+	
+	int dy, dx, d;
+		
+	if(m_ptr->hostile > 0) {
+	    py = m_list[m_ptr->hostile].fy;
+		px = m_list[m_ptr->hostile].fx;
+	}
+
+	/* Distance components */
+	dy = (py > fy) ? (py - fy) : (fy - py);
+	dx = (px > fx) ? (px - fx) : (fx - px);
+
+	/* Approximate distance */
+	d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+
+	/* Restrict distance */
+	if (d > 255)
+		d = 255;
+
+	/* Save the distance */
+	m_ptr->cdis = d;
 }

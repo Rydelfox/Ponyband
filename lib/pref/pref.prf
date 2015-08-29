@@ -354,6 +354,10 @@ C:1:^C
 A:^Gg
 C:1:g
 
+# Access pet menu
+A:P
+C:1:^G
+
 # Message colors
 %:message.prf
 

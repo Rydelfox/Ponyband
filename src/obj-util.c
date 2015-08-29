@@ -4774,7 +4774,7 @@ bool obj_can_wear(const object_type * o_ptr)
 {
 	if((player_has(PF_QUADRUPED)) && (wield_slot(o_ptr) == INVEN_HANDS))
 	    return (FALSE);
-    if((o_ptr->tval == TV_RING) && (p_ptr->num_rings <= 0))
+    if((o_ptr->tval == TV_RING) && (rp_ptr->num_rings <= 0))
         return FALSE;
     return (wield_slot(o_ptr) >= INVEN_WIELD);
 }

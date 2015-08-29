@@ -263,6 +263,36 @@ void gain_specialty(void)
 
 		/* Write a note */
 		history_add(buf, HISTORY_GAIN_SPECIALTY, 0);
+		
+		/* Adjust alignment */
+		switch(pick) {
+        case PF_CLARITY:
+            p_ptr->alignment+=50;
+            break;
+        case PF_FURY:
+            p_ptr->alignment-=50;
+            break;
+        case PF_HARMONY:
+            p_ptr->alignment+=200;
+            break;
+        case PF_HOLY_LIGHT:
+            p_ptr->alignment+=100;
+            break;
+        case PF_MEDITATION:
+            p_ptr->alignment+=50;
+            break;
+        case PF_POWER_SIPHON:
+            p_ptr->alignment-=100;
+            break;
+        case PF_SOUL_SIPHON:
+            p_ptr->alignment-=200;
+            break;
+        case PF_UNLIGHT:
+            p_ptr->alignment-=50;
+            break;
+        default:
+            break;
+        }
 
 		/* Update some stuff */
 		p_ptr->update |=

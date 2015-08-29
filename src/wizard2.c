@@ -1632,7 +1632,7 @@ static void do_cmd_wiz_summon(int num)
 	int i;
 
 	for (i = 0; i < num; i++) {
-		(void) summon_specific(py, px, FALSE, p_ptr->depth, 0);
+		(void) summon_specific(py, px, FALSE, p_ptr->depth, 0, F_MONSTER);
 	}
 }
 
@@ -1669,7 +1669,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 			continue;
 
 		/* Place it (allow groups) */
-		if (place_monster_aux(y, x, r_idx, slp, TRUE))
+		if (place_monster_aux(y, x, r_idx, slp, TRUE, r_ptr->faction))
 			break;
 	}
 }

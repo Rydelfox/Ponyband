@@ -4,7 +4,7 @@
     (2) Non-Magical Combat                                  (combat.txt)
     (3) Defending Yourself                                  (defence.txt)
     (4) Equipment Combat Attributes                         (equip.txt)
-
+    (5) Pets                                                (pets.txt)
 
 
 
@@ -17,3 +17,4 @@
 ***** [2] combat.txt
 ***** [3] defence.txt
 ***** [4] equip.txt
+***** [5] pets.txt

@@ -31,6 +31,7 @@
 #include "squelch.h"
 #include "store.h"
 #include "trap.h"
+#include "target.h"
 
 /** 
  * Move house to the current town
@@ -1170,14 +1171,14 @@ static void chest_trap(int y, int x, s16b o_idx)
 	/* Lose strength */
 	if (trap & (CHEST_LOSE_STR)) {
 		msg("A small needle has pricked you!");
-		take_hit(damroll(1, 4), "a poison needle");
+		take_hit(damroll(1, 4), "a poison needle", SOURCE_ENVIRONMENTAL);
 		(void) do_dec_stat(A_STR);
 	}
 
 	/* Lose constitution */
 	if (trap & (CHEST_LOSE_CON)) {
 		msg("A small needle has pricked you!");
-		take_hit(damroll(1, 4), "a poison needle");
+		take_hit(damroll(1, 4), "a poison needle", SOURCE_ENVIRONMENTAL);
 		(void) do_dec_stat(A_CON);
 	}
 
@@ -1202,7 +1203,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg("You are enveloped in a cloud of smoke!");
 		sound(MSG_SUM_MONSTER);
 		for (i = 0; i < num; i++) {
-			(void) summon_specific(y, x, FALSE, summon_level, 0);
+			(void) summon_specific(y, x, FALSE, summon_level, 0, F_MONSTER);
 		}
 	}
 
@@ -1211,7 +1212,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg("There is a sudden explosion!");
 		msg("Everything inside the chest is destroyed!");
 		o_ptr->pval = 0;
-		take_hit(damroll(5, 8), "an exploding chest");
+		take_hit(damroll(5, 8), "an exploding chest", SOURCE_ENVIRONMENTAL);
 	}
 
 	/* Scatter contents. */
@@ -1229,7 +1230,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		j = randint1(3) + 5;
 		msg("Elemental beings appear to protect their treasures!");
 		for (i = 0; i < j; i++) {
-			summon_specific(y, x, FALSE, summon_level, SUMMON_ELEMENTAL);
+			summon_specific(y, x, FALSE, summon_level, SUMMON_ELEMENTAL, F_MONSTER);
 		}
 	}
 
@@ -1244,7 +1245,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 		j = randint1(5) + o_ptr->pval / 5;
 		for (i = 0; i < j; i++) {
-			summon_specific(y, x, TRUE, summon_level, SUMMON_BIRD);
+			summon_specific(y, x, TRUE, summon_level, SUMMON_BIRD, F_MONSTER);
 		}
 	}
 
@@ -1257,7 +1258,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 			j = randint1(3) + 2;
 			for (i = 0; i < j; i++) {
 				(void) fire_meteor(0, GF_FIRE, y, x, 10, 5, TRUE);
-				summon_specific(y, x, FALSE, summon_level, SUMMON_DEMON);
+				summon_specific(y, x, FALSE, summon_level, SUMMON_DEMON, F_MONSTER);
 			}
 		}
 
@@ -1267,7 +1268,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 			j = randint1(3) + 2;
 			for (i = 0; i < j; i++) {
-				summon_specific(y, x, FALSE, summon_level, SUMMON_DRAGON);
+				summon_specific(y, x, FALSE, summon_level, SUMMON_DRAGON, F_MONSTER);
 			}
 		}
 
@@ -1277,7 +1278,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 			j = randint1(5) + 3;
 			for (i = 0; i < j; i++) {
-				summon_specific(y, x, FALSE, summon_level, SUMMON_HYBRID);
+				summon_specific(y, x, FALSE, summon_level, SUMMON_HYBRID, F_MONSTER);
 			}
 		}
 
@@ -1287,7 +1288,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 			j = randint1(3) + 2;
 			for (i = 0; i < j; i++) {
-				summon_specific(y, x, TRUE, summon_level, SUMMON_VORTEX);
+				summon_specific(y, x, TRUE, summon_level, SUMMON_VORTEX, F_MONSTER);
 			}
 		}
 	}
@@ -1305,7 +1306,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 			/* ...but a high saving throw does help a little. */
 			if (!check_save(2 * o_ptr->pval)) {
 				if (randint0(6) == 0)
-					take_hit(damroll(5, 20), "a chest dispel-player trap");
+					take_hit(damroll(5, 20), "a chest dispel-player trap", SOURCE_ENVIRONMENTAL);
 				else if (randint0(5) == 0)
 					(void) inc_timed(TMD_CUT, 200, TRUE);
 				else if (randint0(4) == 0) {
@@ -3294,4 +3295,165 @@ void textui_cmd_suicide(void)
 void do_cmd_save_game(cmd_code code, cmd_arg args[])
 {
 	save_game();
+}
+
+bool pet_command_needs_aim(int command)
+{
+    logbug("In pet_command_needs_aim\n");
+    switch (command)
+    {
+    case 1:
+        logbug("Case 1\n");
+        return FALSE;
+    default:
+        logbug("Not case 1\n");
+        return TRUE;
+    }
+}
+
+void do_cmd_pet(cmd_code code, cmd_arg args[])
+{
+    int command = args[1].choice;
+    int dir = args[1].direction;
+    int target;
+    
+    s16b ty, tx;
+    
+    logbug("In do_cmd_pet\n");
+    /* Determine which action is being taken */
+    switch(command)
+    {
+    case 0: /* Order pets to attack a creature */
+        logbug("Case 0\n");
+        /* Use the given direction */
+	    ty = p_ptr->py + 99 * ddy[dir];
+	    tx = p_ptr->px + 99 * ddx[dir];
+	    
+	    /* Use the actual target */
+	    if(dir == 5)
+	        target_get(&tx, &ty);
+        
+        target = cave_m_idx[ty][tx];
+        
+        if(target == 0) {
+            msg("That space is empty.");
+            return;
+        }
+        
+        cause_threat(ty, tx, target, F_PLAYER, 1000, target, TRUE);
+        break;
+    case 1: /* Change follow distance */
+        logbug("Case 1\n");
+        set_follow_distance();
+        break;
+    case 2: /* Order to a specified location */
+        logbug("Case 2\n");
+        /* Use the given direction */
+	    ty = p_ptr->py + 99 * ddy[dir];
+	    tx = p_ptr->px + 99 * ddx[dir];
+	    
+        /* Use the actual target */
+	    if(dir == 5)
+	        target_get(&tx, &ty);
+        
+        /* Order the pets to attack an empty square */
+        cause_threat(ty, tx, 0, F_PLAYER, 1000, 0, TRUE);
+        break;
+    case 3: /* Destroy Pet */
+        logbug("Case 3\n");
+        /* Make sure this is actually a pet */
+        /* Use the given direction */
+	    ty = p_ptr->py + 99 * ddy[dir];
+	    tx = p_ptr->px + 99 * ddx[dir];
+	    
+	    /* Use the actual target */
+	    if(dir == 5)
+	        target_get(&tx, &ty);
+	        
+        target = cave_m_idx[ty][tx];
+        
+        if(target == 0) {
+            msg("That space is empty.");
+            return;
+        }
+        
+        if(m_list[target].faction != F_PLAYER) {
+            msg("This can only be used on your pets.");
+            return;
+        }
+        delete_monster(ty, tx);
+        break;
+    case 4:
+        logbug("Case 4\n");
+        /* Make sure this is actually a pet */
+        /* Use the given direction */
+	    ty = p_ptr->py + 99 * ddy[dir];
+	    tx = p_ptr->px + 99 * ddx[dir];
+	    
+	    /* Use the actual target */
+	    if(dir == 5)
+	        target_get(&tx, &ty);
+	        
+        target = cave_m_idx[ty][tx];
+        
+        if(target == 0) {
+            msg("That space is empty.");
+            return;
+        }
+        
+        if(m_list[target].faction != F_PLAYER) {
+            msg("This can only be used on your pets.");
+            return;
+        }
+        m_list[target].faction = F_RELEASED_PET;
+        msg("%s has been released", r_info[m_list[target].r_idx].name);
+        break;
+    default:
+        logbug("Default case\n");
+        break;
+    }
+    
+    /* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATE);
+
+	/* Handle stuff */
+	handle_stuff(p_ptr);
+
+	/* Refresh XXX XXX XXX */
+	Term_fresh();
+}
+
+void set_follow_distance(void)
+{
+    int dist = follow_distance;
+    char prompt[80];
+    char buf[80];
+    
+    /* Clear all current messages */
+	msg_flag = FALSE;
+	prt("", 0, 0);
+	msg_flag = TRUE;
+	
+	/* Build a prompt */
+	strnfmt(prompt, sizeof(prompt), "Set Distance (Currently %d): ", follow_distance);
+	
+	/* Build the default */
+	strnfmt(buf, sizeof(buf), "%d", dist);
+	
+	/* Ask for the new distance */
+	if(!get_string(prompt, buf, 7)) return;
+	
+	/* Fail on non-numberic entries */
+	if (isalpha((unsigned char)buf[0])) return;
+	
+	dist = atoi(buf);
+	
+	/* Enforce a minimum of 1 */
+	if (dist < 1) dist = 1;
+	
+    follow_distance = dist;
+       
 }

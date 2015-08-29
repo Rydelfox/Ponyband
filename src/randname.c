@@ -95,7 +95,7 @@ size_t randname_make(randname_type name_type, size_t min, size_t max,
                
                int use_type;
                int count = 0;
-               int len;
+               unsigned int len;
                const char **wordlist = NULL;
                /* char *temp_word = NULL; */
                u32b name_count, target_name;

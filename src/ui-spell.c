@@ -85,6 +85,15 @@ struct ability_menu_data {
     int selected_ability;
 };
 
+/**
+ * Pet menu data struct
+ */
+struct pet_menu_data {
+    int n_choices;
+    
+    int selected_option;
+};
+
 
 /**
  * Is item oid valid?
@@ -114,6 +123,11 @@ static int ability_menu_valid(menu_type * m, int aid)
         }
     }
     return 0;
+}
+
+static int pet_menu_valid(menu_type * m, int aid)
+{
+    return TRUE;
 }
 
 /**
@@ -210,6 +224,39 @@ static void ability_menu_display(menu_type * m, int oid, bool cursor,
             ability_chance(ability)), row, col + 30);
     c_put_str(TERM_DEEP_L_BLUE, format("%s", comment), row, col + 42);
 }
+
+/**
+ * Display a row of the pet command menu
+ */
+static void pet_menu_display(menu_type * m, int oid, bool cursor,
+                             int row, int col, int wid)
+{    
+    char *comment;
+    logbug("In pet_menu_display\n");
+    switch(oid)
+    {
+    case 0:
+        comment = "Issue attack order";
+        break;
+    case 1:
+        comment = "Change follow distance";
+        break;
+    case 2:
+        comment = "Issue point order";
+        break;
+    case 3:
+        comment = "Dismiss pet";
+        break;
+    case 4:
+        comment = "Release pet";
+        break;
+    default:
+        comment = "Error - Missing option";
+    }
+    
+    /* Dump the command */
+    c_put_str(TERM_WHITE, format("%-30s", *comment), row, col);
+}
  
 /**
  * Handle an event on a spell menu row.
@@ -235,6 +282,22 @@ static bool ability_menu_handler(menu_type * m, const ui_event * e, int oid)
     
     if(e->type == EVT_SELECT) {
         d->selected_ability = d->abilities[oid];
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
+
+/**
+ * Handle and event on a pet command row
+ */
+static bool pet_menu_handler(menu_type * m, const ui_event * e, int oid)
+{
+    struct pet_menu_data *d = menu_priv(m);
+    
+    if(e->type == EVT_SELECT) {
+        d->selected_option = oid;
         return FALSE;
     }
     
@@ -291,6 +354,44 @@ static void ability_menu_browser(int oid, void *data, const region * loc)
 	text_out_wrap = 0;
 }
 
+static void pet_menu_browser(int oid, void *data, const region * loc)
+{
+    char desc[43];
+    
+    /* Set up ability description */
+    switch(oid) {
+    case 0:
+        my_strcpy(desc, "Order pets to attack a single target", 37);
+        break;
+    case 1:
+        my_strcpy(desc, "Change how closely pets should follow you", 43);
+        break;
+    case 2:
+        my_strcpy(desc, "Order pets to a specific location", 34);
+        break;
+    case 3:
+        my_strcpy(desc, "Kill one of your pets", 22);
+        break;
+    case 4:
+        my_strcpy(desc, "Allow one of your pets to go free", 35);
+        break;
+    }
+    
+    /* Redirect output to the screen */
+    text_out_hook = text_out_to_screen;
+    text_out_wrap = loc->col + 60;
+    text_out_indent = loc->col - 1;
+    text_out_pad = 1;
+    
+    Term_gotoxy(loc->col, loc->row + loc->page_rows);
+    text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", desc));
+    
+    /* XXX */
+    text_out_pad = 0;
+    text_out_indent = 0;
+    text_out_wrap = 0;
+}
+
 
 static const menu_iter spell_menu_iter = {
 	NULL,						/* get_tag = NULL, just use lowercase selections */
@@ -307,6 +408,91 @@ static const menu_iter ability_menu_iter = {
     ability_menu_handler,
     NULL
 };
+
+static const menu_iter pet_menu_iter = {
+    NULL,
+    pet_menu_valid,
+    pet_menu_display,
+    pet_menu_handler,
+    NULL
+};
+
+/**
+ * Create and initialize the pet menu
+ */
+static menu_type *pet_menu_new(void)
+{
+    menu_type *m = menu_new(MN_SKIN_SCROLL, &pet_menu_iter);
+    struct pet_menu_data *d = mem_alloc(sizeof *d);
+    
+    region loc = {-65, 1, 65, -99};
+    
+    d->selected_option = -1;
+    
+    d->n_choices = 5;
+    
+    menu_setpriv(m, d->n_choices, d);
+    
+    /* Set flags */
+    m->header = "Option";
+    m->flags = MN_CASELESS_TAGS;
+    m->selections = lower_case;
+    m->browse_hook = pet_menu_browser;
+    
+    /* Set size */
+    loc.page_rows = 6;
+    menu_layout(m, &loc);
+    
+    return m;
+}
+
+/** Clean up a pet menu instance */
+static void pet_menu_destroy(menu_type *m)
+{
+    struct pet_menu_data *d = menu_priv(m);
+    mem_free(d);
+    mem_free(m);
+}
+
+/**
+ * Run the pet menu to select a command 
+ */
+static int pet_menu_select(menu_type *m)
+{
+    struct pet_menu_data *d = menu_priv(m);
+    
+    screen_save();
+    region_erase_bordered(&m->active);
+    
+    prt("Give which command?", 0, 0);
+    
+    menu_select(m, 0, TRUE);
+    
+    screen_load();
+    
+    return d->selected_option;
+}
+
+/**
+ * Issue commands to pets
+ */
+void textui_pet(void)
+{
+    int selection = -1;
+    menu_type *m;
+    
+    /* This list is full of predefined options, so build it manually */
+    m = pet_menu_new();
+    if (m) {
+        selection = pet_menu_select(m);
+        pet_menu_destroy(m);
+    }
+    
+    if (selection >= 0) {
+        cmd_insert(CMD_PET);
+        cmd_set_arg_choice(cmd_get_top(), 0, selection);
+    }
+}
 
 /** Create and initialise a spell menu, given an object and a validity hook */
 static menu_type *spell_menu_new(const object_type * o_ptr,
@@ -426,9 +612,10 @@ static menu_type *ability_menu_new(void)
 {
     menu_type *m = menu_new(MN_SKIN_SCROLL, &ability_menu_iter);
     struct ability_menu_data *d = mem_alloc(sizeof *d);
-    d->abilities = mem_alloc(sizeof(int) * z_info->ability_max);
-    
+        
     region loc = { -65, 1, 65, -99 };
+    
+    d->abilities = mem_alloc(sizeof(int) * z_info->ability_max);
 
     if(!player_ability_count()) {
         mem_free(m);
@@ -669,4 +856,3 @@ void textui_ability(void)
         cmd_set_arg_choice(cmd_get_top(), 0, ability);
     }
 }
-

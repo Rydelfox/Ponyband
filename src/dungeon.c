@@ -416,6 +416,29 @@ static void play_ambient_sound(void)
 	}
 }
 
+static int count_pet_levels(void)
+{
+    int levels = 0;
+	int i;
+	
+	monster_type *m_ptr;
+	monster_race *r_ptr;
+	
+	for(i = 0; i < m_max; i++) {
+	    m_ptr = &m_list[i];
+		r_ptr = &r_info[m_ptr->r_idx];
+		
+		if(m_ptr->faction == F_PLAYER)
+		    levels += r_ptr->level;
+	}
+	
+	levels /= 2;
+	levels /= p_ptr->lev;
+	levels -= 2;
+	
+	return levels;
+}
+
 /**
  * Handle certain things once every 10 game turns.
  */
@@ -533,7 +556,7 @@ static void process_world(void)
 		take_hit(randint1
 				 (p_ptr->timed[TMD_POISONED] >
 				  300 ? 20 : (p_ptr->timed[TMD_POISONED] + 14) / 15),
-				 "poison");
+				 "poison", SOURCE_ENVIRONMENTAL);
 	}
 
 	/* Take damage from cuts */
@@ -554,7 +577,7 @@ static void process_world(void)
 		}
 
 		/* Take damage */
-		take_hit(i, "a fatal wound");
+		take_hit(i, "a fatal wound", SOURCE_ENVIRONMENTAL);
 	}
 
 
@@ -605,7 +628,7 @@ static void process_world(void)
 		i = (PY_FOOD_STARVE - p_ptr->food) / 10;
 
 		/* Take damage */
-		take_hit(i, "starvation");
+		take_hit(i, "starvation", SOURCE_ENVIRONMENTAL);
 	}
 
 	/* Default regeneration */
@@ -658,6 +681,9 @@ static void process_world(void)
 		regen_amount *= 2;
 	if (player_has(PF_MEDITATION))
 		mana_regen_amount *= 2;
+		
+	/* Reduce Mana Regeneration based on pets */
+	mana_regen_amount -= 10 * count_pet_levels();
 
 	/* Regenerate the mana */
 	if (p_ptr->csp < p_ptr->msp) {
@@ -1116,7 +1142,7 @@ static void process_world(void)
 
 		/* Here it comes */
 		summon_specific(p_ptr->py, p_ptr->px, FALSE, p_ptr->depth,
-						SUMMON_DEMON);
+						SUMMON_DEMON, F_MONSTER);
 
 		/* Notice */
 		notice_curse(CF_ATTRACT_DEMON, 0);
@@ -1129,7 +1155,7 @@ static void process_world(void)
 
 		/* Here it comes */
 		summon_specific(p_ptr->py, p_ptr->px, FALSE, p_ptr->depth,
-						SUMMON_UNDEAD);
+						SUMMON_UNDEAD, F_MONSTER);
 
 		/* Notice */
 		notice_curse(CF_ATTRACT_UNDEAD, 0);
@@ -1309,7 +1335,6 @@ static void process_world(void)
 	}
 }
 
-
 /**
  * Hack -- helper function for "process_player()"
  *
@@ -1396,9 +1421,9 @@ static void special_mana_gain(void)
 		 * Mega-Hack - Restrict to Necromancers to make it affect Soul Siphon
 		 * and not Power Siphon.
 		 */
-		if ((p_ptr->mana_gain > p_ptr->lev) && (player_has(PF_EVIL))) {
+		if ((p_ptr->mana_gain > p_ptr->lev) && (player_has(PF_SOUL_SIPHON))) {
 			msg("You absorb too much mana!");
-			take_hit(damroll(2, 8), "mana burn");
+			take_hit(damroll(2, 8), "mana burn", SOURCE_PLAYER);
 		}
 
 		/* Paranioa */

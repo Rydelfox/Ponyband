@@ -114,9 +114,12 @@ extern void do_cmd_hold(cmd_code code, cmd_arg args[]);
 extern void do_cmd_pickup(cmd_code code, cmd_arg args[]);
 extern void do_cmd_rest(cmd_code code, cmd_arg args[]);
 extern bool easy_open_door(int y, int x);
+extern bool pet_command_needs_aim(int command);
+extern void do_cmd_pet(cmd_code code, cmd_arg args[]);
 
 void textui_cmd_rest(void);
 void textui_cmd_suicide(void);
+void set_follow_distance(void);
 
 /* cmd3.c */
 extern void do_cmd_inven(void);
@@ -159,6 +162,7 @@ void textui_spell_browse(void);
 void textui_obj_study(void);
 void textui_obj_cast(void);
 void textui_ability(void);
+void textui_pet(void);
 
 /* ui-knowledge.c */
 extern int big_pad(int col, int row, byte a, wchar_t c);

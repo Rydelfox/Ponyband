@@ -54,7 +54,7 @@ struct cmd_info {
  * Magic use 
  */
 static struct cmd_info cmd_magic[] = {
-	{"Browse a book", {'b', 'P'}, CMD_BROWSE_SPELL, textui_spell_browse},
+	{"Browse a book", {'b'}, CMD_BROWSE_SPELL, textui_spell_browse},
 	{"Gain new spells", {'G'}, CMD_STUDY_BOOK, textui_obj_study,
 	 player_can_study},
 	{"Cast a spell", {'m'}, CMD_CAST, textui_obj_cast, player_can_cast},
@@ -86,7 +86,8 @@ static struct cmd_info cmd_action[] = {
 	 textui_cmd_fire_at_nearest},
 	{"Racial shapechange/End shapechange", {']'}, CMD_NULL,
 	 do_cmd_reshape},
-	{"Walk into a trap", {'W', '-'}, CMD_JUMP, NULL}
+	{"Walk into a trap", {'W', '-'}, CMD_JUMP, NULL},
+	{"Give an order to pets", {'P'}, CMD_PET, textui_pet}
 };
 
 /**
