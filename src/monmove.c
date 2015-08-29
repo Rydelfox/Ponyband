@@ -1194,6 +1194,55 @@ static void remove_useless_spells(int m_idx, bool los)
 }
 
 /**
+ * Remove all summoning spells from pets
+ * Avoids cluttering up choose_ranged_attack
+ */
+static void remove_pet_summons(int m_idx)
+{
+    monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Check if the monster is the player's pet */
+	if(m_ptr->faction != F_PLAYER)
+        return;
+    
+    /* Remove all summoning spells */
+    rsf_off(mon_spells, RSF_S_KIN);
+    rsf_off(mon_spells, RSF_S_XXX1);
+    rsf_off(mon_spells, RSF_S_XXX2);
+    rsf_off(mon_spells, RSF_S_MONSTER);
+    rsf_off(mon_spells, RSF_S_MONSTERS);
+    rsf_off(mon_spells, RSF_S_XXX3);
+    rsf_off(mon_spells, RSF_S_XXX4);
+    rsf_off(mon_spells, RSF_S_XXX5);
+    rsf_off(mon_spells, RSF_S_ANT);
+    rsf_off(mon_spells, RSF_S_SPIDER);
+    rsf_off(mon_spells, RSF_S_HOUND);
+    rsf_off(mon_spells, RSF_S_ANIMAL);
+    rsf_off(mon_spells, RSF_S_XXX6);
+    rsf_off(mon_spells, RSF_S_XXX7);
+    rsf_off(mon_spells, RSF_S_THIEF);
+    rsf_off(mon_spells, RSF_S_SWAMP);
+    rsf_off(mon_spells, RSF_S_XXX8);
+    rsf_off(mon_spells, RSF_S_XXX9);
+    rsf_off(mon_spells, RSF_S_XX10);
+    rsf_off(mon_spells, RSF_S_XX11);
+    rsf_off(mon_spells, RSF_S_DRAGON);
+    rsf_off(mon_spells, RSF_S_HI_DRAGON);
+    rsf_off(mon_spells, RSF_S_XX12);
+    rsf_off(mon_spells, RSF_S_XX13);
+    rsf_off(mon_spells, RSF_S_DEMON);
+    rsf_off(mon_spells, RSF_S_HI_DEMON);
+    rsf_off(mon_spells, RSF_S_XX14);
+    rsf_off(mon_spells, RSF_S_APPROP);
+    rsf_off(mon_spells, RSF_S_UNDEAD);
+    rsf_off(mon_spells, RSF_S_HI_UNDEAD);
+    rsf_off(mon_spells, RSF_S_QUEST);
+    rsf_off(mon_spells, RSF_S_UNIQUE);
+    
+}
+
+/**
  * Count the number of castable spells.
  *
  * If exactly 1 spell is availble cast it.  If more than more is
@@ -1353,6 +1402,9 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 	/* No spells left */
 	if (rsf_is_empty(mon_spells))
 		return (0);
+		
+	/* Pets don't summon */
+	remove_pet_summons(m_idx);
 
 	/* Stupid monsters choose at random. */
 	if (rf_has(r_ptr->flags, RF_STUPID))
