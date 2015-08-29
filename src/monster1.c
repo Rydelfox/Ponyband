@@ -564,7 +564,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 		strcpy(location_desc, "");
 
 		if (rf_has(mon_flags, RF_ANGBAND))
-			strcpy(location_desc, " in Angband");
+			strcpy(location_desc, " in the Castle of the Two Sisters");
 		if (rf_has(mon_flags, RF_RUDH))
 			strcpy(location_desc, " in Amon Rûdh");
 		if (rf_has(mon_flags, RF_NARGOTHROND))
