@@ -1510,6 +1510,10 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
         /* Bonus if want summon and this spell is helpful */
 		if (spell_desire[i][D_SUMM] && want_summon)
 			cur_spell_rating += want_summon * spell_desire[i][D_SUMM];
+		
+		/* Penalty is want to summon and are targetting an NPC */
+		if(spell_desire[i][D_SUMM] &&m_ptr->hostile > 0)
+            cur_spell_rating >>= 1;
 
 		/* Bonus if wounded and this spell is helpful */
 		if (spell_desire[i][D_HURT] && want_hps)
