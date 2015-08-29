@@ -634,11 +634,18 @@ const char *mention_use(int slot)
 	        return "";
         if (rp_ptr->num_rings == 1)
 	        return "On horn";
-        else
+        if (rp_ptr->clawed)
+			return "On left claw";
+		else
 		    return "On left hand";
 	case INVEN_RIGHT:
 		if (rp_ptr->num_rings >= 2)
-            return "On right hand";
+           {
+			if(rp_ptr->clawed)
+				return "On right claw";
+			else
+				return "On right hand";
+		}
         else
             return "";
 	case INVEN_NECK:
@@ -658,7 +665,9 @@ const char *mention_use(int slot)
 	case INVEN_HANDS:
         if(player_has(PF_QUADRUPED))
             return "";
-        else
+        else if (rp_ptr->clawed)
+			return "On claws";
+		else
             return "On hands";
 	case INVEN_FORE:
 		if(player_has(PF_QUADRUPED))
@@ -704,17 +713,22 @@ const char *describe_use(int i)
 	    if (rp_ptr->num_rings == 1) {
 	        p = "wearing on your horn";
 	        break;
-	    } else if (rp_ptr->num_rings >= 2) {
-	        p = "wearing on your left hand";
-		    break;
-	    }
-	    else
+	    } else if (rp_ptr->num_rings <= 0) {
 	        p = "";
-            break;
+			break;
+	    } else if (rp_ptr->clawed) {
+			p = "wearing on your left claw";
+			break;
+		}
+	    else
+	        p = "wearing on your left hand";
+		break;
 	case INVEN_RIGHT:
 		if (rp_ptr->num_rings < 2)
             p = "";
-         else
+        else if (rp_ptr->clawed)
+			p = "wearing on your right claw";
+		else
             p = "wearing on your right hand";
 		break;
 	case INVEN_NECK:
@@ -744,7 +758,9 @@ const char *describe_use(int i)
 	case INVEN_HANDS:
 		if(player_has(PF_QUADRUPED)) 
 		    p = "";
-        else
+        else if(rp_ptr->clawed)
+			p = "wearing on your claws";
+		else
             p = "wearing on your hands";
 		break;
 	case INVEN_FORE:

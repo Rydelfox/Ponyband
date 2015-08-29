@@ -380,7 +380,7 @@ void do_cmd_show_obj(void)
 
 	/* See what's available */
 	q = "Pick an item to use:";
-	s = "You have no items to hand.";
+	s = "You have no items to use.";
 	if (!get_item
 		(&item, q, s, CMD_NULL, (USE_INVEN | USE_EQUIP | USE_FLOOR)))
 		return;

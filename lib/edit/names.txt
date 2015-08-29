@@ -6720,7 +6720,7 @@ D:zigba
 
 # Female Deer Names
 N:25
-D;anemone
+D:anemone
 D:aconite
 D:amaranth
 D:amaryllis

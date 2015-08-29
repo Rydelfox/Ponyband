@@ -1362,6 +1362,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			if (!(p_ptr->special_attack & (ATTACK_CONFUSE))) {
 				if(player_has(PF_QUADRUPED))
 				    msg("Your hooves begin to glow.");
+				else if(rp_ptr->clawed)
+					msg("Your claws begin to glow.");
 				else
 				    msg("Your hands begin to glow.");
 				p_ptr->special_attack |= (ATTACK_CONFUSE);
@@ -2657,7 +2659,9 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_RAND_FIRE2:
 		{
 			if(player_has(PF_QUADRUPED))
-			    msg("You feel a phere of fire form between your hooves.");
+			    msg("You feel a sphere of fire form between your hooves.");
+			else if(rp_ptr->clawed)
+				msg("You feel a sphere of fire form between your claws.");
 			else
 			    msg("You feel a sphere of fire form between your hands.");
 			fire_sphere(GF_FIRE, dir, 90, 1, 20);
@@ -2697,6 +2701,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		{
 			if(player_has(PF_QUADRUPED))
 			    msg("A sphere of deadly acid forms in front of your hoof.");
+			else if(rp_ptr->clawed)
+				msg("A sphere of deadly acid forms upon your claw.");
 			else
 			    msg("A sphere of deadly acid forms upon your hand.");
 			fire_sphere(GF_ACID, dir, 90, 1, 20);
@@ -3153,6 +3159,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 			if(player_has(PF_QUADRUPED))
 			    msg("A bolt of lightning leaps from your mouth!");
+			else if(rp_ptr->clawed)
+				msg("A bolt of lightning leaps from your claws!");
 			else
 			    msg("A bolt of lightning leaps from your hands!");
 

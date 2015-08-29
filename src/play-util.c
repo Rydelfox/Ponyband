@@ -59,7 +59,7 @@ bool player_can_cast(void)
 {
 	/* Races without Horns or Hands cannot cast arcane spells */
 	if((!rp_ptr->num_rings) && p_ptr->cumber_glove) {
-	    msg("You need a horn or hands to cast arcane spells.");
+	    msg("You need a horn, hands, or claws to cast arcane spells.");
 	    return FALSE;
 	}
 	

@@ -2393,6 +2393,8 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 			if (!(p_ptr->special_attack & ATTACK_BLKBRTH)) {
 				if(player_has(PF_QUADRUPED)) {
                     msg("Your hooves start to radiate Night.");
+                } else if(rp_ptr->clawed) {
+                    msg("Your claws start to radiate Night.");
                 } else {
                     msg("Your hands start to radiate Night.");
                 }

@@ -1022,7 +1022,7 @@ bool py_attack(int y, int x, bool can_push)
 	monster_type *m_ptr;
 	monster_race *r_ptr;
 	monster_lore *l_ptr;
-
+	
 	object_type *o_ptr;
 
 	feature_type *f_ptr = &f_info[cave_feat[y][x]];
@@ -1049,7 +1049,6 @@ bool py_attack(int y, int x, bool can_push)
 	m_ptr = &m_list[cave_m_idx[y][x]];
 	r_ptr = &r_info[m_ptr->r_idx];
 	l_ptr = &l_list[m_ptr->r_idx];
-
 	/* Just push past neutral monsters */
 	if ((m_ptr->hostile != -1) && can_push) {
 		/* Get monster name (or "something") */
@@ -1347,7 +1346,9 @@ bool py_attack(int y, int x, bool can_push)
 					{
 						if(player_has(PF_QUADRUPED))
 						    msgt(MSG_HIT, "Your hooves stop glowing.");
-						else
+						else if(rp_ptr->clawed)
+	                        msgt(MSG_HIT, "Your claws stop glowing.");
+                        else
 						    msgt(MSG_HIT, "Your hands stop glowing.");	
 					}
 
@@ -1398,7 +1399,9 @@ bool py_attack(int y, int x, bool can_push)
 				/* Message */
 				if(player_has(PF_QUADRUPED))
 					msg("Your hooves stop radiating Night.");
-				else
+				else if(rp_ptr->clawed)
+				    msg("Your claws stop radiating Night.");
+			    else
 				    msg("Your hands stop radiating Night.");
 
 				/* Redraw the state */

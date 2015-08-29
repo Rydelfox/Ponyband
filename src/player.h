@@ -721,6 +721,8 @@ struct player_race {
     int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
 
     bitflag pflags[PF_SIZE];	/* Race (player) flags */
+    
+    bool clawed; /* Race's hands are called claws */
 
 };
 

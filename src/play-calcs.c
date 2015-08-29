@@ -1362,14 +1362,18 @@ static void calc_mana(void)
 	if (old_cumber_glove != p_ptr->cumber_glove) {
 		/* Message */
 		if (p_ptr->cumber_glove) {
-		    if(rp_ptr->num_rings == 1)
+		    if(rp_ptr->num_rings <= 1)
 		        msg("Your encircles horn feels unsuitable for spellcasting.");
-            else
+            else if(rp_ptr->clawed)
+				msg("Your covered claws feel unsuitable for spellcasting.");
+			else
 			    msg("Your covered hands feel unsuitable for spellcasting.");
 		} else {
-			if(rp_ptr->num_rings == 1)
+			if(rp_ptr->num_rings <= 1)
                 msg("Your horn feels more suitable for spellcasting.");
-           else
+            else if(rp_ptr->clawed)
+                msg("Your claws feel more suitable for spellcasting.");
+			else
                 msg("Your hands feel more suitable for spellcasting.");
 		}
 	}
@@ -3476,7 +3480,9 @@ static void update_bonuses(void)
 		} else if (p_ptr->inventory[INVEN_ARM].k_idx) {
 			if(player_has(PF_QUADRUPED))
 			   msg("Your shield is now stapped to your foreleg.");
-            else
+            else if(rp_ptr->clawed)
+			   msg("You are carrying your shield in your claw.");
+			else
                msg("You are carrying your shield in your hand.");
 		}
 

@@ -226,10 +226,10 @@ char *obj_class_info[101] = {
 	"", "", "", "", "",
 
 	"Footwear protects the feet or hooves only, but some rare items of this type have magics to render them fleet, light, or steady.",
-	"Your hands would benefit from protection too, but most magic users need to keep their fingers unencumbered or magically supple.",
+	"Your hands would benefit from protection too, but most bipedal magic users need to keep their fingers unencumbered or magically supple.",
 	"Many a blow will be struck upon your head, and protection here will certainly be helpful.  Some rare items may protect and enhance your mind.",
 	"Many a blow will be struck upon your head, and protection here will certainly be helpful.  Some rare items may protect and enhance your mind.",
-	"Shields can be worn on your arm, or on your back if you need both hands to use your weapon.  So protective can a shield be that it can reduce damage as much or more than body armour, and you can perhaps deflect physical missiles (even shards) or take advantage of opportunities to bash your foe if you have one on your arm.",
+	"Shields can be worn on your arm, strapped to a hoof, or slung on your back if you need both hands to use your weapon.  So protective can a shield be that it can reduce damage as much or more than body armour, and you can perhaps deflect physical missiles (even shards) or take advantage of opportunities to bash your foe if you have one on your arm.",
 	"Experienced adventurers wrap a cloak around their body.  Some rare items of this type may allow you to slip silently around less alert enemies.",
 	"Some kind of body protection will become a necessity as you face ever more dangerous opponents; rare items of this type may hold many and varied protective magics.",
 	"Some kind of body protection will become a necessity as you face ever more dangerous opponents; rare items of this type may hold many and varied protective magics.",
@@ -238,7 +238,7 @@ char *obj_class_info[101] = {
 
 	"Amulets slip around your neck, and almost all have magics wondrous or perilous bound inside.",
 	"", "", "", "",
-	"You may wear a ring upon each of your two ring fingers, or a your horn, and benefit or suffer from the magics it contains.  Some races do not have any place to wear a ring.",
+	"You may wear a ring upon each of your two ring fingers, or a your horn, and benefit or suffer from the magics it contains.  Some races do not have any place to wear a ring.  A ring worn on a horn may interfere with some magic.",
 	"", "", "", "",
 
 	"", "", "", "", "",

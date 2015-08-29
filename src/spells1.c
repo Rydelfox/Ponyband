@@ -2652,7 +2652,9 @@ int apply_dispel(int power)
 		p_ptr->special_attack &= ~(ATTACK_CONFUSE);
 		if(player_has(PF_QUADRUPED))
             msg("Your hooves stop glowing.");
-        else
+        else if(rp_ptr->clawed)
+			msg("Your claws stop glowing.");
+		else
             msg("Your hands stop glowing.");
 		num_effects += 1;
 	}
@@ -2660,7 +2662,9 @@ int apply_dispel(int power)
 		p_ptr->special_attack &= ~(ATTACK_BLKBRTH);
 		if(player_has(PF_QUADRUPED))
             msg("Your hooves stop radiating Night.");
-        else
+        else if(rp_ptr->clawed)
+            msg("Your claws stop radiating Night.");
+		else
             msg("Your hands stop radiating Night.");
 		num_effects += 1;
 	}

@@ -15,7 +15,7 @@
 # S:str:int:wis:dex:con:chr
 # R:dis:dev:sav:stl:srh:fos:thn:thb
 # M:xdis:xdev:xsav:xstl:xsrh:xfos:xthn:xthb
-# E:id:mint:maxt:sk/de:ac:pval:ring:xtra1
+# E:id:mint:maxt:sk/de:ac:pval:ring:claws
 # X:hitdie:expbase:infra:startlevel:hometown
 # I:history:agebase:agemod:male name number:female name number
 # H:male_mean:male_st_dev:female_mean:female_st_dev
@@ -41,7 +41,7 @@ X:13:5:0:1:0
 I:1:18:26:3:3
 H:51:6:49:4
 W:450:35:450:25
-B:SUST_CON
+B:SUSTAIN_CON
 U:BOW_UNSKILL | QUADRUPED | CUTIE_MARK
 C:0|2|4|5|6
 
@@ -90,7 +90,7 @@ X:12:1:2:1:0
 I:17:1000:200:11:11
 H:60:27:60:25
 W:2000:200:2000:200
-B:SUST_CON
+B:SUSTAIN_CON
 U:DIVINE | BOW_UNSKILL | WINGED | QUADRUPED | CUTIE_MARK | TELEKINESIS
 C:0|1|2|3|4|5|6|7|8
 
@@ -98,7 +98,7 @@ N:5:Griffon
 S:3:-0:-1:2:3:-2
 R:3:0:4:0:2:11:2:0
 M:4:0:0:0:0:0:4:0
-E:0:0:0:0:0:0:2:0
+E:0:0:0:0:0:0:2:1
 X:12:10:3:1:0
 I:56:18:15:22:23
 H:54:7:51:5
@@ -146,9 +146,9 @@ C:0|2|4|5|6
 
 N:9:Deer
 S:0:0:4:3:-1:-1
-R:-2:5:8:8:7:15:0:0
-M:1:6:4:4:3:3:7:0
-E:0:0:0:0:0:0:0
+R:-2:5:11:9:7:15:0:0
+M:1:6:4:4:3:4:9:0
+E:0:0:0:0:0:0:0:0
 X:8:1:2:1:0
 I:80:16:40:24:25
 H:52:5:49:5
@@ -160,7 +160,7 @@ N:10:Young Dragon
 S:1:-1:-2:1:3:0
 R:6:2:4:2:6:18:0:0
 M:5:0:0:0:8:12:0:12
-E:0:0:0:0:0:0:2:0
+E:0:0:0:0:0:0:2:1
 X:13:10:2:1:0
 I:46:4:20:19:19
 H:24:24:24:24
