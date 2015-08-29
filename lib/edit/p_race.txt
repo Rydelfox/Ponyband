@@ -144,8 +144,19 @@ W:400:30:400:20
 U:BOW_UNSKILL | HARDY | QUADRUPED | CUTIE_MARK
 C:0|2|4|5|6
 
+N:9:Deer
+S:0:0:4:3:-1:-1
+R:-2:5:8:8:7:15:0:0
+M:1:6:4:4:3:3:7:0
+E:0:0:0:0:0:0:0
+X:8:1:2:1:0
+I:80:16:40:24:25
+H:52:5:49:5
+W:100:20:100:20
+U:BOW_UNSKILL | QUADRUPED | PLANT_FRIEND | EDAIN | WOODSMAN
+C:0|2|4|5|6
 
-N:9:Young Dragon
+N:10:Young Dragon
 S:1:-1:-2:1:3:0
 R:6:2:4:2:6:18:0:0
 M:5:0:0:0:8:12:0:12
@@ -158,7 +169,7 @@ B:RES_FIRE[40]
 U:BR_FIRE
 C:0|1|2|3|4|6|7|8
 
-N:10:Diamond Dog
+N:11:Diamond Dog
 S:2:-2:-2:2:2:-2
 R:7:0:0:8:10:15:0:0
 M:4:0:0:4:10:10:3:0
@@ -171,7 +182,7 @@ B:RES_POIS[40]
 U:TUNNELING
 C:0|1|2|3|4|5|6|7|8
 
-N:11:Human
+N:12:Human
 S:0:0:0:0:0:0
 R:9:5:2:6:6:15:0:0
 M:5:2:0:2:2:6:2:5

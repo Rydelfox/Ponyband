@@ -40,7 +40,7 @@ M:V:300
 M:W:32
 
 # Maximum number of player races - changes required if this exceeds 32
-M:P:12
+M:P:13
 
 # Maximum number of player classes
 M:C:9
@@ -49,7 +49,7 @@ M:C:9
 M:U:10
 
 # Maximum number of player history lines
-M:H:481
+M:H:507
 
 # Maximum number of owners per store
 M:B:14
