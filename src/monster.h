@@ -46,7 +46,7 @@
  * Special Monster Flags (all temporary)
  */
 #define MFLAG_VIEW	0x01	/* Monster is in line of sight */
-#define MFLAG_XXX1	0x02	/*  */
+#define MFLAG_PUSH	0x02	/* Monster can be pushed */
 #define MFLAG_XXX2	0x04	/*  */
 #define MFLAG_ACTV	0x08	/* Monster is in active mode */
 #define MFLAG_WARY	0x10	/* Monster is wary of traps */

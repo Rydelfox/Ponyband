@@ -1724,6 +1724,10 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 				}
 			}
 		}
+		
+		/* Notice we made an attack. This prevents others pushing into our position
+		 * and allows fronts to form in combat in large groups */
+		m_ptr->mflag |= (MFLAG_PUSH);
 	}
 
 

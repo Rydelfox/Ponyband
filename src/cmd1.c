@@ -877,7 +877,72 @@ void move_player(int dir)
 		/* Assume terrain can be traversed normally. */
 		can_move = TRUE;
 
-		/*** Handle traversable terrain.  ***/
+		/* Terrain blocked by a friendly monster */
+		if (cave_m_idx[y][x] > 0)
+		{
+		    monster_type *n_ptr = & m_list[cave_m_idx[y][x]];
+		    
+		    /* Push monster if it doesn't have a target and hasn't been pushed.
+			 * This allows the player to move into a corridor with a monster in
+			 * front of him, and have the monster move ahead, if it is faster. If its
+			 * not faster, the player will push over it on the second move, as the push
+			 * flag below will have been set. */
+			 if(((n_ptr->mflag & MFLAG_PUSH) == 0) && !(n_ptr->ty) && !(n_ptr->tx) && push_aside(p_ptr->py, p_ptr->px, n_ptr))
+			 {
+			     int dy = n_ptr->fy - y;
+			     int dx = n_ptr->fx - x;
+			     int count = 0;
+			     
+			     n_ptr->ty = n_ptr->fy;
+			     n_ptr->tx = n_ptr->fx;
+			     
+			     /* Hack -- get new target as far as the monster can move in the direction
+				 * pushed. We do this with a walking stick approach to prevent us getting
+				 * invalid target locations like (0,0) */
+				while (in_bounds_fully(n_ptr->ty + dy, n_ptr->tx + dx)
+						&& cave_exist_mon(n_ptr->r_idx, n_ptr->ty + dy, n_ptr->tx + dx, TRUE)
+						&& (count++ < (MAX_SIGHT / 2)))
+				{
+					n_ptr->ty = n_ptr->ty + dy;
+					n_ptr->tx = n_ptr->tx + dx;
+				}
+
+				/* Clear target if none available */
+				if ((n_ptr->ty == n_ptr->fy) && (n_ptr->tx == n_ptr->fx))
+				{
+					n_ptr->ty = 0;
+					n_ptr->tx = 0;
+				}
+			}
+
+			/* The other monster cannot switch places */
+			else if (!cave_exist_mon(n_ptr->r_idx, p_ptr->py, p_ptr->px, TRUE))
+			{
+				/* Try to push it aside. Allow aborting of move if an ally */
+				if ((!push_aside(p_ptr->py, p_ptr->px, n_ptr)) && (get_reaction(F_PLAYER, n_ptr->faction) <= REACT_FRIEND))
+				{
+					/* Don't provide more warning */
+					if (!get_check("Are you sure?")) 
+					{
+					    temp = FALSE;
+					    p_ptr->running = 0;
+					    can_move = FALSE;
+					}
+				}
+			}
+
+			/* Hack -- we clear the target if we move over a monster */
+			else
+			{
+				n_ptr->ty = 0;
+				n_ptr->tx = 0;
+			}
+
+			/* Mark monsters as pushed */
+			n_ptr->mflag |= (MFLAG_PUSH);
+		}
+        
+        /*** Handle traversable terrain.  ***/
 		if (tf_has(f_ptr->flags, TF_ROCK)) {
 			/* Dwarves move easily through rubble */
 			if (player_has(PF_DWARVEN))

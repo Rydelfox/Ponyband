@@ -495,6 +495,49 @@ static void find_range(monster_type * m_ptr)
 			&& (m_ptr->best_range < 6) && (m_ptr->hp > m_ptr->maxhp / 2))
 			m_ptr->best_range = 6;
 	}
+	
+	/* Allow faster melee monsters to hack-and-back - based off Unangband code by Andrew Doull */
+	if((m_ptr->mspeed > 115) && r_ptr->freq_ranged <= 24) {
+	    /* Hand-and-back against another monster */
+	    if((m_ptr->target > 0)(cave_m_idx[m_ptr->ty][m_ptr-<tx]) && distance(m_ptr->ty, m_ptr->tx, m_ptr->fy, m_ptr->fx) == 1) {
+	       
+	       monster_type *n_ptr = &m_list[cave_m_idx[m_ptr->ty][m_ptr->tx]];
+	       
+	       /* Make sure it is an enemy */
+	       if ((m_ptr->faction != n_ptr->faction) &&
+	       
+	       /* Hack - check min_range and best_range instead of figuring out the monster's range */
+	          (n_ptr->min_range <= 1) && (n_ptr->best_range <= 1) &&
+        
+           /* Enough of a differential - this doesn't have to be exact */
+              (n_ptr->mspeed < m_ptr->mspeed - 5) &&
+              /* This is more important. The other monster will be able to act before we can act again.
+               * Therefore, we are currently doing out last move. */
+              (n_ptr->energy + extract_energy[n_ptr->mspeed] >= 100))
+           {
+               m_ptr->best_range = 4;
+               
+               /* Ensure we don't push anyone else into this space */
+               m_ptr->mflag |= MFLAG_PUSH;
+           }
+       }
+       /* Hack-and-back against the player */
+       else if ((m_ptr->target < 0) && (m_ptr->cdis == 1))
+       {
+           /* Enough of a differential. This doesn't have to be exact */
+           if ((p_ptr->pspeed < m_ptr->mspeed - 5) &&
+           
+              /* This is more important. The player will be able to act before we can act again.
+               * Therefore, we are currently doing our last move. */
+              (p_ptr->energy + extract_energy[p_ptr->pspeed] >= 100))
+           {
+                  m_ptr->best_range = 4;
+                  
+                  /* Ensure we don't push anyone else into this space */
+                  m_ptr->mflag |= MFLAG_PUSH;
+           }
+       }
+   }
 }
 
 
@@ -1759,6 +1802,20 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 			&& (!(rf_has(r_ptr->flags, RF_UNIQUE)))
 			&& (r_ptr->mexp > nr_ptr->mexp)) {
 			move_chance = 100;
+		}
+		
+		/* Quest monsters can alway push past (except other quest monsters */
+		else if (rf_has(r_ptr->flags, RF_QUESTOR) && !rf_has(nr_ptr->flags, RF_QUESTOR))
+		{
+		    /* Can always push past at full speef */
+		    move_chance = 100;
+		}
+		
+		/* Pushed already */
+		else if ((m_ptr->mflag & (MFLAG_PUSH)) || (n_ptr->mflag & (MFLAG_PUSH)))
+		{
+		    /* Cannot push away the other monster */
+		    return 0;
 		}
 
 		/* Push past weaker or similar monsters */
@@ -3838,7 +3895,11 @@ static bool push_aside(monster_type * m_ptr, monster_type * n_ptr)
 	    || (get_reaction(m_ptr->faction, n_ptr->faction) == REACT_FRIEND))
 	    return (FALSE);
 
-	/* 
+	/* Fail if either monster has already been pushed */
+	if((m_ptr->mflag & (MFLAG_PUSH)) || (n_ptr->mflag & (MFLAG_PUSH)))
+        return (FALSE);
+	
+    /* 
 	 * Translate the difference between the locations of the two 
 	 * monsters into a direction of travel.
 	 */
@@ -3882,6 +3943,64 @@ static bool push_aside(monster_type * m_ptr, monster_type * n_ptr)
 	/* We didn't find any empty, legal grids */
 	return (FALSE);
 }
+
+/**
+ * Separate, coordinate-based push_aside function, for when the player pushes a monster
+ */
+bool push_aside(int fy, int fx, monster_type *n_ptr)
+{
+    /* Get racial information about the second monster */
+	monster_race *nr_ptr = &r_info[n_ptr->r_idx];
+	
+	/* Fail if monster has already been pushed */
+	if(n_ptr->mflag & (MFLAG_PUSH))
+        return (FALSE);
+	
+    /* 
+	 * Translate the difference between the locations of the two 
+	 * monsters into a direction of travel.
+	 */
+	for (i = 0; i < 10; i++) {
+		/* Require correct difference along the y-axis */
+		if ((n_ptr->fy - fy) != ddy[i])
+			continue;
+
+		/* Require correct difference along the x-axis */
+		if ((n_ptr->fx - fx) != ddx[i])
+			continue;
+
+		/* Found the direction */
+		dir = i;
+		break;
+	}
+
+	/* Favor either the left or right side on the "spur of the moment". */
+	if (turn % 2 == 0)
+		dir += 10;
+
+	/* Check all directions radiating out from the initial direction. */
+	for (i = 0; i < 7; i++) {
+		int side_dir = side_dirs[dir][i];
+
+		y = n_ptr->fy + ddy[side_dir];
+		x = n_ptr->fx + ddx[side_dir];
+
+		/* Illegal grid */
+		if (!in_bounds_fully(y, x))
+			continue;
+
+		/* Grid is not occupied, and the 2nd monster can exist in it. */
+		if (cave_exist_mon(nr_ptr, y, x, FALSE)) {
+			/* Push the 2nd monster into the empty grid. */
+			monster_swap(n_ptr->fy, n_ptr->fx, y, x);
+			return (TRUE);
+		}
+	}
+
+	/* We didn't find any empty, legal grids */
+	return (FALSE);
+}
+ 
 
 /**
  * Check the effect of the Rogue's monster trap.  Certain traps may be avoided 
@@ -4313,8 +4432,12 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	/* Check if the monster is in a web */
 	if (cave_web(oy, ox)) {
 		/* Insects and bats get stuck */
-		if (strchr("abcFIKl", r_ptr->d_char))
+		if (strchr("abcFIKl", r_ptr->d_char)) 
+        {
 			do_move = FALSE;
+			/* Can't be pushed while in the web */
+			m_ptr->mflag |= MFLAG_PUSH;
+		}
 
 		/* Spiders go right through */
 		else if (strchr("S", r_ptr->d_char));
@@ -4355,6 +4478,9 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 		/* Break the rune */
 		remove_trap_kind(ny, nx, FALSE, RUNE_PROTECT);
+		
+		/* We broke a rune this turn - prevent us from being pushed, as if we attacked */
+		m_ptr->mflag |= MFLAG_PUSH;
 	}
 
 	/* Get the feature in the grid that the monster is trying to enter. */
@@ -4469,6 +4595,12 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 				/* Kill the monster */
 				delete_monster(ny, nx);
 			}
+			
+			/* If the monster can't be pushed, don't move */
+			else if ((m_ptr->mflag & (MFLAG_PUSH) || (n_ptr->mflag & (MLAG_PUSH)))
+			{
+			    do_move = FALSE;
+			}
 
 			/* Swap with or push aside the other monster */
 			else {
@@ -4481,9 +4613,18 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 					}
 				}
 
-				/* Note */
+				/* Note, and mark monsters as pushed */
 				if (do_move)
-					did_move_body = TRUE;
+				{
+					/* Monster has pushed */
+					m_ptr->mflag |= (MFLAG_PUSH);
+					
+					/* Monster has been pushed aside */
+					n_ptr->mflag |= (MFLAG_PUSH);
+					
+                    /* Note the movement */
+                    did_move_body = TRUE;
+				}
 			}
 		}
 	}
@@ -4859,6 +5000,9 @@ static void process_monster(monster_type * m_ptr)
 
 	/* Will the monster move randomly? */
 	bool random = FALSE;
+	
+	/* Monster can act - reset the push flag */
+	m_ptr->mflag &= ~(MFLAG_PUSH);
 
 
 	/* If monster is sleeping, or in stasis, it loses its turn. */
@@ -5121,6 +5265,10 @@ static void process_monster(monster_type * m_ptr)
 			m_ptr->orig_idx = old_shape;
 			m_ptr->old_p_race = old_race;
 		}
+		
+		/* Notice that we made an attack.  This prevents other from pushing into our position
+		 * and allows firing lines to form in combat in large groups */
+		 m_ptr->mflag |= MFLAG_PUSH;
 
 		/* End turn */
 		return;
