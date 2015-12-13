@@ -1509,6 +1509,7 @@ static enum parser_error parse_f_x(struct parser *p)
 	f->jammed = parser_getint(p, "jammed");
 	f->shopnum = parser_getint(p, "shopnum");
 	f->dig = parser_getrand(p, "dig");
+	f->duration = parser_getint(p, "duration");
 	return PARSE_ERROR_NONE;
 }
 
@@ -1556,7 +1557,7 @@ struct parser *init_parse_f(void)
 	parser_reg(p, "G char glyph sym color", parse_f_g);
 	parser_reg(p, "M uint index", parse_f_m);
 	parser_reg(p, "P uint priority", parse_f_p);
-	parser_reg(p, "X int locked int jammed int shopnum rand dig",
+	parser_reg(p, "X int locked int jammed int shopnum rand dig int duration",
 			   parse_f_x);
 	parser_reg(p, "F ?str flags", parse_f_f);
 	parser_reg(p, "D str text", parse_f_d);
@@ -3343,9 +3344,18 @@ static errr finish_parse_mark(struct parser *p)
 static void cleanup_mark(void)
 {
     int idx;
+
     for (idx = 0; idx < z_info->cm_max; idx++) {
-        string_free((char *) cm_info[idx].name);
-        string_free((char *) cm_info[idx].desc);
+    	if(cm_info[idx].name)
+    	{
+    		assert(cm_info[idx].name);
+    		string_free((char *) cm_info[idx].name);
+    	}
+    	if(cm_info[idx].desc)
+    	{
+    		assert(cm_info[idx].desc);
+    		string_free((char *) cm_info[idx].desc);
+    	}
     }
     mem_free(cm_info);
 }
@@ -5287,9 +5297,9 @@ void cleanup_angband(void)
 	cleanup_parser(&s_parser);
 	cleanup_parser(&hints_parser);
 	cleanup_parser(&mp_parser);
-	cleanup_parser(&z_parser);
 	cleanup_parser(&mark_parser);
 	cleanup_parser(&ability_parser);
+	cleanup_parser(&z_parser);
 
 	/* Free the format() buffer */
 	vformat_kill();

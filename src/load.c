@@ -34,6 +34,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "cmds.h"
 #include "history.h"
 #include "mapmode.h"
 #include "monster.h"
@@ -63,7 +64,7 @@ byte max_p_res = 0, a_max = 0, max_p_bonus = 0, max_p_slay =
  */
 static int rd_item(object_type * o_ptr)
 {
-	int i;
+	unsigned int i;
 
 	char buf[128];
 
@@ -119,46 +120,46 @@ static int rd_item(object_type * o_ptr)
 	rd_u16b(&o_ptr->origin_xtra);
 
 	/* Flags */
-	for (i = 0; i < of_size; i++)
+	for (i = of_size; i--; )
 		rd_byte(&o_ptr->flags_obj[i]);
-	for (i = 0; i < cf_size; i++)
+	for (i = cf_size; i--; )
 		rd_byte(&o_ptr->flags_curse[i]);
-	for (i = 0; i < cf_size; i++)
+	for (i = cf_size; i--; )
 		rd_byte(&o_ptr->id_curse[i]);
-	for (i = 0; i < of_size; i++)
+	for (i = of_size; i--; )
 		rd_byte(&o_ptr->id_obj[i]);
-	for (i = 0; i < if_size; i++)
+	for (i = if_size; i--; )
 		rd_byte(&o_ptr->id_other[i]);
 
 	/* New percentage resists -NRM- */
-	for (i = 0; i < max_p_res; i++) {
+	for (i = max_p_res; i--; ) {
 		rd_byte(&tmp);
 		o_ptr->percent_res[i] = tmp;
 	}
 
 	/* Bonuses and multiples - nasty byte hack */
-	for (i = 0; i < a_max; i++) {
+	for (i = a_max; i--; ) {
 		rd_byte(&tmp);
 		if (tmp < 129)
 			o_ptr->bonus_stat[i] = (int) tmp;
 		else
 			o_ptr->bonus_stat[i] = (int) (tmp - 256);
 	}
-	for (i = 0; i < max_p_bonus; i++) {
+	for(i = max_p_bonus; i--; ) {
 		rd_byte(&tmp);
 		if (tmp < 129)
 			o_ptr->bonus_other[i] = (int) tmp;
 		else
 			o_ptr->bonus_other[i] = (int) (tmp - 256);
 	}
-	for (i = 0; i < max_p_slay; i++) {
+	for (i = max_p_slay; i--; ) {
 		rd_byte(&tmp);
 		if (tmp < 129)
 			o_ptr->multiple_slay[i] = (int) tmp;
 		else
 			o_ptr->multiple_slay[i] = (int) (tmp - 256);
 	}
-	for (i = 0; i < max_p_brand; i++) {
+	for (i = max_p_brand; i--; ) {
 		rd_byte(&tmp);
 		if (tmp < 129)
 			o_ptr->multiple_brand[i] = (int) tmp;
@@ -223,6 +224,10 @@ static int rd_monster(monster_type * m_ptr)
 
 	/* Oangband 0.3.3 added monster stasis. */
 	rd_byte(&m_ptr->stasis);
+	
+	/* MLAngband added root and challenge. */
+	rd_byte(&m_ptr->rooted);
+	rd_byte(&m_ptr->challenged);
 
 
 	/* Oangband 0.5.0 saves 'smart learn' flags and Black Breath state */
@@ -277,7 +282,7 @@ static int rd_monster(monster_type * m_ptr)
  */
 static void rd_trap(trap_type * t_ptr)
 {
-	int i;
+	unsigned int i;
 
 	rd_byte(&t_ptr->t_idx);
 	t_ptr->kind = &trap_info[t_ptr->t_idx];
@@ -294,7 +299,7 @@ static void rd_trap(trap_type * t_ptr)
  */
 int rd_randomizer(void)
 {
-	int i;
+	unsigned int i;
 	u32b noop;
 
 	/* current value for the simple RNG */
@@ -327,7 +332,7 @@ int rd_randomizer(void)
 
 typedef struct {
 	const char *name;
-	int value;
+	unsigned int value;
 } old_opt_struct;
 
 
@@ -380,7 +385,7 @@ old_opt_struct old_options[] = {
  */
 int rd_options_1(void)
 {
-	int i, n;
+	unsigned int i, n;
 
 	byte b;
 
@@ -428,8 +433,8 @@ int rd_options_1(void)
 
 	/* Analyze the options (ugh) */
 	for (i = 0; i < 256; i++) {
-		int os = i / 32;
-		int ob = i % 32;
+		unsigned int os = i / 32;
+		unsigned int ob = i % 32;
 		size_t j;
 		bool opt_val = (mask[os] & (1L << ob)) && (flag[os] & (1L << ob));
 
@@ -516,7 +521,7 @@ int rd_options_1(void)
  */
 int rd_options_2(void)
 {
-	int i, n;
+	unsigned int i, n;
 
 	byte b;
 
@@ -614,14 +619,14 @@ int rd_options_2(void)
  */
 int rd_messages(void)
 {
-	int i;
+	unsigned int i;
 	char buf[128];
 	u16b tmp16u;
 
-	s16b num;
+	u16b num;
 
 	/* Total */
-	rd_s16b(&num);
+	rd_u16b(&num);
 
 	/* Read the messages */
 	for (i = 0; i < num; i++) {
@@ -650,7 +655,7 @@ int rd_messages(void)
 int rd_monster_memory(void)
 {
 	byte tmp8u, rf_size, rsf_size, monster_blow_max;
-	int r_idx;
+	unsigned int r_idx;
 	u16b tmp16u;
 
 	/* Monster Memory */
@@ -748,7 +753,7 @@ int rd_monster_memory(void)
 
 int rd_object_memory(void)
 {
-	int i;
+	unsigned int i;
 	u16b tmp16u;
 
 	/* Object Memory */
@@ -858,7 +863,7 @@ int rd_object_memory(void)
 
 int rd_quests(void)
 {
-	int i;
+	unsigned int i;
 	byte tmp8u;
 	u16b tmp16u, num_quests;
 
@@ -884,13 +889,13 @@ int rd_quests(void)
 
 int rd_artifacts(void)
 {
-	int i, k;
+	unsigned int i, k;
 	byte tmp8u;
 	u16b tmp16u, base, dice, sides;
 	u32b tmp32u;
-	int total_artifacts = 0;
+	unsigned int total_artifacts = 0;
 	int random_artifacts = 0;
-	int art_min_random = 0;
+	unsigned int art_min_random = 0;
 	char buf[128];
 
 	/* Load the Artifacts */
@@ -1091,9 +1096,9 @@ int rd_player_1(void)
 	strip_bytes(1);
 
 	/* Age/Height/Weight */
-	rd_s16b(&p_ptr->age);
-	rd_s16b(&p_ptr->ht);
-	rd_s16b(&p_ptr->wt);
+	rd_u16b(&p_ptr->age);
+	rd_u16b(&p_ptr->ht);
+	rd_u16b(&p_ptr->wt);
 	
 	/* Read the last few turns' movement */
 	for (i = 0; i < ACTION_MAX; ++i) 
@@ -1148,7 +1153,7 @@ int rd_player_1(void)
 	rd_s16b(&p_ptr->speed_boost);
 	rd_s16b(&p_ptr->heighten_power);
 
-	rd_s16b(&p_ptr->sc);
+	rd_u16b(&p_ptr->sc);
 
 	/* Read the flags */
 	rd_s16b(&p_ptr->alignment);
@@ -1261,7 +1266,7 @@ int rd_player_1(void)
 
 int rd_player_2(void)
 {
-	int i;
+	unsigned int i;
 
 	byte max_recall_pts, tmd_max, rune_tail, max_specialties;
 
@@ -1297,6 +1302,17 @@ int rd_player_2(void)
 	p_ptr->class = cp_ptr;
 	mp_ptr = &cp_ptr->magic;
 
+	/* Player Cutie Mark */
+	rd_byte(&p_ptr->pmark);
+
+	/* Verify player Cutie Mark */
+	if (p_ptr->pmark >= z_info->cm_max) {
+		note(format("Invalid cutie mark (%d).", p_ptr->pmark));
+		return (-1);
+	}
+	cmp_ptr = &cm_info[p_ptr->pmark];
+	p_ptr->cutiemark = cmp_ptr;
+
 	/* Player gender */
 	rd_byte(&p_ptr->psex);
 	sp_ptr = &sex_info[p_ptr->psex];
@@ -1310,9 +1326,15 @@ int rd_player_2(void)
 	strip_bytes(1);
 
 	/* Age/Height/Weight */
-	rd_s16b(&p_ptr->age);
-	rd_s16b(&p_ptr->ht);
-	rd_s16b(&p_ptr->wt);
+	rd_u16b(&p_ptr->age);
+	rd_u16b(&p_ptr->ht);
+	rd_u16b(&p_ptr->wt);
+
+	/* Get previous actions */
+	for (i = 0; i < ACTION_MAX; ++i)
+	{
+		rd_byte(&p_ptr->previous_action[i]);
+	}
 
 	/* Read the stat info */
 	for (i = 0; i < a_max; i++)
@@ -1378,9 +1400,10 @@ int rd_player_2(void)
 	rd_s16b(&p_ptr->speed_boost);
 	rd_s16b(&p_ptr->heighten_power);
 
-	rd_s16b(&p_ptr->sc);
+	rd_u16b(&p_ptr->sc);
 
 	/* Read the flags */
+	rd_s16b(&p_ptr->alignment);
 	rd_s16b(&p_ptr->food);
 	rd_s16b(&p_ptr->energy);
 	rd_s16b(&p_ptr->word_recall);
@@ -1430,7 +1453,7 @@ int rd_player_2(void)
 	 */
 	rd_byte(&bones_selector);
 
-	/* Find out how many thefts have already occured on this level. */
+	/* Find out how many thefts have already occurred on this level. */
 	rd_byte(&number_of_thefts_on_level);
 
 	/* Read number of monster traps on level. */
@@ -1493,7 +1516,7 @@ int rd_player_2(void)
  */
 int rd_squelch_1(void)
 {
-	int i;
+	unsigned int i;
 	byte tmp8u;
 	u16b file_e_max;
 	u32b tmp32u;
@@ -1540,7 +1563,7 @@ int rd_squelch_1(void)
 
 int rd_squelch_2(void)
 {
-	int i, j;
+	unsigned int i, j;
 	byte tmp8u;
 	u16b file_e_max;
 	u32b tmp32u;
@@ -1601,7 +1624,7 @@ int rd_misc(void)
 {
 	byte tmp8u;
 	u32b tmp32u;
-	int i;
+	unsigned int i;
 
 	/* Hack -- the "special seeds" */
 	rd_u32b(&seed_flavor);
@@ -1641,7 +1664,7 @@ int rd_misc(void)
 
 int rd_player_hp(void)
 {
-	int i;
+	unsigned int i;
 	u16b tmp16u;
 
 	/* Read the player_hp array */
@@ -1663,11 +1686,11 @@ int rd_player_hp(void)
 
 int rd_player_spells(void)
 {
-	int i;
+	unsigned int i;
 	u16b tmp16u;
 	u32b tmp32u;
 
-	int cnt;
+	unsigned int cnt;
 
 	/* Read the number of spells */
 	rd_u16b(&tmp16u);
@@ -1698,7 +1721,7 @@ int rd_randarts(void)
 
 int rd_inventory(void)
 {
-	int slot = 0;
+	unsigned int slot = 0;
 	byte all_inven_total;
 	object_type *i_ptr;
 	object_type object_type_body;
@@ -1790,7 +1813,7 @@ int rd_inventory(void)
  */
 int rd_stores(void)
 {
-	int i;
+	unsigned int i;
 	byte num, max_stores, store_inven_max, store_choices;
 
 
@@ -1881,7 +1904,7 @@ int rd_stores(void)
  */
 int rd_dungeon(void)
 {
-	int i, n, y, x;
+	unsigned int i, n, y, x;
 
 	s16b stage;
 	s16b last_stage;
@@ -1891,6 +1914,7 @@ int rd_dungeon(void)
 	byte count;
 	byte tmp8u;
 	u16b tmp16u, cave_size;
+	
 
 
 	/* Only if the player's alive */
@@ -2019,6 +2043,15 @@ int rd_dungeon(void)
 					break;
 			}
 		}
+	}
+	
+	/* Load list of temporary features */
+	for (i = 0; i < MAX_TEMP_GRIDS; i++)
+	{
+		rd_byte(&tmp8u);
+		cave_temp[i][0] = tmp8u;
+		rd_byte(&tmp8u);
+		cave_temp[i][1] = tmp8u;
 	}
 
 
@@ -2283,11 +2316,11 @@ int rd_history(void)
 
 int rd_traps(void)
 {
-	int i;
+	unsigned int i;
 	u32b tmp32u;
 
 	rd_byte(&trf_size);
-	rd_s16b(&trap_max);
+	rd_u16b(&trap_max);
 
 	for (i = 0; i < trap_max; i++) {
 		trap_type *t_ptr = &trap_list[i];

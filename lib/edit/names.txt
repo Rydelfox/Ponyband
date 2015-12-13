@@ -1269,10 +1269,13 @@ D:Big
 D:Black
 D:Blue
 D:Blueberry
+D:Born
 D:Buck
+D:Butter
 D:Braeburn
 D:Bread
 D:Breezy
+D:Bright
 D:Brown
 D:Burnt
 D:Butter
@@ -1301,6 +1304,7 @@ D:Diamond
 D:Doctor
 D:Donut
 D:Emerald
+D:Fair
 D:Filthy
 D:Fizzy
 D:Flax
@@ -1350,11 +1354,13 @@ D:Red
 D:River
 D:Rose
 D:Royal
+D:Sad
 D:Sapphire
 D:Silver
 D:Spring
 D:Squash
 D:Steel
+D:Stone
 D:Sugar
 D:Sunny
 D:Surprise
@@ -1362,6 +1368,7 @@ D:Sweetie
 D:Symphony
 D:Tea
 D:Tofu
+D:Too
 D:Torch
 D:Truffle
 D:Turnip
@@ -1377,6 +1384,7 @@ D:Arrow
 D:Aura
 D:Barrel
 D:Basket
+D:Bean
 D:Beauty
 D:Belle
 D:Berry
@@ -1420,8 +1428,10 @@ D:Dreams
 D:Drops
 D:Dumpling
 D:Dust
+D:Eyes
 D:Fever
 D:Fizzy
+D:Flash
 D:Flurry
 D:Fritter
 D:Frost
@@ -1465,6 +1475,7 @@ D:Rich
 D:Riff
 D:Rock
 D:Rose
+D:Sack
 D:Sandwich
 D:Sauce
 D:Scroll
@@ -1476,6 +1487,7 @@ D:Shores
 D:Shuffle
 D:Shot
 D:Smiles
+D:Snout
 D:Song
 D:Spear
 D:Spices
@@ -1522,6 +1534,7 @@ D:Amber
 D:Ambrosia
 D:Amythest
 D:Beauty
+D:Born
 D:Bright
 D:Ceaser
 D:Celestial
@@ -1532,6 +1545,7 @@ D:Comet
 D:Crystal
 D:Dainty
 D:Dark
+D:Dashing
 D:Diamond
 D:Dinky
 D:Doctor
@@ -1539,6 +1553,7 @@ D:Dusk
 D:Elusive
 D:Emerald
 D:Fancy
+D:Fingle
 D:Flash
 D:Gala
 D:Glass
@@ -1556,6 +1571,8 @@ D:Magnum
 D:Marble
 D:Midnight
 D:Monochrome
+D:Moon
+D:Moony
 D:Morning
 D:Night
 D:Noble
@@ -1576,16 +1593,20 @@ D:Royal
 D:Satin
 D:Shining
 D:Silver
+D:Snooty
 D:Sparkling
 D:Star
 D:Sun
+D:Sunny
 D:Sunset
 D:Sweet
 D:Sweetie
 D:Tea
+D:Too
 D:Torch
 D:Trendy
 D:Twilight
+D:Very
 D:Violet
 
 # Unicorn Last Names
@@ -1621,6 +1642,7 @@ D:Hearts
 D:Helm
 D:Hemline
 D:Honor
+D:Horn
 D:Jewel
 D:Lace
 D:Light
@@ -1671,21 +1693,29 @@ D:Blaze
 D:Blue
 D:Cerulean
 D:Cheery
+D:Cirrus
 D:Cloud
 D:Cotton
 D:Crafty
 D:Cyan
 D:Daring
+D:Dashing
 D:Deep
 D:Derpy
 D:Ditzy
 D:Dizzy
 D:Dove
 D:Drizzle
+D:Easy
 D:Electric
+D:Fair
+D:Feather
+D:Fairy
 D:Feather
 D:Fire
+D:Flash
 D:Flitter
+D:Flow
 D:Flutter
 D:Flurry
 D:Foggy
@@ -1694,12 +1724,15 @@ D:Frosty
 D:Glimmer
 D:Grace
 D:Graceful
+D:Grey
 D:Gusty
 D:High
+D:Hot
 D:Hurricane
 D:Icy
 D:Lavender
 D:Lightning
+D:Mad
 D:Mango
 D:May
 D:Merry
@@ -1712,6 +1745,7 @@ D:Prism
 D:Purple
 D:Rain
 D:Rainbow
+D:Sad
 D:Silver
 D:Sky
 D:Sleepy
@@ -1743,6 +1777,7 @@ D:Blaze
 D:Blitz
 D:Blue
 D:Bolt
+D:Bug
 D:Burn
 D:Burst
 D:Chaser
@@ -1751,7 +1786,9 @@ D:Climber
 D:Cloud
 D:Dance
 D:Dancer
+D:Dart
 D:Dash
+D:Dasher
 D:Daze
 D:Descent
 D:Dew
@@ -1761,13 +1798,16 @@ D:Draft
 D:Drizzle
 D:Drop
 D:Dust
+D:Eyes
 D:Falls
 D:Feather
 D:Fire
 D:Flash
 D:Fleece
+D:Flight
 D:Flurry
 D:Flutter
+D:Fly
 D:Fog
 D:Frost
 D:Glider
@@ -1803,6 +1843,7 @@ D:Speed
 D:Spirits
 D:Spring
 D:Star
+D:Storm
 D:Streak
 D:Summer
 D:Sunrise
@@ -1816,8 +1857,10 @@ D:Trotter
 D:Twister
 D:Water
 D:Waters
+D:Weather
 D:Winds
 D:Wing
+D:Wings
 D:Winter
 
 # Bat Pony First Names
@@ -1825,12 +1868,14 @@ N:9
 D:Angel
 D:Austere
 D:Black
+D:Bright
 D:Cave
 D:Cloudy
 D:Comet
 D:Dark
 D:Deeping
 D:Dusk
+D:Easy
 D:Echo
 D:Evening
 D:Gentle
@@ -1844,6 +1889,7 @@ D:Midnight
 D:Misty
 D:Moon
 D:Moonlit
+D:Moony
 D:Murky
 D:Night
 D:Raven
@@ -1869,15 +1915,22 @@ D:Blossom
 D:Calm
 D:Dance
 D:Dancer
+D:Dart
+D:Dash
 D:Descent
 D:Dew
 D:Echo
 D:Eclipse
+D:Eyes
+D:Firefly
 D:Flash
+D:Flight
 D:Fun
+D:Glider
 D:Glow
 D:Guard
 D:Knight
+D:Light
 D:Lullaby
 D:Moon
 D:Nexus

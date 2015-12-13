@@ -445,6 +445,10 @@ byte monster_health_attr(void)
 		if (m_ptr->monfear)
 			attr = TERM_VIOLET;
 
+		/* Rooted */
+		if (m_ptr->rooted)
+			attr = TERM_MUD;
+
 		/* Confused */
 		if (m_ptr->confused)
 			attr = TERM_UMBER;
@@ -569,6 +573,8 @@ static void prt_health(int row, int col)
 			Term_putstr(col + 1, row, len, attr, "cccccccccc");
 		else if (m_ptr->stunned)
 			Term_putstr(col + 1, row, len, attr, "ssssssssss");
+		else if (m_ptr->rooted)
+			Term_putstr(col + 1, row, len, attr, "rrrrrrrrrr");
 		else
 			Term_putstr(col + 1, row, len, attr, "**********");
 	}
@@ -864,9 +870,11 @@ static const struct state_info effects[] = {
 	{TMD_AFRAID, S("Afraid"), TERM_ORANGE},
 	{TMD_IMAGE, S("Halluc"), TERM_ORANGE},
 	{TMD_POISONED, S("Poisoned"), TERM_ORANGE},
+	{TMD_ROOT, S("Rooted"), TERM_ORANGE},
 	{TMD_PROTEVIL, S("ProtEvil"), TERM_L_GREEN},
 	{TMD_TELEPATHY, S("ESP"), TERM_L_BLUE},
 	{TMD_INVULN, S("MagDef"), TERM_L_GREEN},
+	{TMD_STEADFAST, S("Guard"), TERM_L_GREEN},
 	{TMD_HERO, S("Hero"), TERM_L_GREEN},
 	{TMD_SHERO, S("Berserk"), TERM_L_GREEN},
 	{TMD_SHIELD, S("Shield"), TERM_L_GREEN},
@@ -874,6 +882,15 @@ static const struct state_info effects[] = {
 	{TMD_SINVIS, S("SInvis"), TERM_L_GREEN},
 	{TMD_SINFRA, S("Infra"), TERM_L_GREEN},
 	{TMD_SSTEALTH, S("Hidden"), TERM_L_DARK},
+	{TMD_MANASHIELD, S("MShield"), TERM_L_GREEN},
+	{TMD_FOCUS, S("Focus"), TERM_L_GREEN},
+	{TMD_FREEACT, S("FreeAct"), TERM_L_GREEN},
+	{TMD_SSTR, S("S.Str"), TERM_YELLOW},
+	{TMD_SDEX, S("S.Dex"), TERM_YELLOW},
+	{TMD_SCON, S("S.Con"), TERM_YELLOW},
+	{TMD_SINT, S("S.Int"), TERM_YELLOW},
+	{TMD_SWIS, S("S.Wis"), TERM_YELLOW},
+	{TMD_SCHA, S("S.Cha"), TERM_YELLOW},
 	{TMD_OPP_ACID, S("RAcid"), TERM_SLATE},
 	{TMD_OPP_ELEC, S("RElec"), TERM_BLUE},
 	{TMD_OPP_FIRE, S("RFire"), TERM_RED},

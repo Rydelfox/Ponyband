@@ -1,0 +1,26 @@
+Lava + GF_ICE = Open Floor
+Lava + GF_WATER = Open Floor
+Water + GF_ICE = Icy Floor
+Water + GF_COLD = Icy Floor
+Tree + GF_FIRE = Burning Tree
+Open Floor + GF_CYCLONE = Strong Wind
+Ice + GF_FIRE = Water
+
+
+feature_type duration
+
+Terrain with WATERY + Ice/Cold = Icy Floor
+Terrain with FIERY + Ice/Water = Open Floor
+Terrain with BURNING + Water = Open Floor
+Terrain with TREE + Fire/Sun = Burning Tree
+Terrain with FLOOR + Cyclone = Strong Wind
+Terrain with FROZEN + Fire/Sun = Water
+Terrain with CHAOS + Harmony Terrain = Open Space
+Terrain with HARMONY + Chaotic Terrain = Open Space
+Terrain with FLOOR + Harmony Terrain = Harmony Terrain
+Terrain with FLOOR + Chaotic Terrain = Chaotic Terrain
+Terrain with FLOOR + Water = Water
+Terrain with FLOOR + Ice = Icy Floor
+
+Reduce GF_SUN's bonus on HURT_LIGHT to +50%
+Make Electric on water's ball fo 40% damage.

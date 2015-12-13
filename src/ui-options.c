@@ -1918,7 +1918,7 @@ static menu_action option_actions[] = {
 	{0, 'v', "Interact with visuals (advanced)", do_cmd_visuals},
 
 #ifdef ALLOW_COLORS
-	{0, 'c', "Interact with colours (advanced)", do_cmd_colors},
+	{0, 'r', "Interact with colours (advanced)", do_cmd_colors},
 #endif							/* ALLOW_COLORS */
 };
 

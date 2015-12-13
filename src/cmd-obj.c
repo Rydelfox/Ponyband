@@ -339,6 +339,8 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	use_type use;
 	int items_allowed = 0;
 
+	bool no_consume = (player_has(PF_DEVICE_TALENT) && (randint1(40) == 1));
+
 	/* Determine how this item is used. */
 	if (obj_is_rod(o_ptr)) {
 		if (!obj_can_zap(o_ptr)) {
@@ -481,7 +483,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 		return;
 
 	/* Chargeables act differently to single-used items when not used up */
-	if (used && use == USE_CHARGE) {
+	if (used && (use == USE_CHARGE) && (!no_consume)) {
 		/* Use a single charge */
 		o_ptr->pval--;
 
@@ -490,10 +492,10 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 			inven_item_charges(item);
 		else
 			floor_item_charges(0 - item);
-	} else if (used && use == USE_TIMEOUT) {
+	} else if (used && (use == USE_TIMEOUT) && (!no_consume)) {
 		if (o_ptr->time.base)
 			o_ptr->timeout += randcalc(o_ptr->time, 0, RANDOMISE);
-	} else if (used && use == USE_SINGLE) {
+	} else if (used && use == USE_SINGLE && (!no_consume)) {
 		/* Destroy a potion in the pack */
 		if (item >= 0) {
 			inven_item_increase(item, -1);
@@ -724,6 +726,7 @@ void pseudo_probe(void)
 
 	/* Acquire the target monster */
 	struct monster *m_ptr = target_get_monster();
+	assert(cave_m_idx[m_ptr->fy][m_ptr->fx] > 0);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
@@ -845,7 +848,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 				const magic_type *s_ptr = &mp_ptr->info[spell];
 
 				/* Verify "dangerous" spells */
-				if (s_ptr->smana > p_ptr->csp) {
+				if (spell_cost(spell) > p_ptr->csp) {
 					/* Warning */
 					msg("You do not have enough mana to %s this %s.",
 						magic_desc[mp_ptr->spell_realm][SPELL_VERB],

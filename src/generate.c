@@ -452,6 +452,13 @@ static void clear_cave(void)
 			cave_m_idx[y][x] = 0;
 		}
 	}
+	
+	/* Clear list of temporary features */
+	for (y = 0; y < MAX_TEMP_GRIDS; y++)
+	{
+		cave_temp[y][0] = 0;
+		cave_temp[y][1] = 0;
+	}
 
 	/* Mega-Hack -- no player in dungeon yet */
 	p_ptr->px = p_ptr->py = 0;

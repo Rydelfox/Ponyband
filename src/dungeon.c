@@ -67,8 +67,9 @@ void init_artifacts(void)
 				continue;
 
 			/* Artifacts are more common for Lucky characters */
-			if(player_has(PF_LUCK_AURA))
-			    a_ptr->rarity++;
+			/* Dummied out - some character parts may not have loaded yet */
+			/*if(player_has(PF_LUCK_AURA))
+			    a_ptr->rarity++;*/
 			
             /* This is a "special" artifact */
 			if ((a_idx < ART_MIN_NORMAL) ||
@@ -458,6 +459,10 @@ static void process_world(void)
 	bool hardy = (player_has(PF_HARDY));
 
 	bool dawn;
+	
+	bool less_temp_terrain = FALSE;
+	
+	feature_type *f_ptr;
 
 	/*** Check the Time ***/
 
@@ -515,7 +520,39 @@ static void process_world(void)
 			}
 		}
 	}
+	
+	/*** Handle terrain ***/
+	for (i = 0; i < MAX_TEMP_GRIDS; i++)
+	{
+		feature_type *f_ptr = &f_info[cave_feat[cave_temp[i][0]][cave_temp[i][1]]];
+		
+		if((cave_temp[i][0] == 0) && (cave_temp[i][1] == 0))
+		    break;
+        
+        if(randint1(f_ptr->duration) == 1)
+        {
+        	/* Remove the feature */
+        	sqinfo_off(cave_info[cave_temp[i][0]][cave_temp[i][1]], SQUARE_MARK);
+        	cave_set_feat(cave_temp[i][0], cave_temp[i][1], FEAT_FLOOR);
+        	
+        	/* Remove from list */
+        	cave_temp[i][0] = 0;
+        	cave_temp[i][1] = 0;
+        	
+        	/* Remember to sort */
+        	less_temp_terrain = TRUE;
+        }
+    }
 
+	/* Extra terrain processing occasionally. */
+	if (turn % 1000)
+	{
+		if((cave_temp[0][0] == 0) && (cave_temp[0][1] == 0))
+			cave_temp_clean();
+	}
+    
+    if(less_temp_terrain)
+        sort_temp_cave();
 
 	/* Update the stores once a day (while out of town) */
 	if (p_ptr->depth)
@@ -578,6 +615,27 @@ static void process_world(void)
 
 		/* Take damage */
 		take_hit(i, "a fatal wound", SOURCE_ENVIRONMENTAL);
+	}
+	
+	/* Take damage from terrain */
+	f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+	if (tf_has(f_ptr->flags, TF_FIERY))
+		fire_dam(damroll(4, 20), "a pool of lava", SOURCE_ENVIRONMENTAL);
+	else if (tf_has(f_ptr->flags, TF_BURNING)) 
+	    fire_dam(damroll(2, 12), "standing in fire", SOURCE_ENVIRONMENTAL);
+    else if ((tf_has(f_ptr->flags, TF_HARMONY)) && (get_player_alignment() == ALIGN_CHAOS_PURE))
+        take_hit(damroll(6, 12), "harmonious land", SOURCE_ENVIRONMENTAL);
+    else if ((tf_has(f_ptr->flags, TF_HARMONY)) && (get_player_alignment() == ALIGN_CHAOS))
+        take_hit(damroll(3, 10), "harmonious land", SOURCE_ENVIRONMENTAL);
+    
+    /* Get confused by terrain */
+    else if ((tf_has(f_ptr->flags, TF_CHAOS)) && (get_player_alignment() >= ALIGN_HARMONY)) {
+    	if (!p_resist_good(P_RES_CONFU)) {
+			if (p_ptr->timed[TMD_CONFUSED])
+				inc_timed(TMD_CONFUSED, 2 + randint1(p_ptr->depth / 2), TRUE);
+			else
+				inc_timed(TMD_CONFUSED, 5 + randint1(p_ptr->depth), TRUE);
+		}
 	}
 
 
@@ -714,7 +772,7 @@ static void process_world(void)
 
 	/* Hack -- Hallucinating */
 	if (p_ptr->timed[TMD_IMAGE]) {
-		/* Maiar recover quickly from anything. */
+		/* Alicorns recover quickly from anything. */
 		if (divine)
 			(void) dec_timed(TMD_IMAGE, 2, FALSE);
 		else
@@ -723,13 +781,22 @@ static void process_world(void)
 
 	/* Blindness */
 	if (p_ptr->timed[TMD_BLIND]) {
-		/* Maiar recover quickly from anything. */
+		/* Alicorns recover quickly from anything. */
 		if (divine)
 			(void) dec_timed(TMD_BLIND, 2, FALSE);
 
 		else
 			(void) dec_timed(TMD_BLIND, 1, FALSE);
 	}
+	
+	/* Rooted */
+	if (p_ptr->timed[TMD_ROOT]) {
+		/* Alicorns recover quickly from anything. */
+		if (divine)
+		    (void) dec_timed(TMD_ROOT, 2, FALSE);
+        else
+            (void) dec_timed(TMD_ROOT, 1, FALSE);
+    }
 
 	/* Timed see-invisible */
 	if ((p_ptr->timed[TMD_SINVIS]) && (!extend_magic)) {
@@ -770,6 +837,41 @@ static void process_world(void)
 	if ((p_ptr->timed[TMD_ATT_COLD]) && (!extend_magic)) {
 		(void) dec_timed(TMD_ATT_COLD, 1, FALSE);
 	}
+	
+	/* Timed temporary sustains. */
+	if ((p_ptr->timed[TMD_SSTR]) && (!extend_magic)) {
+		(void) dec_timed(TMD_SSTR, 1, FALSE);
+	}
+	if ((p_ptr->timed[TMD_SDEX]) && (!extend_magic)) {
+		(void) dec_timed(TMD_SDEX, 1, FALSE);
+	}
+	if ((p_ptr->timed[TMD_SCON]) && (!extend_magic)) {
+		(void) dec_timed(TMD_SCON, 1, FALSE);
+	}
+	if ((p_ptr->timed[TMD_SINT]) && (!extend_magic)) {
+		(void) dec_timed(TMD_SINT, 1, FALSE);
+	}
+	if ((p_ptr->timed[TMD_SWIS]) && (!extend_magic)) {
+		(void) dec_timed(TMD_SWIS, 1, FALSE);
+	}
+	if ((p_ptr->timed[TMD_SCHA]) && (!extend_magic)) {
+		(void) dec_timed(TMD_SCHA, 1, FALSE);
+	}
+		
+	/* Timed Free Action */
+	if ((p_ptr->timed[TMD_FREEACT]) && (!extend_magic)) {
+		(void) dec_timed(TMD_FREEACT, 1, FALSE);
+	}
+	
+	/* Mana Shield */
+	if ((p_ptr->timed[TMD_MANASHIELD]) && (!extend_magic)) {
+		(void) dec_timed(TMD_MANASHIELD, 1, FALSE);
+	}
+	
+	/* Magic Focus */
+	if ((p_ptr->timed[TMD_FOCUS]) && (!extend_magic)) {
+		(void) dec_timed(TMD_FOCUS, 1, FALSE);
+	}
 
 	/* Timed infra-vision */
 	if ((p_ptr->timed[TMD_SINFRA]) && (!extend_magic)) {
@@ -778,7 +880,7 @@ static void process_world(void)
 
 	/* Paralysis */
 	if (p_ptr->timed[TMD_PARALYZED]) {
-		/* Maiar recover quickly from anything. */
+		/* Alicorns recover quickly from anything. */
 		if (divine)
 			(void) dec_timed(TMD_PARALYZED, 2, FALSE);
 
@@ -788,17 +890,27 @@ static void process_world(void)
 
 	/* Confusion */
 	if (p_ptr->timed[TMD_CONFUSED]) {
-		/* Maiar recover quickly from anything. */
+		/* Alicorns recover quickly from anything. */
 		if (divine)
 			(void) dec_timed(TMD_CONFUSED, 2, FALSE);
 
 		else
 			(void) dec_timed(TMD_CONFUSED, 1, FALSE);
 	}
+	
+	/* Rooted */
+	if (p_ptr->timed[TMD_ROOT]) {
+		/* Alicorns recover quickly from anything. */
+		if (divine)
+			(void) dec_timed(TMD_ROOT, 2, FALSE);
+
+		else
+			(void) dec_timed(TMD_ROOT, 1, FALSE);
+	}
 
 	/* Afraid */
 	if (p_ptr->timed[TMD_AFRAID] && !(p_ptr->state.fear)) {
-		/* Maiar recover quickly from anything. */
+		/* Alicorns recover quickly from anything. */
 		if (divine)
 			(void) dec_timed(TMD_AFRAID, 2, FALSE);
 
@@ -948,14 +1060,14 @@ static void process_world(void)
 				continue;
 
 			/* No messages if object has the flag, to avoid annoyance. */
-			if (cf_has(o_ptr->flags_curse, CF_DRAIN_EXP))
+			if (cf_has(o_ptr->flags_curse, CF_DRAIN_EXP)) {
 				be_silent = TRUE;
+			}
 
 		}
 		/* If we are allowed to speak, warn and disturb. */
 
 		if (be_silent == FALSE) {
-			msg("The Black Breath saps your soul!");
 			disturb(0, 0);
 		}
 	}
@@ -1499,7 +1611,8 @@ static void process_player(void)
 				&& !p_ptr->timed[TMD_POISONED] && !p_ptr->timed[TMD_AFRAID]
 				&& !p_ptr->timed[TMD_STUN] && !p_ptr->timed[TMD_CUT]
 				&& !p_ptr->timed[TMD_SLOW] && !p_ptr->timed[TMD_PARALYZED]
-				&& !p_ptr->timed[TMD_IMAGE] && !p_ptr->word_recall) {
+				&& !p_ptr->timed[TMD_IMAGE] && !p_ptr->word_recall
+				&& !p_ptr->timed[TMD_ROOT]) {
 				disturb(0, 0);
 			}
 		}
@@ -1539,6 +1652,9 @@ static void process_player(void)
 
 	/*** Hack - handle special mana gain ***/
 	special_mana_gain();
+
+	/*** Hack - end one turn invulnerability ***/
+	clear_timed(TMD_STEADFAST, TRUE);
 
 	/*** Handle actual user input ***/
 
@@ -2391,8 +2507,9 @@ void play_game(void)
 	}
 
 	/* Set the savefile name if it's not already set */
-	if (!savefile[0])
+	if (!savefile[0]) {
 		savefile_set_name(player_safe_name(p_ptr, TRUE));
+	}
 
 	/* Stop the player being quite so dead */
 	p_ptr->is_dead = FALSE;
@@ -2533,6 +2650,7 @@ void play_game(void)
 				(void) clear_timed(TMD_CUT, TRUE);
 				(void) clear_timed(TMD_AFRAID, TRUE);
 				(void) clear_timed(TMD_PARALYZED, TRUE);
+				(void) clear_timed(TMD_ROOT, TRUE);
 				p_ptr->black_breath = FALSE;
 
 				/* Hack -- Prevent starvation */

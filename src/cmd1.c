@@ -741,10 +741,10 @@ void fall_off_cliff(void)
  * Note that this routine handles monsters in the destination grid,
  * and also handles attempting to move into walls/doors/etc.
  */
-void move_player(int dir)
+void move_player(int dir, bool no_options)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
+	unsigned int py = p_ptr->py;
+	unsigned int px = p_ptr->px;
 
 	byte str_escape, dex_escape;
 
@@ -756,9 +756,12 @@ void move_player(int dir)
 
 	/* Player hits a trap (always unless flying) */
 	bool trapped = TRUE;
+	
+	/* Sliding on the ice */
+	bool icy_slide = FALSE;
 
 	int temp;
-	int y, x;
+	unsigned int y, x;
 
 	feature_type *f_ptr;
 
@@ -796,10 +799,22 @@ void move_player(int dir)
 	}
 
 
+	/* Rooted players cannot move */
+	if (p_ptr->timed[TMD_ROOT])
+	{
+		can_move = FALSE;
+		msg("You are rooted to the ground and can't move.");
+		
+		/* Prevent repeated attempts */
+		disturb(0, 0);
+		
+		return;
+	}
+	
 	/* Option to disarm a visible trap. -TNB- */
 	/* Hack - Rogues can walk over their own trap - BR */
-	if (OPT(easy_alter) && cave_visible_trap(y, x)
-		&& cave_player_trap(y, x)) {
+	else if (cave_visible_trap(y, x) && cave_player_trap(y, x)
+			&& OPT(easy_alter)) {
 		bool more = FALSE;
 		/* Auto-repeat if not already repeating */
 		if (cmd_get_nrepeats() == 0)
@@ -887,11 +902,11 @@ void move_player(int dir)
 			 * front of him, and have the monster move ahead, if it is faster. If its
 			 * not faster, the player will push over it on the second move, as the push
 			 * flag below will have been set. */
-			 if(((n_ptr->mflag & MFLAG_PUSH) == 0) && !(n_ptr->ty) && !(n_ptr->tx) && push_aside(p_ptr->py, p_ptr->px, n_ptr))
+			 if(((n_ptr->mflag & MFLAG_PUSH) == 0) && !(n_ptr->ty) && !(n_ptr->tx) && push_aside_player(p_ptr->py, p_ptr->px, n_ptr))
 			 {
 			     int dy = n_ptr->fy - y;
 			     int dx = n_ptr->fx - x;
-			     int count = 0;
+			     unsigned int count = 0;
 			     
 			     n_ptr->ty = n_ptr->fy;
 			     n_ptr->tx = n_ptr->fx;
@@ -900,7 +915,7 @@ void move_player(int dir)
 				 * pushed. We do this with a walking stick approach to prevent us getting
 				 * invalid target locations like (0,0) */
 				while (in_bounds_fully(n_ptr->ty + dy, n_ptr->tx + dx)
-						&& cave_exist_mon(n_ptr->r_idx, n_ptr->ty + dy, n_ptr->tx + dx, TRUE)
+						&& cave_exist_mon(&r_info[n_ptr->r_idx], n_ptr->ty + dy, n_ptr->tx + dx, TRUE)
 						&& (count++ < (MAX_SIGHT / 2)))
 				{
 					n_ptr->ty = n_ptr->ty + dy;
@@ -916,13 +931,15 @@ void move_player(int dir)
 			}
 
 			/* The other monster cannot switch places */
-			else if (!cave_exist_mon(n_ptr->r_idx, p_ptr->py, p_ptr->px, TRUE))
+			else if (!cave_exist_mon(&r_info[n_ptr->r_idx], p_ptr->py, p_ptr->px, TRUE))
 			{
 				/* Try to push it aside. Allow aborting of move if an ally */
-				if ((!push_aside(p_ptr->py, p_ptr->px, n_ptr)) && (get_reaction(F_PLAYER, n_ptr->faction) <= REACT_FRIEND))
+				if ((!push_aside_player(p_ptr->py, p_ptr->px, n_ptr)) && (get_reaction(F_PLAYER, n_ptr->faction) <= REACT_FRIEND))
 				{
+					/* No warning if sliding */
+					if (no_options)	{}
 					/* Don't provide more warning */
-					if (!get_check("Are you sure?")) 
+					else if (!get_check("Are you sure?")) 
 					{
 					    temp = FALSE;
 					    p_ptr->running = 0;
@@ -988,6 +1005,21 @@ void move_player(int dir)
 			/* Speed will need updating */
 			p_ptr->update |= PU_BONUS;
 		}
+		
+		/* Walking on to ice can cause you to slide an additional square. */
+		if (tf_has(f_ptr->flags, TF_ICY)) {
+			/* Stop any run */
+			disturb(0, 0);
+			
+			can_move = TRUE;
+			
+			/* Slide is less likely with Cold Resist */
+			if ((!p_immune(P_RES_COLD)) && (randint1((p_resist_pos(P_RES_COLD) || p_resist_strong(P_RES_COLD)) ? 2 : 4) != 1))
+			    icy_slide = TRUE;
+			
+			/* Speed will need updating */
+			p_ptr->update |= PU_BONUS;
+		}
 
 		if (tf_has(f_ptr->flags, TF_FIERY)) {
 			/* Assume player will continue. */
@@ -995,7 +1027,9 @@ void move_player(int dir)
 
 			/* Smart enough to stop running. */
 			if (p_ptr->running) {
-				if (!get_check("Lava blocks your path.  Step into it? ")) {
+				/* Ice keeps sliding */
+				if (no_options) {}
+				else if (!get_check("Lava blocks your path.  Step into it? ")) {
 					temp = FALSE;
 					p_ptr->running = 0;
 				}
@@ -1006,7 +1040,9 @@ void move_player(int dir)
 					 || (!p_resist_strong(P_RES_FIRE)
 						 && (p_ptr->chp <= 100))
 					 || (!p_immune(P_RES_FIRE) && (p_ptr->chp <= 30))) {
-				if (!get_check
+				/* Sliding continues regardless */
+				if (no_options) {}
+				else if (!get_check
 					("The heat of the lava scalds you! Really enter? ")) {
 					temp = FALSE;
 				}
@@ -1031,6 +1067,50 @@ void move_player(int dir)
 				/* Player refuse to go. */
 				can_move = FALSE;
 		}
+		
+		if (tf_has(f_ptr->flags, TF_BURNING))
+		{
+            /* Assume player will continue */
+            temp = TRUE;
+            
+            /* Smart enough to stop running */
+            if (p_ptr->running)
+            {
+            	if (no_options) {}
+				else if (!get_check("Your path is block by a burning tree. Step into it? "))
+            	{
+            		temp = FALSE;
+            		p_ptr->running = 9;
+            	}
+            }
+            
+            /* Smart enough to sense trouble */
+            else if ((!p_resist_pos(P_RES_FIRE))
+					 || (!p_resist_strong(P_RES_FIRE)
+						 && (p_ptr->chp <= 100))
+					 || (!p_immune(P_RES_FIRE) && (p_ptr->chp <= 30))) {
+				if (no_options) {}
+				else if (!get_check
+					("The heat of the fire burns you! Really enter? ")) {
+					temp = FALSE;
+				}
+			}
+
+			/* Enter if OK or confirmed. */
+			if (temp) {
+				/* Can always cross. */
+				can_move = TRUE;
+
+				/* Take light damage from the fire */
+				temp = 49 + randint1(51);
+
+				/* Will take serious fire damage. */
+				fire_dam(temp, "burnt to death in a fire.", SOURCE_ENVIRONMENTAL);
+			}
+			else
+				/* Player refuse to go. */
+				can_move = FALSE;
+		}
 
 		if (tf_has(f_ptr->flags, TF_FALL)) {
 			/* Bats, dragons can fly */
@@ -1041,7 +1121,8 @@ void move_player(int dir)
 
 				/* Smart enough to stop running. */
 				if (p_ptr->running) {
-					if (!get_check
+					if (no_options) {}
+					else if (!get_check
 						("You have come to a cliff.  Step off it? ")) {
 						can_move = FALSE;
 						temp = FALSE;
@@ -1051,7 +1132,8 @@ void move_player(int dir)
 
 				/* Smart enough to sense trouble. */
 				else if (!p_ptr->timed[TMD_BLIND]) {
-					if (!get_check("It's a cliff! Really step off it? ")) {
+					if (no_options) {}
+					else if (!get_check("It's a cliff! Really step off it? ")) {
 						can_move = FALSE;
 						temp = FALSE;
 					}
@@ -1092,19 +1174,24 @@ void move_player(int dir)
 		/* Fall off a cliff */
 		if (falling)
 			fall_off_cliff();
-
-		/* Spontaneous Searching */
-		if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] > 49) {
-			(void) search(FALSE);
-		} else if (0 ==
-				   randint0(50 -
-							p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) {
-			(void) search(FALSE);
-		}
-
-		/* Continuous Searching */
-		if (p_ptr->searching) {
-			(void) search(FALSE);
+			
+		
+        /* Sliding on ice prevents searching */
+        if (!icy_slide)
+        {
+			/* Spontaneous Searching */
+			if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] > 49) {
+				(void) search(FALSE);
+			} else if (0 ==
+					   randint0(50 -
+								p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) {
+				(void) search(FALSE);
+			}
+	
+			/* Continuous Searching */
+			if (p_ptr->searching) {
+				(void) search(FALSE);
+			}
 		}
 
 		/* Handle "store doors" */
@@ -1154,5 +1241,9 @@ void move_player(int dir)
 		else if (cave_monster_trap(y, x)) {
 			msg("You inspect your cunning trap.");
 		}
+		
+		/* Slide an additional square on the ice */
+		if (icy_slide)
+		    move_player(dir, TRUE);
 	}
 }

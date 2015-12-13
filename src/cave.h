@@ -92,6 +92,11 @@
 #define FEAT_VOID               0x77  
 #define FEAT_PIT                0x78  
 #define FEAT_DUNE               0x7a
+#define FEAT_WIND				0x7b
+#define FEAT_ICE				0x7c
+#define FEAT_TREE_BURN			0x7d
+#define FEAT_HARMONY			0x7e
+#define FEAT_CHAOS				0x7f
 
 /*** Terrain flags ***/
 
@@ -205,6 +210,7 @@ typedef struct feature {
     byte jammed;   /**< How jammed is it? */
     byte shopnum;  /**< Which shop does it take you to? */
     random_value dig;      /**< How hard is it to dig through? */
+    int duration;	/**< Chance of vanishing every 10 game turns */
 
     bitflag flags[TF_SIZE];		/**< Bitflags */
 
@@ -264,6 +270,7 @@ typedef s16b s16b_wid[DUNGEON_WID];
 
 extern int distance(int y1, int x1, int y2, int x2);
 extern bool los(int y1, int x1, int y2, int x2);
+extern int get_direction (int source_y, int source_x, int target_y, int target_x);
 extern bool no_light(void);
 extern bool cave_valid_bold(int y, int x);
 extern byte get_color(byte a, int attr, int n);
@@ -296,9 +303,14 @@ extern void track_object(int item);
 extern void track_object_kind(int k_idx);
 extern void disturb(int stop_search, int unused_flag);
 extern bool dtrap_edge(int y, int x);
+extern void sort_temp_cave(void);
+extern bool add_temp_cave(int y, int x);
+extern int search_temp_cave(int y, int x, int min, int max);
+void cave_temp_clean(void);
 
 #define CAVE_INFO_Y	DUNGEON_HGT
 #define CAVE_INFO_X	256
+#define MAX_TEMP_GRIDS 256
 
 
 #endif /* !CAVE_H */

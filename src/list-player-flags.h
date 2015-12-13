@@ -99,3 +99,4 @@ PF(DETECT_TREASURE, "Treasure Detection", "You are innately able to detect nearb
 PF(LUCK_AURA, "Luck Aura", "You are able to find rare treasures more easily."),
 PF(BR_FIRE, "Breathe Fire", "As a fire breathing dragon, naturally, you can breathe fire."),
 PF(TELEKINESIS, "Telekinesis", "You are able to lift distant objects with your magic."),
+PF(DEVICE_TALENT, "Device Talent", "Sometimes your magical devices are not consumed on use."),

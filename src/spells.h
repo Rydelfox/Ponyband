@@ -52,6 +52,7 @@ enum
  *   PLAY:  Explicitly affect the player
  *   HIDE:  Hack -- disable "visual" feedback from projection
  *   CHCK:  Note occupied grids, but do not stop at them.
+ *   BOUNCE: Fire again in a random direction when hitting a monster.
  */
 #define PROJECT_NONE    0x0000
 #define PROJECT_JUMP	0x0001
@@ -66,6 +67,8 @@ enum
 #define PROJECT_PLAY	0x0200
 #define PROJECT_HIDE	0x0400
 #define PROJECT_CHCK	0x0800
+#define PROJECT_BOUNCE	0x1000
+
 
 /*
  * Bit flags for the "enchant()" function
@@ -101,7 +104,7 @@ extern bool res_stat(int stat);
 extern int remove_player_mana(int power);
 extern int apply_dispel(int power);
 extern bool apply_disenchant(int mode);
-extern bool project(int who, int rad, int y, int x, int dam, int typ, 
+extern bool project(int who, int rad, int source_y, int source_x, int y, int x, int dam, int typ,
                     int flg, int degrees_of_arc, byte diameter_of_source);
 extern void teleport_towards(int oy, int ox, int ny, int nx);
 
@@ -110,6 +113,9 @@ extern void shapechange(s16b shape);
 extern bool choose_ele_resist(void);
 extern void create_athelas(void);
 extern void dimen_door(void);
+extern void dimen_door_los(void);
+extern void wood_walk(void);
+extern bool create_harmony_land(int rad);
 void rebalance_weapon(void);
 extern bool set_recall(int v);
 extern bool hp_player(int num);
@@ -120,6 +126,7 @@ extern bool do_res_stat(int stat);
 extern bool do_inc_stat(int stat, bool star);
 extern void identify_object(object_type *o_ptr);
 extern void identify_pack(void);
+extern void nature_lore(void);
 extern bool remove_curse(void);
 extern bool remove_curse_good(void);
 extern bool restore_level(void);
@@ -135,7 +142,9 @@ extern bool detect_monsters_normal(int range, bool show);
 extern bool detect_monsters_invis(int range, bool show);
 extern bool detect_monsters_evil(int range, bool show);
 extern bool detect_monsters_living(int range, bool show);
+extern bool detect_monsters_undead(int range, bool show);
 extern bool detect_all(int range, bool show);
+extern bool detect_nature_awareness(int range, bool show);
 extern void stair_creation(void);
 extern bool enchant(object_type *o_ptr, int n, int eflag);
 extern bool enchant_spell(int num_hit, int num_dam, int num_ac);
@@ -155,12 +164,15 @@ extern void grow_trees_and_grass(bool powerful);
 extern void unmake(int dir);
 extern void ele_air_smite(void);
 extern bool project_los_not_player(int y1, int x1, int dam, int typ);
+extern bool chain_lightning(int type, int dir, int dam);
 extern bool speed_monsters(void);
 extern bool slow_monsters(int dam);
 extern bool sleep_monsters(int dam);
+extern bool sleep_animals(int dam);
 extern bool fear_monsters(int dam);
 extern bool confu_monsters(int dam);
 extern bool banish_evil(int dist);
+extern bool remove_undead(int dist);
 extern bool turn_undead(int dam);
 extern bool turn_evil(int dam);
 extern bool dispel_undead(int dam);
@@ -172,11 +184,19 @@ extern bool dispel_monsters(int dam);
 extern bool dispel_small_monsters(int dam);
 extern bool dispel_living(int dam);
 extern bool dispel_light_hating(int dam);
+extern bool dispel_slowed(int dam);
+extern bool dispel_stunned(int dam);
+extern bool dispel_root_para(int dam);
+extern bool undispel_living(int heal);
+extern bool heal_animals(int heal);
+extern bool heal_monsters(int heal);
+extern bool brighten(int dam);
 extern bool hold_undead(void);
 extern bool hold_all(void);
 extern bool poly_all(int dam);
 extern bool teleport_all(int dam);
 extern bool cacophony(int dam);
+extern void summon_animals(void);
 extern bool aggravate_monsters(int who, bool entire_level);
 extern bool genocide(void);
 extern bool mass_genocide(void);
@@ -185,10 +205,13 @@ extern void destroy_area(int y1, int x1, int r, bool full);
 extern void earthquake(int cy, int cx, int r, bool volcano);
 extern bool tremor(void);
 extern void light_room(int y1, int x1);
-extern void unlight_room(int y1, int x1);
+extern int unlight_room(int y1, int x1);
 extern bool light_area(int dam, int rad);
 extern bool unlight_area(int dam, int rad);
+extern bool natural_light(int num_lights, int radius);
 extern bool fire_ball(int typ, int dir, int dam, int rad, bool jump);
+extern bool explode(int typ, int y, int x, int dam, int rad);
+extern bool explode(int typ, int y, int x, int dam, int rad);
 extern bool fire_sphere(int typ, int dir, int dam, int rad, 
                         byte diameter_of_source);
 extern bool fire_cloud(int typ, int dir, int dam, int rad);
@@ -201,6 +224,7 @@ extern bool fire_bolt_or_beam(int prob, int typ, int dir, int dam);
 extern bool light_line(int dir);
 extern bool drain_life(int dir, int dam);
 extern bool wall_to_mud(int dir);
+extern bool wall_to_tree(int dir);
 extern bool destroy_door(int dir);
 extern bool disarm_trap(int dir);
 extern bool heal_monster(int dir);
@@ -211,12 +235,19 @@ extern bool confuse_monster(int dir, int dam);
 extern bool poly_monster(int dir);
 extern bool clone_monster(int dir);
 extern bool fear_monster(int dir, int dam);
+extern bool charm_monster(int dir, int dam);
+extern bool charm_animal(int dir, int dam);
+extern bool root_monster(int dir, int dam);
+extern bool stun_monster(int dir, int dam);
 extern bool dispel_an_undead(int dir, int dam);
 extern bool dispel_a_demon(int dir, int dam);
 extern bool dispel_a_dragon(int dir, int dam);
 extern bool teleport_monster(int dir, int dist);
 extern bool door_creation(void);
 extern bool trap_creation(void);
+extern bool wood_wall(int rad);
+extern bool create_wall(void);
+extern bool breaking(int dir);
 extern bool destroy_doors_touch(void);
 extern bool sleep_monsters_touch(int dam);
 
@@ -226,6 +257,9 @@ extern const char *get_spell_name(int index);
 extern void get_spell_info(int tval, int index, char *buf, size_t len);
 extern bool cast_spell(int tval, int index, int dir, int plev);
 extern bool spell_needs_aim(int tval, int spell);
+extern int align_cost_adjust(int spell);
+extern int spell_cost(int spell);
+extern int spell_fail(int spell);
 extern int player_ability_count(void);
 extern bool ability_use(int index, int dir, int plev);
 extern bool ability_needs_aim(int ability);

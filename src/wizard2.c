@@ -1375,6 +1375,7 @@ static void do_cmd_wiz_cure_all(void)
 	(void) clear_timed(TMD_STUN, TRUE);
 	(void) clear_timed(TMD_CUT, TRUE);
 	(void) clear_timed(TMD_SLOW, TRUE);
+	(void) clear_timed(TMD_ROOT, TRUE);
 	p_ptr->black_breath = FALSE;
 
 	/* No longer hungry */

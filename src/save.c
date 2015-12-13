@@ -86,27 +86,29 @@ static void wr_item(object_type * o_ptr)
 	wr_u16b(o_ptr->origin_xtra);
 
 	/* Flags */
-	for (i = 0; i < OF_SIZE; i++)
+	/* Hack - Rewritten to loop backwards to speed up load */
+	for (i = OF_SIZE; i--; )
 		wr_byte(o_ptr->flags_obj[i]);
-	for (i = 0; i < CF_SIZE; i++)
+	for (i = CF_SIZE; i--; )
 		wr_byte(o_ptr->flags_curse[i]);
-	for (i = 0; i < CF_SIZE; i++)
+	for (i = CF_SIZE; i--; )
 		wr_byte(o_ptr->id_curse[i]);
-	for (i = 0; i < OF_SIZE; i++)
+	for (i = OF_SIZE; i--; )
 		wr_byte(o_ptr->id_obj[i]);
-	for (i = 0; i < IF_SIZE; i++)
+	for (i = IF_SIZE; i--; )
 		wr_byte(o_ptr->id_other[i]);
 
 	/* Resists, bonuses, multiples -NRM- */
-	for (i = 0; i < MAX_P_RES; i++)
+	/* Hack - Rewritten to loop backwards to speed up load */
+	for (i = MAX_P_RES; i--; )
 		wr_byte(o_ptr->percent_res[i]);
-	for (i = 0; i < A_MAX; i++)
+	for (i = A_MAX; i--; )
 		wr_byte(o_ptr->bonus_stat[i]);
-	for (i = 0; i < MAX_P_BONUS; i++)
+	for (i = MAX_P_BONUS; i--; )
 		wr_byte(o_ptr->bonus_other[i]);
-	for (i = 0; i < MAX_P_SLAY; i++)
+	for (i = MAX_P_SLAY; i--; )
 		wr_byte(o_ptr->multiple_slay[i]);
-	for (i = 0; i < MAX_P_BRAND; i++)
+	for (i = MAX_P_BRAND; i--; )
 		wr_byte(o_ptr->multiple_brand[i]);
 
 	/* Held by monster index */
@@ -157,6 +159,8 @@ static void wr_monster(monster_type * m_ptr)
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
 	wr_byte(m_ptr->stasis);
+	wr_byte(m_ptr->rooted);
+	wr_byte(m_ptr->challenged);
 
 	wr_byte(m_ptr->black_breath);
 
@@ -561,9 +565,9 @@ void wr_player(void)
 	wr_byte(p_ptr->hitdie);
 	wr_byte(0);
 
-	wr_s16b(p_ptr->age);
-	wr_s16b(p_ptr->ht);
-	wr_s16b(p_ptr->wt);
+	wr_u16b(p_ptr->age);
+	wr_u16b(p_ptr->ht);
+	wr_u16b(p_ptr->wt);
 	
 	/* Dump the last few turns' movement */
 	for (i = 0; i < ACTION_MAX; ++i) 
@@ -582,16 +586,16 @@ void wr_player(void)
 	wr_s16b(p_ptr->ht_birth);
 	wr_s16b(p_ptr->wt_birth);
 	wr_s16b(p_ptr->sc_birth);
-	wr_u32b(p_ptr->au_birth);
+	wr_s32b(p_ptr->au_birth);
 
 	/* Druid damage */
 	for (i = 0; i < 12; ++i)
 		wr_u16b(p_ptr->barehand_dam[i]);
 
-	wr_u32b(p_ptr->au);
+	wr_s32b(p_ptr->au);
 
-	wr_u32b(p_ptr->max_exp);
-	wr_u32b(p_ptr->exp);
+	wr_s32b(p_ptr->max_exp);
+	wr_s32b(p_ptr->exp);
 	wr_u16b(p_ptr->exp_frac);
 	wr_s16b(p_ptr->lev);
 	wr_s16b(p_ptr->home);
@@ -620,7 +624,7 @@ void wr_player(void)
 	/* More info */
 	wr_s16b(p_ptr->speed_boost);	/* Specialty Fury */
 	wr_s16b(p_ptr->heighten_power);	/* Specialty Heighten Magic */
-	wr_s16b(p_ptr->sc);
+	wr_u16b(p_ptr->sc);
 
 	wr_s16b(p_ptr->alignment);
     wr_s16b(p_ptr->food);
@@ -959,14 +963,20 @@ void wr_dungeon(void)
 				count++;
 			}
 		}
-	}
+	}	
 
 	/* Flush the data (if any) */
 	if (count) {
 		wr_byte((byte) count);
 		wr_byte((byte) prev_char);
 	}
-
+	
+	/* Dump list of temporary features */
+	for (i = 0; i < MAX_TEMP_GRIDS; i++)
+	{
+        wr_byte(cave_temp[i][0]);
+        wr_byte(cave_temp[i][1]);
+    }
 
 	/*** Compact ***/
 
@@ -1069,7 +1079,7 @@ void wr_traps(void)
 	int i;
 
 	wr_byte(TRF_SIZE);
-	wr_s16b(trap_max);
+	wr_u16b(trap_max);
 
 	for (i = 0; i < trap_max; i++) {
 		trap_type *t_ptr = &trap_list[i];

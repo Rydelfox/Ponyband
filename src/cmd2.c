@@ -2989,7 +2989,7 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
 		return;
 
 	/* Move the player */
-	move_player(dir);
+	move_player(dir, FALSE);
 }
 
 
@@ -3027,6 +3027,10 @@ void do_cmd_run(cmd_code code, cmd_arg args[])
 		msg("You are too confused!");
 		return;
 	}
+	else if (p_ptr->timed[TMD_ROOT]) {
+		msg("You are rooted to the ground!");
+		return;
+	}
 
 
 	/* Get location */
@@ -3055,6 +3059,10 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
 	/* Hack XXX XXX XXX */
 	if (p_ptr->timed[TMD_CONFUSED]) {
 		msg("You are too confused!");
+		return;
+	}
+	else if (p_ptr->timed[TMD_ROOT]) {
+		msg("You are rooted to the ground!");
 		return;
 	}
 
@@ -3299,32 +3307,30 @@ void do_cmd_save_game(cmd_code code, cmd_arg args[])
 
 bool pet_command_needs_aim(int command)
 {
-    logbug("In pet_command_needs_aim\n");
     switch (command)
     {
-    case 1:
-        logbug("Case 1\n");
-        return FALSE;
-    default:
-        logbug("Not case 1\n");
+    case 0:
+    case 3:
+    case 4:
         return TRUE;
+    default:
+        return FALSE;
     }
 }
 
+
 void do_cmd_pet(cmd_code code, cmd_arg args[])
 {
-    int command = args[1].choice;
+    int command = args[0].choice;
     int dir = args[1].direction;
     int target;
     
     s16b ty, tx;
     
-    logbug("In do_cmd_pet\n");
     /* Determine which action is being taken */
     switch(command)
     {
     case 0: /* Order pets to attack a creature */
-        logbug("Case 0\n");
         /* Use the given direction */
 	    ty = p_ptr->py + 99 * ddy[dir];
 	    tx = p_ptr->px + 99 * ddx[dir];
@@ -3343,24 +3349,23 @@ void do_cmd_pet(cmd_code code, cmd_arg args[])
         cause_threat(ty, tx, target, F_PLAYER, 1000, target, TRUE);
         break;
     case 1: /* Change follow distance */
-        logbug("Case 1\n");
         set_follow_distance();
         break;
     case 2: /* Order to a specified location */
-        logbug("Case 2\n");
-        /* Use the given direction */
-	    ty = p_ptr->py + 99 * ddy[dir];
-	    tx = p_ptr->px + 99 * ddx[dir];
-	    
-        /* Use the actual target */
-	    if(dir == 5)
-	        target_get(&tx, &ty);
+        msg("Choose a location to direct pets to.");
+        message_flush();
+
+        /* Target on our own - we need different settings */
+    	if(!target_set_interactive(TARGET_LOOK | TARGET_GRID, -1, -1))
+    		break;
+
+    	/* Grab the target coords */
+    	target_get(&tx, &ty);
         
         /* Order the pets to attack an empty square */
         cause_threat(ty, tx, 0, F_PLAYER, 1000, 0, TRUE);
         break;
     case 3: /* Destroy Pet */
-        logbug("Case 3\n");
         /* Make sure this is actually a pet */
         /* Use the given direction */
 	    ty = p_ptr->py + 99 * ddy[dir];
@@ -3384,7 +3389,6 @@ void do_cmd_pet(cmd_code code, cmd_arg args[])
         delete_monster(ty, tx);
         break;
     case 4:
-        logbug("Case 4\n");
         /* Make sure this is actually a pet */
         /* Use the given direction */
 	    ty = p_ptr->py + 99 * ddy[dir];
@@ -3408,8 +3412,25 @@ void do_cmd_pet(cmd_code code, cmd_arg args[])
         m_list[target].faction = F_RELEASED_PET;
         msg("%s has been released", r_info[m_list[target].r_idx].name);
         break;
+    case 5:
+    	/* Cancel out threat on pets */
+		/* Process over the monsters (backwards) */
+		for (int i = m_max - 1; i >= 1; i--)
+		{
+			monster_type *m_ptr = &m_list[i];
+			if(m_ptr->faction != F_PLAYER)
+				continue;
+			m_ptr->target = 0;
+			m_ptr->threat = 0;
+			m_ptr->hostile = 0;
+			m_ptr->ty = m_ptr->fy;
+			m_ptr->tx = m_ptr->fx;
+			monster_distance(i);
+		}
+		msg("Pets have ceased seeking targets.");
+		break;
     default:
-        logbug("Default case\n");
+    	msg("do_cmd_pet has failed. Sorry.");
         break;
     }
     

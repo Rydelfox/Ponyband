@@ -496,6 +496,8 @@ typedef struct monster {
     byte monfear;	/**< Monster is afraid */
     byte schange;	/**< Monster is shapechanged */
     byte stasis;	/**< Monster is held in stasis. -LM- */
+    byte rooted;	/**< Monster is rooted */
+    byte challenged;    /**< Monster is forced to melee */
 
     bool black_breath;
 			/**< Monster suffers from the Black Breath -LM-  BR */
@@ -604,5 +606,6 @@ extern bool cave_exist_mon(monster_race *r_ptr, int y, int x,
                            bool occupied_ok);
 extern void process_monsters(byte minimum_energy);
 extern void reset_monsters(void);
+extern bool push_aside_player(int fy, int fx, monster_type *n_ptr);
 
 #endif /* !MONSTER_MONSTER_H */

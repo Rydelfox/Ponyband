@@ -1,0 +1,478 @@
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# begin Dump colors
+# *Warning!*  The lines below are an automatic dump.
+# Don't edit them; changes will be deleted and replaced automatically.
+
+
+#  colors definitions
+
+# Color: White
+V:1:7:255:255:255
+
+# Color: Slate
+V:2:3:128:128:128
+
+# Color: Orange
+V:3:12:255:128:0
+
+# Color: Red
+V:4:4:192:0:0
+
+# Color: Green
+V:5:2:0:128:64
+
+# Color: Blue
+V:6:1:32:96:255
+
+# Color: Umber
+V:7:6:128:64:0
+
+# Color: Light Dark
+V:8:8:96:96:96
+
+# Color: Light Slate
+V:9:11:192:192:192
+
+# Color: Light Purple
+V:10:5:255:0:255
+
+# Color: Yellow
+V:11:14:255:255:0
+
+# Color: Light Red
+V:12:13:255:64:64
+
+# Color: Light Green
+V:13:10:0:255:0
+
+# Color: Light Blue
+V:14:9:0:255:255
+
+# Color: Light Umber
+V:15:6:192:128:64
+
+# Color: Purple
+V:16:0:144:0:144
+
+# Color: Violet
+V:17:0:144:32:255
+
+# Color: Teal
+V:18:0:0:160:160
+
+# Color: Mud
+V:19:0:108:108:48
+
+# Color: Light Yellow
+V:20:0:255:255:144
+
+# Color: Magenta-Pink
+V:21:0:255:0:160
+
+# Color: Light Teal
+V:22:0:32:255:220
+
+# Color: Light Violet
+V:23:0:184:168:255
+
+# Color: Light Pink
+V:24:0:255:128:128
+
+# Color: Mustard
+V:25:0:180:180:0
+
+# Color: Blue Slate
+V:26:0:160:192:208
+
+# Color: Deep Light Blue
+V:27:0:0:176:255
+
+# Color: 
+V:28:0:56:56:56
+
+# Color: 
+V:29:0:16:64:40
+
+
+
+
+# *Warning!*  The lines above are an automatic dump.
+# Don't edit them; changes will be deleted and replaced automatically.
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# end Dump colors
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# end Dump options
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# begin Dump options
+# *Warning!*  The lines below are an automatic dump.
+# Don't edit them; changes will be deleted and replaced automatically.
+
+
+#  options definitions
+
+# Option 'Rogue-like commands'
+X:rogue_like_commands
+
+# Option 'Keep the player centered (slow)'
+Y:center_player
+
+# Option 'Automatically show lists for commands'
+Y:show_lists
+
+# Option 'Enter key brings up command menu'
+Y:show_menus
+
+# Option 'Allow mouse clicks to move the player'
+X:mouse_movement
+
+# Option 'Show flavors in object descriptions'
+Y:show_flavors
+
+# Option 'Show detection region'
+Y:show_detect
+
+# Option 'Use special colors for torch light'
+Y:view_yellow_light
+
+# Option 'Animate multi-colored monsters and items'
+Y:animate_flicker
+
+# Option 'Show walls as solid blocks'
+Y:solid_walls
+
+# Option 'Show walls with shaded background'
+X:hybrid_walls
+
+# Option 'Audible bell (on errors, etc)'
+Y:ring_bell
+
+# Option 'Play sounds in game'
+X:use_sound
+
+# Option 'Player colour indicates low hit points'
+Y:hp_changes_colour
+
+# Option 'Automatically clear '-more-' prompts'
+X:auto_more
+
+# Option 'Auto-scum for good levels'
+X:auto_scum
+
+# Option 'Generate more pits and vaults'
+X:night_mare
+
+# Option 'Use old target by default'
+X:use_old_target
+
+# Option 'Pick things up by default'
+X:pickup_always
+
+# Option 'Always pickup items matching inventory'
+Y:pickup_inven
+
+# Option 'Open/close/disarm without direction'
+Y:easy_open
+
+# Option 'Open/close/disarm on movement'
+Y:easy_alter
+
+# Option 'Hide items set as squelchable'
+Y:hide_squelchable
+
+# Option 'When running, ignore stairs'
+Y:run_ignore_stairs
+
+# Option 'When running, ignore doors'
+Y:run_ignore_doors
+
+# Option 'Disturb whenever viewable monster moves'
+Y:disturb_near
+
+# Option 'Disturb when leaving trap detect area'
+Y:disturb_detect
+
+# Option 'Notify on object recharge'
+X:notify_recharge
+
+# Option 'Highlight target with cursor'
+Y:show_target
+
+# Window 'Term-1', Flag 'Display inven/equip'
+W:1:0:1
+
+# Window 'Term-1', Flag 'Display equip/inven'
+W:1:1:0
+
+# Window 'Term-1', Flag 'Display player (basic)'
+W:1:2:0
+
+# Window 'Term-1', Flag 'Display player (extra)'
+W:1:3:0
+
+# Window 'Term-1', Flag 'Display messages'
+W:1:6:0
+
+# Window 'Term-1', Flag 'Display overhead view'
+W:1:7:0
+
+# Window 'Term-1', Flag 'Display monster recall'
+W:1:8:0
+
+# Window 'Term-1', Flag 'Display object recall'
+W:1:9:0
+
+# Window 'Term-1', Flag 'Display snap-shot'
+W:1:11:0
+
+# Window 'Term-1', Flag 'Display monster list'
+W:1:12:0
+
+# Window 'Term-1', Flag 'Display item list'
+W:1:13:0
+
+# Window 'Term-1', Flag 'Display borg messages'
+W:1:14:0
+
+# Window 'Term-1', Flag 'Display borg status'
+W:1:15:0
+
+# Window 'Term-2', Flag 'Display inven/equip'
+W:2:0:0
+
+# Window 'Term-2', Flag 'Display equip/inven'
+W:2:1:0
+
+# Window 'Term-2', Flag 'Display player (basic)'
+W:2:2:1
+
+# Window 'Term-2', Flag 'Display player (extra)'
+W:2:3:0
+
+# Window 'Term-2', Flag 'Display messages'
+W:2:6:0
+
+# Window 'Term-2', Flag 'Display overhead view'
+W:2:7:0
+
+# Window 'Term-2', Flag 'Display monster recall'
+W:2:8:0
+
+# Window 'Term-2', Flag 'Display object recall'
+W:2:9:0
+
+# Window 'Term-2', Flag 'Display snap-shot'
+W:2:11:0
+
+# Window 'Term-2', Flag 'Display monster list'
+W:2:12:0
+
+# Window 'Term-2', Flag 'Display item list'
+W:2:13:0
+
+# Window 'Term-2', Flag 'Display borg messages'
+W:2:14:0
+
+# Window 'Term-2', Flag 'Display borg status'
+W:2:15:0
+
+# Window 'Term-3', Flag 'Display inven/equip'
+W:3:0:0
+
+# Window 'Term-3', Flag 'Display equip/inven'
+W:3:1:0
+
+# Window 'Term-3', Flag 'Display player (basic)'
+W:3:2:0
+
+# Window 'Term-3', Flag 'Display player (extra)'
+W:3:3:0
+
+# Window 'Term-3', Flag 'Display messages'
+W:3:6:1
+
+# Window 'Term-3', Flag 'Display overhead view'
+W:3:7:0
+
+# Window 'Term-3', Flag 'Display monster recall'
+W:3:8:0
+
+# Window 'Term-3', Flag 'Display object recall'
+W:3:9:0
+
+# Window 'Term-3', Flag 'Display snap-shot'
+W:3:11:0
+
+# Window 'Term-3', Flag 'Display monster list'
+W:3:12:0
+
+# Window 'Term-3', Flag 'Display item list'
+W:3:13:0
+
+# Window 'Term-3', Flag 'Display borg messages'
+W:3:14:0
+
+# Window 'Term-3', Flag 'Display borg status'
+W:3:15:0
+
+# Window 'Term-4', Flag 'Display inven/equip'
+W:4:0:0
+
+# Window 'Term-4', Flag 'Display equip/inven'
+W:4:1:1
+
+# Window 'Term-4', Flag 'Display player (basic)'
+W:4:2:0
+
+# Window 'Term-4', Flag 'Display player (extra)'
+W:4:3:0
+
+# Window 'Term-4', Flag 'Display messages'
+W:4:6:0
+
+# Window 'Term-4', Flag 'Display overhead view'
+W:4:7:0
+
+# Window 'Term-4', Flag 'Display monster recall'
+W:4:8:0
+
+# Window 'Term-4', Flag 'Display object recall'
+W:4:9:0
+
+# Window 'Term-4', Flag 'Display snap-shot'
+W:4:11:0
+
+# Window 'Term-4', Flag 'Display monster list'
+W:4:12:0
+
+# Window 'Term-4', Flag 'Display item list'
+W:4:13:0
+
+# Window 'Term-4', Flag 'Display borg messages'
+W:4:14:0
+
+# Window 'Term-4', Flag 'Display borg status'
+W:4:15:0
+
+# Window 'Term-5', Flag 'Display inven/equip'
+W:5:0:0
+
+# Window 'Term-5', Flag 'Display equip/inven'
+W:5:1:0
+
+# Window 'Term-5', Flag 'Display player (basic)'
+W:5:2:0
+
+# Window 'Term-5', Flag 'Display player (extra)'
+W:5:3:0
+
+# Window 'Term-5', Flag 'Display messages'
+W:5:6:0
+
+# Window 'Term-5', Flag 'Display overhead view'
+W:5:7:0
+
+# Window 'Term-5', Flag 'Display monster recall'
+W:5:8:0
+
+# Window 'Term-5', Flag 'Display object recall'
+W:5:9:0
+
+# Window 'Term-5', Flag 'Display snap-shot'
+W:5:11:0
+
+# Window 'Term-5', Flag 'Display monster list'
+W:5:12:1
+
+# Window 'Term-5', Flag 'Display item list'
+W:5:13:0
+
+# Window 'Term-5', Flag 'Display borg messages'
+W:5:14:0
+
+# Window 'Term-5', Flag 'Display borg status'
+W:5:15:0
+
+# Window 'Term-6', Flag 'Display inven/equip'
+W:6:0:0
+
+# Window 'Term-6', Flag 'Display equip/inven'
+W:6:1:0
+
+# Window 'Term-6', Flag 'Display player (basic)'
+W:6:2:0
+
+# Window 'Term-6', Flag 'Display player (extra)'
+W:6:3:0
+
+# Window 'Term-6', Flag 'Display messages'
+W:6:6:0
+
+# Window 'Term-6', Flag 'Display overhead view'
+W:6:7:0
+
+# Window 'Term-6', Flag 'Display monster recall'
+W:6:8:1
+
+# Window 'Term-6', Flag 'Display object recall'
+W:6:9:0
+
+# Window 'Term-6', Flag 'Display snap-shot'
+W:6:11:0
+
+# Window 'Term-6', Flag 'Display monster list'
+W:6:12:0
+
+# Window 'Term-6', Flag 'Display item list'
+W:6:13:0
+
+# Window 'Term-6', Flag 'Display borg messages'
+W:6:14:0
+
+# Window 'Term-6', Flag 'Display borg status'
+W:6:15:0
+
+# Window 'Term-7', Flag 'Display inven/equip'
+W:7:0:0
+
+# Window 'Term-7', Flag 'Display equip/inven'
+W:7:1:0
+
+# Window 'Term-7', Flag 'Display player (basic)'
+W:7:2:0
+
+# Window 'Term-7', Flag 'Display player (extra)'
+W:7:3:1
+
+# Window 'Term-7', Flag 'Display messages'
+W:7:6:0
+
+# Window 'Term-7', Flag 'Display overhead view'
+W:7:7:0
+
+# Window 'Term-7', Flag 'Display monster recall'
+W:7:8:0
+
+# Window 'Term-7', Flag 'Display object recall'
+W:7:9:0
+
+# Window 'Term-7', Flag 'Display snap-shot'
+W:7:11:0
+
+# Window 'Term-7', Flag 'Display monster list'
+W:7:12:0
+
+# Window 'Term-7', Flag 'Display item list'
+W:7:13:0
+
+# Window 'Term-7', Flag 'Display borg messages'
+W:7:14:0
+
+# Window 'Term-7', Flag 'Display borg status'
+W:7:15:0
+
+# Autoinscription settings
+# B:item kind:inscription
+
+
+
+
+
+# *Warning!*  The lines above are an automatic dump.
+# Don't edit them; changes will be deleted and replaced automatically.
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# end Dump options

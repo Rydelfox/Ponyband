@@ -3185,6 +3185,10 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type, u16b fac
 			/* Hack -- no summon on glyph of warding */
 			if (cave_trap_specific(y, x, RUNE_PROTECT))
 				continue;
+				
+			/* Hack -- don't summon on an explosive rune */
+			if (cave_trap_specific(y, x, RUNE_EXPLOSIVE))
+			    continue;
 
 			/* Okay */
 			found = TRUE;
@@ -3273,6 +3277,10 @@ bool summon_questor(int y1, int x1)
 		/* Hack -- no summon on glyph of warding */
 		if (cave_trap_specific(y, x, RUNE_PROTECT))
 			continue;
+			
+		/* Hack -- no summon directly on explosive rune */
+		if (cave_trap_specific(y, x, RUNE_EXPLOSIVE))
+		    continue;
 
 		/* Okay */
 		break;
@@ -3314,7 +3322,7 @@ int assess_shapechange(int m_idx, monster_type * m_ptr)
 
 	bitflag summons[RSF_SIZE];
 
-	flags_init(summons, RSF_SIZE, RSF_SUMMON_MASK);
+	flags_init(summons, RSF_SIZE, RSF_SUMMON_MASK, FLAG_END);
 	rsf_inter(summons, r_ptr->spell_flags);
 
 	/* Pick some possible monsters, using the level calculation */

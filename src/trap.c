@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "cmds.h"
 #include "generate.h"
 #include "mapmode.h"
 #include "monster.h"
@@ -1356,6 +1357,10 @@ void hit_trap_aux(int y, int x, int trap)
 						/* Hack -- no summon on glyph of warding */
 						if (cave_trap_specific(y, x, RUNE_PROTECT))
 							continue;
+							
+						/* Hack -- no summon on glyph of warding */
+						if (cave_trap_specific(y, x, RUNE_EXPLOSIVE))
+						    continue;
 
 						/* Okay */
 						break;

@@ -126,8 +126,8 @@ s16b o_cnt = 0;					/* Number of live objects */
 s16b m_max = 1;					/* Number of allocated monsters */
 s16b m_cnt = 0;					/* Number of live monsters */
 
-s16b trap_max = 1;				/* Number of allocated traps */
-s16b trap_cnt = 0;				/* Number of live traps */
+u16b trap_max = 1;				/* Number of allocated traps */
+u16b trap_cnt = 0;				/* Number of live traps */
 
 u16b group_id = 1;				/* Number of group IDs allocated */
 
@@ -162,7 +162,7 @@ term *angband_term[TERM_WIN_MAX];
  * The array[TERM_WIN_MAX] of window names (modifiable?)
  */
 char angband_term_name[TERM_WIN_MAX][16] = {
-	"Ponyband",
+	"MLAngband",
 	"Term-1",
 	"Term-2",
 	"Term-3",
@@ -210,6 +210,11 @@ bitflag(*cave_info)[256][SQUARE_SIZE];
  * Array[DUNGEON_HGT][DUNGEON_WID] of cave grid feature codes
  */
 byte(*cave_feat)[DUNGEON_WID];
+
+/**
+ * Array[MAX_TEMP_GRIDS][2] of y,x coordinates of temporary features
+ */
+byte cave_temp[MAX_TEMP_GRIDS][2];
 
 
 /**

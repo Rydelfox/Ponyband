@@ -221,8 +221,8 @@ s16b spell_chance(int spell)
 	/* Access the spell */
 	mt_ptr = &mp_ptr->info[spell];
 
-	/* Extract the base spell failure rate */
-	chance = mt_ptr->sfail;
+	/* Extract the base spell failure rate, adjusted for alignment */
+	chance = spell_fail(spell);
 
 	/* Determine the player's effective level */
 	effective_level = p_ptr->lev;
@@ -239,8 +239,8 @@ s16b spell_chance(int spell)
 		3 * (adj_mag_stat[p_ptr->state.stat_ind[mp_ptr->spell_stat]] - 1);
 
 	/* Not enough mana to cast */
-	if (mt_ptr->smana > p_ptr->csp) {
-		chance += 5 * (mt_ptr->smana - p_ptr->csp);
+	if (spell_cost(spell) > p_ptr->csp) {
+		chance += 5 * (spell_cost(spell) - p_ptr->csp);
 	}
 
 	/* Extract the minimum failure rate */
@@ -350,6 +350,11 @@ bool spell_cast(int spell, int dir)
 		plev += 1 + ((p_ptr->heighten_power + 5) / 10);
 	if (player_has(PF_CHANNELING))
 		plev += get_channeling_boost();
+	if (p_ptr->timed[TMD_FOCUS])
+	{
+		plev *= 5;
+		plev /= 4;
+	}
 
 	/* Failed spell */
 	if (randint0(100) < chance) {
@@ -387,7 +392,7 @@ bool spell_cast(int spell, int dir)
 	/* Hack - simplify rune of mana calculations by fully draining the rune
 	 * first */
 	if (cave_trap_specific(py, px, RUNE_MANA) &&
-		(mana_reserve <= mt_ptr->smana) && (mt_ptr->index != 60)) {
+		(mana_reserve <= spell_cost(spell)) && (mt_ptr->index != 60)) {
 		p_ptr->csp += mana_reserve;
 		mana_reserve = 0;
 	}
@@ -417,21 +422,21 @@ bool spell_cast(int spell, int dir)
 
 	/* Use mana from a rune if possible */
 	else if (cave_trap_specific(py, px, RUNE_MANA)
-			 && (mana_reserve > mt_ptr->smana)) {
-		mana_reserve -= mt_ptr->smana;
+			 && (mana_reserve > spell_cost(spell))) {
+		mana_reserve -= spell_cost(spell);
 	}
 
 	/* Sufficient mana */
-	else if (mt_ptr->smana <= p_ptr->csp) {
+	else if (spell_cost(spell) <= p_ptr->csp) {
 		/* Use some mana */
-		p_ptr->csp -= mt_ptr->smana;
+		p_ptr->csp -= spell_cost(spell);
 
 		/* Specialty ability Harmony */
 		if ((failed == FALSE) & (player_has(PF_HARMONY))) {
 			int frac, boost;
 
 			/* Percentage of max hp to be regained */
-			frac = 3 + (mt_ptr->smana / 3);
+			frac = 3 + (spell_cost(spell) / 3);
 
 			/* Cap at 10 % */
 			if (frac > 10)
@@ -447,17 +452,14 @@ bool spell_cast(int spell, int dir)
 
 	/* Over-exert the player */
 	else {
-		int oops = mt_ptr->smana - p_ptr->csp;
+		int oops = spell_cost(spell) - p_ptr->csp;
 
 		/* No mana left */
 		p_ptr->csp = 0;
 		p_ptr->csp_frac = 0;
 
 		/* Message */
-		if (mp_ptr->spell_realm == REALM_NECROMANTIC)
-			msg("You collapse after the ritual!");
-		else
-			msg("You faint from the effort!");
+		msg("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
 		(void) inc_timed(TMD_PARALYZED, randint1(5 * oops + 1), TRUE);

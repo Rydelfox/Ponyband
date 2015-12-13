@@ -37,6 +37,7 @@
 #include "player.h"
 #include "quest.h"
 #include "spells.h"
+#include "target.h"
 #include "trap.h"
 #include "types.h"
 
@@ -421,6 +422,16 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 			msg("You are thrown into molten lava!");
 			fire_dam(damroll(4, 100), "burnt up in molten lava", SOURCE_ENVIRONMENTAL);
 		}
+		if (tf_has(f_ptr->flags, TF_BURNING)) {
+			msg("You are thrown into a burning tree!");
+			fire_dam(damroll(2, 20), "burnt up by fire", SOURCE_ENVIRONMENTAL);
+		}
+		if (tf_has(f_ptr->flags, TF_HARMONY)) {
+			if (get_player_alignment() <= ALIGN_CHAOS) {
+				msg("You are thrown into the light of harmony!");
+				take_hit(damroll(2, 20), "burnt up by the light of harmony", SOURCE_ENVIRONMENTAL);
+			}
+		}
 		if (tf_has(f_ptr->flags, TF_FALL) && (p_ptr->schange != SHAPE_BAT)
 			&& (p_ptr->schange != SHAPE_WYRM)) {
 			msg("You are hurled over the cliff!");
@@ -461,6 +472,36 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 							 note_dies, who);
 
 				/* XXX - If still alive, monster escapes. */
+				teleport_away(cave_m_idx[y][x], 3);
+			}
+		}
+		if (tf_has(f_ptr->flags, TF_BURNING)) {
+			if (!(rf_has(r_ptr->flags, RF_IM_FIRE))) {
+				note_dies = " is burnt up.";
+
+				/* Hurt the monster.  No fear. */
+				mon_take_hit(cave_m_idx[y][x],
+							 damroll(2, 10 + m_ptr->maxhp / 15), &fear,
+							 note_dies, who);
+
+				/* XXX - If still alive, monster escapes. */
+				teleport_away(cave_m_idx[y][x], 3);
+			}
+		}
+		if (tf_has(f_ptr->flags, TF_HARMONY)) {
+			if (rf_has(r_ptr->flags, RF_CHAOS)) {
+				note_dies = " is burnt up by harmony.";
+				
+				/* Hurt the monster. */
+				mon_take_hit(cave_m_idx[y][x], damroll(2, 10 + m_ptr->maxhp / 12),
+				    &fear, note_dies, who);
+                /* XXX - If still alive, monster escapes. */
+				teleport_away(cave_m_idx[y][x], 3);
+			}
+		}
+		if (tf_has(f_ptr->flags, TF_ICY)) {
+			if (!rf_has(r_ptr->flags, RF_IM_COLD)) {
+				/* Ice just slides, to teleport the monster */
 				teleport_away(cave_m_idx[y][x], 3);
 			}
 		}
@@ -615,6 +656,14 @@ void teleport_player(int dis, bool safe)
 		} else if (tf_has(f_ptr->flags, TF_FIERY)) {
 			msg("You land in molten lava!");
 			fire_dam(damroll(4, 100), "landing in molten lava", SOURCE_ENVIRONMENTAL);
+		} else if (tf_has(f_ptr->flags, TF_BURNING)) {
+			msg("You hit a burning tree!");
+			fire_dam(damroll(2, 12), "being hurtled into a burning tree", SOURCE_ENVIRONMENTAL);
+		} else if (tf_has(f_ptr->flags, TF_HARMONY)) {
+			if (get_player_alignment() <= ALIGN_CHAOS) {
+				msg("You are thrown in to sanctified land!");
+				fire_dam(damroll(2, 12), "being thrown into harmony", SOURCE_ENVIRONMENTAL);
+			}
 		} else if (tf_has(f_ptr->flags, TF_FALL)) {
 			msg("You land in mid-air!");
 			fall_off_cliff();
@@ -776,6 +825,14 @@ void teleport_player_to(int ny, int nx, bool friendly)
 		} else if (tf_has(f_ptr->flags, TF_FIERY)) {
 			msg("You land in molten lava!");
 			fire_dam(damroll(4, 100), "landing in molten lava", SOURCE_ENVIRONMENTAL);
+		} else if (tf_has(f_ptr->flags, TF_BURNING)) {
+			msg("You hit a burning tree!");
+			fire_dam(damroll(2, 12), "being hurtled into a burning tree", SOURCE_ENVIRONMENTAL);
+		} else if (tf_has(f_ptr->flags, TF_HARMONY)) {
+			if (get_player_alignment() <= ALIGN_CHAOS) {
+				msg("You are thrown in to sanctified land!");
+				fire_dam(damroll(2, 12), "being thrown into harmony", SOURCE_ENVIRONMENTAL);
+			}
 		} else if (tf_has(f_ptr->flags, TF_FALL)) {
 			msg("You land in mid-air!");
 			fall_off_cliff();
@@ -1382,6 +1439,7 @@ static byte spell_color(int type)
 	case GF_ACID:
 		return (TERM_SLATE);
 	case GF_ELEC:
+	case GF_ELEC_NO_SPREAD:
 		return (TERM_BLUE);
 	case GF_FIRE:
 		return (TERM_RED);
@@ -1410,9 +1468,17 @@ static byte spell_color(int type)
 		return (TERM_L_DARK);
 	case GF_MORGUL_DARK:
 		return (TERM_L_DARK);
+	case GF_SUN:
+	case GF_BRIGHTEN:
+		return (TERM_YELLOW);
 
 	case GF_CONFU:
 		return (TERM_L_UMBER);
+	case GF_CHARM:
+	case GF_CHARM_ANIMAL:
+	case GF_CHARM_ALLY:
+	case GF_STUN:
+		return (TERM_L_PINK);
 	case GF_SOUND:
 		return (TERM_YELLOW);
 	case GF_SHARD:
@@ -1447,6 +1513,20 @@ static byte spell_color(int type)
 		return (TERM_RED);
 	case GF_SPIRIT:
 		return (TERM_L_DARK);
+		
+	case GF_HEAL_LIFE:
+	case GF_HEAL_ANIMAL:
+	case GF_RALLY:
+        return (TERM_L_GREEN);
+        
+    case GF_CHALLENGE:
+    	return (TERM_L_UMBER);
+   	case GF_MAKE_HARMONY:
+   		return (TERM_L_PINK);
+   		
+	case GF_KILL_WALL_TREE:
+	case GF_WOOD_WALL:
+		return (TERM_MUD);
 
 	case GF_ALL:
 		return (randint0(BASIC_COLORS));
@@ -1605,6 +1685,35 @@ void take_hit(int dam, const char *kb_str, int source)
 
 	/* Disturb */
 	disturb(1, 0);
+	
+	/* Handle Steadfast */
+	if(p_ptr->timed[TMD_STEADFAST])
+	{
+		msg("You withstand the blow.");
+		dam = 0;
+	}
+
+	/* Handle Mana Shield */
+	else if(p_ptr->timed[TMD_MANASHIELD])
+	{
+		if (p_ptr->csp > (dam / 4))
+		{
+			msg("Your mana shield absorbs the damage.");
+			p_ptr->csp -= (dam / 4);
+			dam = 0;
+		}
+		else
+		{
+			msg("Your mana shield collapses!");
+			dam -= 4 * p_ptr->csp;
+			p_ptr->csp = 0;
+			(void) clear_timed(TMD_MANASHIELD, FALSE);
+		}
+	}
+	
+	/* Paranoia */
+	if (dam < 0)
+	    dam = 0;
 
 	/* Hurt the player */
 	p_ptr->chp -= dam;
@@ -1614,7 +1723,7 @@ void take_hit(int dam, const char *kb_str, int source)
 		add_speed_boost(1 + ((dam * 70) / p_ptr->mhp));
 
 	/* Display the hitpoints */
-	p_ptr->redraw |= (PR_HP);
+	p_ptr->redraw |= (PR_HP | PR_MANA);
 
 	/* Dead player */
 	if (p_ptr->chp < 0) {
@@ -1829,6 +1938,19 @@ static bool hates_cold(object_type * o_ptr)
 		}
 	}
 
+	return (FALSE);
+}
+
+/**
+ * Is an object a corpse or skeleton?
+ * Not Yet Implemented.  Will be added when reanimation spells
+ * are put in.
+ * Currently destroys old-style skeletons
+ */
+static bool is_corpse_skeleton(object_type * o_ptr)
+{
+	if (o_ptr->tval == TV_SKELETON)
+		return (TRUE);
 	return (FALSE);
 }
 
@@ -3047,25 +3169,69 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		/* Ignore most effects */
 	case GF_ACID:
 	case GF_ELEC:
+	case GF_ELEC_NO_SPREAD:
+	case GF_BRIGHTEN:
 	case GF_METEOR:
 	case GF_SHARD:
 	case GF_FORCE:
+	case GF_FORCE_CHAOS:
 	case GF_SOUND:
 	case GF_MANA:
 	case GF_HOLY_ORB:
 	case GF_ALL:
+	case GF_HEAL_LIFE:
+	case GF_HEAL_ANIMAL:
+	case GF_RALLY:
 		{
 			break;
 		}
+	
+		
+		/* Water can solidify lava, put out burning trees, and create water */
+	case GF_WATER:
+	case GF_STORM:
+		{
+			/* Mark the lava grid for (possible) later alteration */
+			if (tf_has(f_ptr->flags, TF_FIERY) && (dist <= 1))
+			   sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+            
+            /* Mark the burning tree for (possible) later alteration */
+            if (tf_has(f_ptr->flags, TF_BURNING))
+               sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+               
+            /* can make pools.  See "project_t()", */
+            if (dist <= ((typ == GF_WATER) ? 4 : 1)) {
+				/* Mark the floor grid for (possible) later alteration. */
+				if (tf_has(f_ptr->flags, TF_FLOOR))
+					sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+			}
+			break;
 
-		/* Can solidify lava.  See "project_t()". */
-	case GF_COLD:
+		/* Ice can solidify lava, freeze water, and leave patches of ice */
 	case GF_ICE:
 		{
 			/* Mark the lava grid for (possible) later alteration. */
 			if (tf_has(f_ptr->flags, TF_FREEZE) && (dist <= 1))
 				sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+			
+			/* Mark the water grid for (possible) later alteration. */
+			if (tf_has(f_ptr->flags, TF_WATERY))
+			   sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+			   
+            /* Mark the floor grid for (possible) later alteration. */
+            if (tf_has(f_ptr->flags, TF_FLOOR))
+               sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+               
 			break;
+		}
+	
+		/* Cold can freeze water */
+	case GF_COLD:
+		{
+			/* Mark the water grid for (possible) later alteration. */
+			if (tf_has(f_ptr->flags, TF_WATERY))
+			   sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+			   break;
 		}
 
 		/* Can burn, evaporate, and even make lava.  See "project_t()". */
@@ -3078,31 +3244,58 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 				/* Mark the grid for (possible) later alteration. */
 				sqinfo_on(cave_info[y][x], SQUARE_TEMP);
 			}
-			break;
-		}
-
-		/* Can make pools.  See "project_t()". */
-	case GF_WATER:
-	case GF_STORM:
-		{
-			if (dist <= 1) {
-				/* Mark the floor grid for (possible) later alteration. */
-				if (tf_has(f_ptr->flags, TF_FLOOR))
-					sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+			/* Burning trees is easier */
+			else if (tf_has(f_ptr->flags, TF_TREE))
+			{
+				sqinfo_on(cave_info[y][x], SQUARE_TEMP);
 			}
 			break;
 		}
+		
+		/* Can burn trees and evaporate water */	
+	case GF_SUN:
+        {
+        	if (tf_has(f_ptr->flags, TF_TREE))
+        	    sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+     	    if (tf_has(f_ptr->flags, TF_WATERY))
+     	        sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+     	        
+ 	        /* Turn on the light */
+			sqinfo_on(cave_info[y][x], SQUARE_GLOW);
 
+			/* Grid is in line of sight */
+			if (player_has_los_bold(y, x)) {
+				/* Observe */
+				obvious = TRUE;
+
+				/* Fully update the visuals */
+				p_ptr->update |=
+					(PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
+			}
+     	    break;
+     	}
+	
 		/* Can change terrain to other terrain.  See "project_t()". */
 	case GF_CHAOS:
 		{
-			if (dist <= 1) {
+			/* Don't alter chaos terrain - it's already the chaotic ideal */
+			if ((!tf_has(f_ptr->flags, TF_CHAOS)) && (dist <= 1)) {
 				/* Mark the grid for (possible) later alteration. */
 				sqinfo_on(cave_info[y][x], SQUARE_TEMP);
 			}
 			break;
 		}
-
+		
+		/* Makes harmonious land or remove chaos */
+	case GF_MAKE_HARMONY:
+		{
+			if(tf_has(f_ptr->flags, TF_FLOOR))
+			    sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+            if(tf_has(f_ptr->flags, TF_CHAOS))
+                sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+            break;
+        }
+        
 		/* Destroy Traps (and Locks) */
 	case GF_KILL_TRAP:
 		{
@@ -3169,6 +3362,37 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 
 			break;
 		}
+		
+			/* Destroy Walls, Doors, and traps */
+    case GF_BREAKING:
+    	{
+    		/* Destroy traps */
+			if (cave_player_trap(y, x)) {
+				/* 95% chance of success. */
+				if (randint1(20) != 20) {
+					/* Check line of sight */
+					if (player_has_los_bold(y, x)) {
+						msg("There is a bright flash of light.");
+						obvious = TRUE;
+					}
+
+					/* Destroy the trap(s) */
+					remove_trap(y, x, FALSE, -1);
+				}
+				/* 5% chance of setting off the trap. */
+				else {
+					msg("Your magic was too weak!");
+					(void) hit_trap(y, x);
+				}
+			}
+			
+			/* We've destroyed traps.  Let GF_KILL_WALL handles the others by not breaking */
+		}
+		
+		/**
+		 * GF_KILL_WALL MUST come immediately after GF_BREAKING.
+		 * Don't add anything between them.
+		 */
 
 		/* Destroy walls, rubble, and doors */
 	case GF_KILL_WALL:
@@ -3299,7 +3523,134 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 			p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
 
 			break;
-		}
+		}	
+		
+		/* Turn walls into trees */
+	case GF_KILL_WALL_TREE:	
+		{
+		    /* Non-walls (etc) */
+			if (tf_has(f_ptr->flags, TF_PROJECT))
+				break;
+
+			/* Handle everything but doors */
+			if (!(tf_has(f_ptr->flags, TF_DOOR_ANY))) {
+				/* Permanent walls and stores. */
+				if (tf_has(f_ptr->flags, TF_PERMANENT))
+					break;
+
+				/* Granite */
+				if (tf_has(f_ptr->flags, TF_GRANITE)) {
+					/* Message */
+					if (sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+						msg("The wall turns into a tree.");
+						obvious = TRUE;
+					}
+
+					/* Forget the wall */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+					/* Destroy the wall */
+					if (randint0(1))
+						cave_set_feat(y, x, FEAT_TREE);
+					else
+						cave_set_feat(y, x, FEAT_TREE2);
+				}
+
+				/* Quartz / Magma with treasure */
+				else if (tf_has(f_ptr->flags, TF_GOLD)) {
+					/* Message */
+					if (sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+						msg("A tree bursts from the vein.");
+						msg("You have found something!");
+						obvious = TRUE;
+					}
+
+					/* Forget the wall */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+					/* Destroy the wall */
+					if (randint0(1))
+						cave_set_feat(y, x, FEAT_TREE);
+					else
+						cave_set_feat(y, x, FEAT_TREE2);
+
+					/* Place some gold */
+					place_gold(y, x);
+				}
+
+				/* Quartz / Magma */
+				else if (tf_has(f_ptr->flags, TF_MAGMA) ||
+						 tf_has(f_ptr->flags, TF_QUARTZ)) {
+					/* Message */
+					if (sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+						msg("Roots burst from the vein and grow to a tree.");
+						obvious = TRUE;
+					}
+
+					/* Forget the wall */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+					/* Destroy the wall */
+					if (randint0(1))
+						cave_set_feat(y, x, FEAT_TREE);
+					else
+						cave_set_feat(y, x, FEAT_TREE2);
+				}
+
+				/* Rubble */
+				else if (tf_has(f_ptr->flags, TF_ROCK)) {
+					/* Message */
+					if (sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+						msg("A tree grows out of the rubble.");
+						obvious = TRUE;
+					}
+
+					/* Forget the wall */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+					/* Destroy the rubble */
+					if (randint0(1))
+						cave_set_feat(y, x, FEAT_TREE);
+					else
+						cave_set_feat(y, x, FEAT_TREE2);
+
+					/* Hack -- place an object.  Chance much less in Oangband. */
+					if (randint0(100) < 1) {
+						/* Found something */
+						if (player_can_see_bold(y, x)) {
+							msg("There was something buried in the rubble!");
+							obvious = TRUE;
+						}
+
+						/* Place object */
+						place_object(y, x, FALSE, FALSE, FALSE,
+									 ORIGIN_RUBBLE);
+					}
+				}
+			}
+			/* Destroy doors (and secret doors) */
+			else if (tf_has(f_ptr->flags, TF_DOOR_ANY)) {
+				/* Hack -- special message */
+				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+					msg("The wooden door grows back into a tree!");
+					obvious = TRUE;
+				}
+
+				/* Forget the wall */
+				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+				/* Destroy the feature */
+				if (randint0(1))
+				    cave_set_feat(y, x, FEAT_TREE);
+				else
+				    cave_set_feat(y, x, FEAT_TREE2);
+			}
+
+			/* Update the visuals */
+			p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+
+			break;
+		}	
 
 		/* Make doors */
 	case GF_MAKE_DOOR:
@@ -3336,6 +3687,31 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 
 			break;
 		}
+		
+		/* Turn a tree into a wall */
+    case GF_WOOD_WALL:
+    	{
+    		if (tf_has(f_ptr->flags, TF_TREE))
+    		{
+    			/* Message */
+    			if (sqinfo_has(cave_info[y][x], SQUARE_MARK))
+    			{
+				    msg("The tree turns to stone and blocks the path.");
+				    obvious = TRUE;
+				}
+				
+				/* Forget the tree */
+				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+				
+				/* Destroy the tree */
+				cave_set_feat(y, x, FEAT_WALL_SOLID);
+				
+				/* Update the visuals */
+			    p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+			}
+
+			break;
+		}	
 
 		/* Hold door or monster. */
 	case GF_HOLD:
@@ -3395,6 +3771,27 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 			}
 
 			/* All done */
+			break;
+		}
+	}
+	
+	    /* Create strong winds */
+	case GF_STRONG_WIND:
+		{
+			if(tf_has(f_ptr->flags, TF_FLOOR))
+			{
+				if(sqinfo_has(cave_info[y][x], SQUARE_MARK))
+				    obvious = TRUE;
+                
+                /* Replace the empty square */
+                sqinfo_off(cave_info[y][x], SQUARE_MARK);
+                cave_set_feat(y, x, FEAT_WIND);
+                
+            }
+
+			/* Update the visuals */
+			p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+
 			break;
 		}
 	}
@@ -3470,6 +3867,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 
 			/* Elec -- Rings and Wands */
 		case GF_ELEC:
+		case GF_ELEC_NO_SPREAD:
 			{
 				if (hates_elec(o_ptr) && dam > randint0(40)) {
 					do_kill = TRUE;
@@ -3485,6 +3883,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 
 			/* Fire -- Flammable objects */
 		case GF_FIRE:
+		case GF_SUN:
 			{
 				if (hates_fire(o_ptr) && dam > randint0(40)) {
 					do_kill = TRUE;
@@ -3661,6 +4060,16 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 
 				break;
 			}
+			/* Destroy corpses and skeletons */
+        case GF_KILL_UNDEAD:
+        	{
+        		if (is_corpse_skeleton(o_ptr))
+        		{
+        			ignore = FALSE;
+        			do_kill = TRUE;
+        			note_kill = (plural ? " shrivels away!" : " shrivel away!");
+        		}
+        	}
 		}
 
 
@@ -3778,6 +4187,16 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 	return (obvious);
 }
 
+/**
+ * Helper function for project_m
+ *  Spread from electricity on water 
+ */
+static bool elec_spread(int y, int x, int dam)
+{
+    int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_PLAY;
+	
+	return (project(0, 1, y, x, y, x, dam, GF_ELEC_NO_SPREAD, flg, 0, 0));
+}
 
 /**
  * Helper function for "project()" below.
@@ -3832,7 +4251,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
  *
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
-static bool project_m(int who, int y, int x, int dam, int typ, int flg)
+static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
 {
 	int tmp;
 	int charm_boost, turn_all_boost, turn_evil_boost, turn_undead_boost;
@@ -3878,6 +4297,12 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	/* Fear amount (amount to fear) */
 	int do_fear = 0;
+	
+	/* Root amount (amount to root) */
+	int do_root = 0;
+	
+	/* Challenge amount (amount to challenge) */
+	int do_challenge = 0;
 
 	/* On a magic defence rune? */
 	bool magdef_rune = cave_trap_specific(y, x, RUNE_MAGDEF);
@@ -3892,6 +4317,13 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	bool old_evil;
 	bool old_unique;
 	bool killed = FALSE;
+	bool pet_killed = FALSE;
+	
+	/* Level of resistance for Sun */
+	int resist_level = 0;
+	
+	/* Caster's alignment. */
+	int alignment = ALIGN_NEUTRAL;
 
 	/* Assume no note */
 	const char *note = NULL;
@@ -3925,6 +4357,19 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	old_depth = r_ptr->level;
 	old_evil = rf_has(r_ptr->flags, RF_EVIL);
 	old_unique = rf_has(r_ptr->flags, RF_UNIQUE);
+	
+	/* Set up the alignment */
+	/* Player stores their alignment */
+	if (who < 0)
+	    alignment = get_player_alignment();
+    /* Monsters use flags.  Alignments are always pure */
+    else
+    {
+        if(rf_has(r_ptr->flags, RF_HARMONY))
+            alignment = ALIGN_HARMONY_PURE;
+        else if (rf_has(r_ptr->flags, RF_CHAOS))
+            alignment = ALIGN_CHAOS_PURE;
+    }        
     
     /* Breathers don't blast members of the same race. */
 	if ((who > 0) && (flg & (PROJECT_SAFE))) {
@@ -3945,6 +4390,15 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		return (FALSE);
 	}
 
+    /*
+     * Adjust alignment on certain terrain
+     */
+     
+    if (tf_has(f_ptr->flags, TF_HARMONY))
+        alignment = ALIGN_HARMONY_PURE;
+    else if (tf_has(f_ptr->flags, TF_CHAOS))
+        alignment = ALIGN_CHAOS_PURE;
+        
 	/* 
 	 * Various bonuses to beguiling spells
 	 */
@@ -3957,28 +4411,45 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	if (player_has(PF_CHARM))
 		charm_boost = 1;
 
-	/* Strong holy casters are good at turning */
+	/* Strong holy casters are good at turning (only for player) */
 	turn_all_boost = 0;
-	if ((player_has(PF_HOLY)) && (player_has(PF_STRONG_MAGIC)))
+	/*if (((player_has(PF_HOLY)) && (player_has(PF_STRONG_MAGIC)))*/
+	if ((alignment >= ALIGN_HARMONY) && (player_has(PF_STRONG_MAGIC)))
 		turn_all_boost = 1;
 
 	/* Strong evil casters are great at turning undead; Strong holy casters are 
 	 * good at it */
 	turn_undead_boost = 0;
+	/*
 	if ((player_has(PF_EVIL)) && (player_has(PF_STRONG_MAGIC)))
 		turn_undead_boost = 2;
 	else if ((player_has(PF_HOLY)) && (player_has(PF_STRONG_MAGIC)))
 		turn_undead_boost = 1;
+	*/
+	if ((alignment == ALIGN_CHAOS_PURE) && (player_has(PF_STRONG_MAGIC)))
+	    turn_undead_boost = 2;
+    else if ((alignment == ALIGN_CHAOS) && (player_has(PF_STRONG_MAGIC)))
+        turn_undead_boost = 1;
+    else if ((alignment == ALIGN_HARMONY_PURE) && (player_has(PF_STRONG_MAGIC)))
+        turn_undead_boost = 1;
 
 	/* Strong holy casters are great at turning evil; Weak holy, and strong
 	 * evil casters are good at it */
 	turn_evil_boost = 0;
+	/*
 	if ((player_has(PF_HOLY)) && (player_has(PF_STRONG_MAGIC)))
 		turn_evil_boost = 2;
 	else if (player_has(PF_HOLY))
 		turn_evil_boost = 1;
 	else if ((player_has(PF_EVIL)) && (player_has(PF_STRONG_MAGIC)))
 		turn_evil_boost = 1;
+	*/
+	if ((alignment == ALIGN_HARMONY_PURE) && (player_has(PF_STRONG_MAGIC)))
+	    turn_undead_boost = 2;
+    else if ((alignment == ALIGN_HARMONY) && (player_has(PF_STRONG_MAGIC)))
+        turn_undead_boost = 1;
+    else if ((alignment == ALIGN_CHAOS_PURE) && (player_has(PF_STRONG_MAGIC)))
+        turn_undead_boost = 1;
 
 	/* Determine if terrain is capable of preventing physical damage. */
 	if (tf_has(f_ptr->flags, TF_PROTECT)) {
@@ -4007,17 +4478,19 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			terrain_adjustment -= dam / 4;
 	}
 
-	/* Fire-based spells suffer, but water spells come into their own. */
-	if (tf_has(f_ptr->flags, TF_WATERY)) {
+	/* Fire-based spells suffer, but water and electric spells come into their own. */
+	if ((tf_has(f_ptr->flags, TF_WATERY)) || (tf_has(f_ptr->flags, TF_ICY))) {
 		if ((typ == GF_FIRE) || (typ == GF_HELLFIRE) ||
 			(typ == GF_PLASMA) || (typ == GF_DRAGONFIRE))
 			terrain_adjustment -= dam / 2;
 		else if ((typ == GF_WATER) || (typ == GF_STORM))
 			terrain_adjustment = dam / 3;
+		else if ((typ == GF_ELEC) || (typ == GF_ELEC_NO_SPREAD))
+		    terrain_adjustment = dam / 5;
 	}
 
 	/* Cold and water-based spells suffer, and fire-based spells benefit. */
-	if (tf_has(f_ptr->flags, TF_FIERY)) {
+	if (tf_has(f_ptr->flags, TF_FIERY) || tf_has(f_ptr->flags, TF_BURNING)) {
 		if ((typ == GF_COLD) || (typ == GF_ICE) || (typ == GF_WATER)
 			|| (typ == GF_STORM))
 			terrain_adjustment -= dam / 3;
@@ -4034,6 +4507,10 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		/* Special note at death */
 		note_dies = " is destroyed.";
 	}
+	
+	/* Electricity spreads on water, before damage adjustment is done */
+	if(tf_has(f_ptr->flags, TF_WATERY) && (typ == GF_ELEC))
+	    elec_spread(y, x, dam);
 
 
 	/* Analyze the damage type */
@@ -4099,18 +4576,21 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 		/* Electricity */
 	case GF_ELEC:
+	case GF_ELEC_NO_SPREAD:
 		{
 			/* Affected by terrain. */
 			dam += terrain_adjustment;
 
 			if (seen)
 				obvious = TRUE;
+			
 			if (rf_has(r_ptr->flags, RF_IM_ELEC)) {
 				note = " resists a lot.";
 				dam /= 9;
 				if (seen)
 					rf_on(l_ptr->flags, RF_IM_ELEC);
 			}
+			
 			/* Can stun, if enough damage is done. */
 			else if ((dam > 10) && (randint0(2) == 0))
 				do_stun = randint1(dam > 240 ? 32 : dam / 8);
@@ -4278,6 +4758,52 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			}
 			break;
 		}
+		
+		/* Fire + Light */
+    case GF_SUN:
+    	{
+	    	/* Affected by terrain */
+	    	dam += terrain_adjustment;
+	    	
+	    	if(seen)
+	    	    obvious = TRUE;
+			if (rf_has(r_ptr->flags, RF_IM_FIRE))
+				resist_level++;
+			if (rsf_has(r_ptr->spell_flags, RSF_BRTH_LIGHT))
+				resist_level++;
+			if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
+				resist_level--;
+			switch (resist_level)
+			{
+			case -1:
+				{
+					note = " burns in the sun!";
+					note_dies = " shrivels away in the sun!";
+					dam = 3 * dam / 2;
+					break;
+				}
+			case 1:
+				{
+					note = " resists somewhat.";
+					dam /= 3;
+					break;
+				}
+			case 2:
+				{
+					note = " resists a lot!";
+					dam /= 9;
+					break;
+				}
+			}
+			
+			if (seen)
+			{
+				rf_on(l_ptr->flags, RF_IM_FIRE);
+				rf_on(l_ptr->flags, RF_HURT_LIGHT);
+			}
+	        	
+	        break;
+		} 	    
 
 		/* Light, but only hurts susceptible creatures */
 	case GF_LIGHT_WEAK:
@@ -4311,7 +4837,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 				&& ((rf_has(r_ptr->flags, RF_UNDEAD))
 					|| (rf_has(r_ptr->flags, RF_HURT_LIGHT))
 					|| (rf_has(r_ptr->flags, RF_EVIL)))
-				&& (player_has(PF_HOLY_LIGHT)) & (randint1(5) == 1)) {
+				&& (player_has(PF_HOLY_LIGHT)) && (randint1(5) == 1)) {
 				if (rf_has(r_ptr->flags, RF_UNIQUE))
 					tmp = r_ptr->level + 20;
 				else
@@ -4404,6 +4930,32 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 				note = " resists somewhat.";
 				dam *= 3;
 				dam /= 5 + randint0(3);
+			}
+			break;
+		}
+		/* Brighten - hurt creatures in squares that are already lit */
+    case GF_BRIGHTEN:
+    	{
+    		/* Slightly adjusted by terrain. */
+    		dam += terrain_adjustment / 2;
+    		
+    		if (seen)
+    		    obvious = TRUE;
+		    /* Square must be lit */
+		    if (!sqinfo_has(cave_info[y][x], SQUARE_GLOW))
+		       dam = 0;
+ 		   
+ 		   /* Damage is light based */
+ 		   if (rsf_has(r_ptr->spell_flags, RSF_BRTH_LIGHT)) {
+				note = " resists.";
+				dam *= 3;
+				dam /= 14 + randint0(3);
+			} else if (rf_has(r_ptr->flags, RF_HURT_LIGHT)) {
+				if (seen)
+					rf_on(l_ptr->flags, RF_HURT_LIGHT);
+				note = " cringes from the light!";
+				note_dies = " shrivels away in the light!";
+				dam = 3 * dam / 2;
 			}
 			break;
 		}
@@ -4506,6 +5058,36 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			if (seen)
 				obvious = TRUE;
 			do_stun = randint1(dam > 240 ? 20 : dam / 12);
+			if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)) {
+				note = " resists.";
+				dam *= 3;
+				dam /= 14 + randint0(3);
+			}
+
+			/* Mark grid for later processing. */
+			sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+
+			break;
+		}
+		
+		/* Force against Chaos */
+    case GF_FORCE_CHAOS:
+    	{
+    		/* Affected by terrain. */
+			dam += terrain_adjustment;
+
+			if (seen)
+				obvious = TRUE;
+			
+			/* Check target alignment */
+			if (rf_has(r_ptr->flags, RF_HARMONY))
+			   dam = 0;
+            else if (rf_has(r_ptr->flags, RF_CHAOS)) {
+                dam *= 3;
+                dam /= 2;
+            }
+            
+            do_stun = randint1(dam > 240 ? 20 : dam / 12);
 			if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)) {
 				note = " resists.";
 				dam *= 3;
@@ -4766,7 +5348,228 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			break;
 		}
 
+        /* Cyclone */
+    case GF_STRONG_WIND:
+    	{
+    		/* Affected by terrain. */
+			dam += terrain_adjustment;
 
+			if (seen)
+				obvious = TRUE;
+			if (rf_has(r_ptr->flags, RF_FLYING)) {
+				note = " resists.";
+				dam /= 3;
+			}
+			if ((prefix(name, "Wind")) || prefix(name, "Air")) {
+				note = " is immune.";
+				dam = 0;
+			}
+			break;
+		}
+		
+		/* Healing */
+    case GF_HEAL_LIFE:
+    	{
+    		/* Affected by terrain */
+    		dam += terrain_adjustment;
+    		    		
+    		if (seen)
+ 		        obvious = TRUE;
+            
+            /* Must be living */
+            if(!((rf_has(r_ptr->flags, RF_DEMON))
+                 || (rf_has(r_ptr->flags, RF_UNDEAD))
+				 || (rf_has(r_ptr->flags, RF_STUPID))
+				 || (strchr("Evg", r_ptr->d_char)))) {
+		 	    dam = 0;
+		 	    note = " is unaffected.";
+		 	    
+		 	    if (seen)
+		 	    {
+		 	        rf_on(l_ptr->flags, RF_DEMON);
+		 	        rf_on(l_ptr->flags, RF_UNDEAD);
+		 	    }
+		 	} else {
+		 		/* Wake up */
+		 		m_ptr->csleep = 0;
+		 		
+		 		/* Heal */
+		 		m_ptr->hp += dam;
+		 		
+		 		/* No overflow */
+		 		if (m_ptr->hp > m_ptr->maxhp)
+		 		    m_ptr->hp = m_ptr->maxhp;
+		 		    
+	            /* Adjust alignment */
+	            if (r_ptr->faction == F_GOOD)
+	                p_ptr->alignment++;
+	                
+                /* Redraw (later) is needed */
+                if (p_ptr->health_who == cave_m_idx[y][x])
+                    p_ptr->redraw |= (PR_HEALTH);
+                
+                /* Message */
+                note = " looks healthier.";
+                
+                /* No "real" damage */
+                dam = 0;
+            }
+            
+            break;
+        }
+		
+    case GF_HEAL_ANIMAL:
+    	{
+    		/* Affected by terrain */
+    		dam += terrain_adjustment;
+    		
+    		
+    		if (seen)
+ 		        obvious = TRUE;
+            
+            /* Must be living */
+            if(!(rf_has(r_ptr->flags, RF_ANIMAL))) {
+		 	    dam = 0;
+		 	    note = " is unaffected.";
+		 	    
+		 	    if (seen)
+		 	        rf_on(l_ptr->flags, RF_ANIMAL);
+		 	} else {
+		 		/* Wake up */
+		 		m_ptr->csleep = 0;
+		 		
+		 		/* Heal */
+		 		m_ptr->hp += dam;
+		 		
+		 		/* No overflow */
+		 		if (m_ptr->hp > m_ptr->maxhp)
+		 		    m_ptr->hp = m_ptr->maxhp;
+		 		    
+	            /* Adjust alignment */
+	            if (r_ptr->faction == F_GOOD)
+	                p_ptr->alignment++;
+	                
+                /* Redraw (later) is needed */
+                if (p_ptr->health_who == cave_m_idx[y][x])
+                    p_ptr->redraw |= (PR_HEALTH);
+                
+                /* Message */
+                note = " looks healthier.";
+                
+                /* No "real" damage */
+                dam = 0;
+            }
+            
+            break;
+        }
+    
+    case GF_RALLY:
+    	{
+    		if (seen)
+    		    obvious = TRUE;
+                
+            /* Treats pets and not pets differently */
+            if (m_ptr->faction == F_PLAYER)
+            {
+            	note = " is ready for battle!";
+            	
+            	/* Wake up */
+            	m_ptr->csleep = 0;
+            	
+            	/* Heal */
+            	m_ptr->hp += dam;
+            	
+            	/* Remove fear */
+            	m_ptr->monfear = 0;
+            	
+            	/* No hp overflow */
+            	if (m_ptr->hp > m_ptr->maxhp)
+            	    m_ptr->hp = m_ptr->maxhp;
+            	    
+        	    /* Adjust alignment */
+        	    p_ptr->alignment++;
+        	    
+        	    /* Redraw later, if needed */
+        	    if (p_ptr->health_who == cave_m_idx[y][x])
+        	        p_ptr->redraw |= (PR_HEALTH);
+    	        
+    	        /* No "real" damage */
+    	        dam = 0;
+    	        break;
+    	    } else if ((rf_has(r_ptr->flags, RF_HARMONY) && (alignment >= ALIGN_HARMONY))
+    	        || (rf_has(r_ptr->flags, RF_CHAOS) && (alignment <= ALIGN_CHAOS))
+    	        || (!rf_has(r_ptr->flags, RF_CHAOS) && !rf_has(r_ptr->flags, RF_HARMONY) 
+    	        && (alignment >= ALIGN_CHAOS) && (alignment <= ALIGN_HARMONY))) {
+   	        	    
+   	        	/* Adjust for CHA */
+   	        	dam = (dam * adj_cha_charm[p_ptr->state.stat_ind[A_CHR]] / 10);
+					   
+			    /* Sometimes super-charge the spell. */
+		        if ((charm_boost > 0) && (randint1(3) == 1)) {
+   		     	    dam += dam / 2;
+	    		} else if (randint1(6) == 1)
+		            dam += dam / 3;
+            
+         		/* Beguiling specialty ability */
+            	if (beguile)
+                    dam += dam / 2;
+         	    
+         	    /* Uniques are immune */
+         	    if (rf_has(r_ptr->flags, RF_UNIQUE)) {
+         	        dam = 0;
+         	        note = " is too willful to control.";
+         	    }
+         	        
+         	    /* Determine monster's power to resist */
+         	    if (rf_has(r_ptr->flags, RF_WEIRD_MIND))
+         	       	tmp = r_ptr->level + 20;
+   	        	else
+   	        	   	tmp = r_ptr->level + 2;
+        	    	
+        	    /* Adjust for megdef rune */
+        	    if (magdef_rune)
+        	        tmp -= tmp / 4;
+        	    	    
+    	    	/* Attempt a saving throw */
+    	    	if ((dam > 0) && (tmp > randint1(dam)))
+    	    	{
+    	    	  	note = " is unaffected!";
+    	    	   	obvious = FALSE;
+    	    	}
+    	    	    
+    	    	/* We've succeeded. Charm the monster */
+    	    	else
+    	    	{
+    	    	   	/* Announce */
+    	    	   	note = " shifts its loyalty.";
+						
+					/* Put the monster in the player's faction */
+    	    	   	m_ptr->faction = F_PLAYER;
+    	    	    	
+    	    	   	/* Take the player's target */
+    	    	   	if (target_is_set())
+    	    	   	    pet_target(m_ptr);
+	    	        else
+	    	            m_ptr->target = 0;
+	    	    	        
+ 	    	        /* Adjust group membership */
+ 	    	        m_ptr->group = -1;
+ 	    	        m_ptr->group_leader = -1;
+ 	    	            
+ 	    	        /* Clear threat */
+ 	    	        m_ptr->threat = 0;
+ 	    	            
+ 	    	        /* Reset hostility */
+ 	    	        m_ptr->hostile = 0;
+ 	    	    }
+ 	    	        
+	        }
+	        
+      	    /* No physical damage */
+		    dam = 0;
+			break;
+		}
+			        
 
 		/* Drain Life */
 	case GF_OLD_DRAIN:
@@ -4999,6 +5802,69 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			dam = 0;
 			break;
 		}
+		
+		/* Sleep that only applies to animals */
+    case GF_SLEEP_ANIMAL:
+		{
+			if (seen)
+				obvious = TRUE;
+
+
+			if(!rf_has(r_ptr->flags, RF_ANIMAL)) {
+				note = " is unaffected.";
+				dam = 0;
+				obvious = FALSE;
+				break;
+			}
+			
+			if (seen)
+			    rf_on(l_ptr->flags, RF_ANIMAL);
+			
+			/* Sometimes super-charge the spell. */
+			if ((charm_boost > 0) && (randint1(3) == 1)) {
+				dam += dam / 2;
+			} else if (randint1(6) == 1)
+				dam += dam / 3;
+
+			/* Beguiling specialty ability */
+			if (beguile)
+				dam += dam / 2;
+
+			/* Determine monster's power to resist. */
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
+				tmp = r_ptr->level + 20;
+			else
+				tmp = r_ptr->level + 2;
+
+			/* Adjust for magdef rune */
+			if (magdef_rune)
+				tmp -= tmp / 4;
+
+			/* Attempt a saving throw. */
+			if ((tmp > randint1(dam))
+				|| (rf_has(r_ptr->flags, RF_NO_SLEEP))) {
+				/* Memorize a flag */
+				if (rf_has(r_ptr->flags, RF_NO_SLEEP)) {
+					if (seen)
+						rf_on(l_ptr->flags, RF_NO_SLEEP);
+				}
+
+				/* No obvious effect */
+				note = " is unaffected!";
+				obvious = FALSE;
+			}
+
+			/* If it fails, hit the hay.  Sleeping reduced in Oangband. */
+			else {
+				/* Go to sleep (much) later */
+				note = " falls asleep!";
+				do_sleep = 350;
+			}
+
+			/* No physical damage. */
+			dam = 0;
+			break;
+		}
 
 
 		/* Confusion (Use "dam" as "power").  Reworked in Oangband. */
@@ -5051,6 +5917,58 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			}
 
 			/* No physical damage. */
+			dam = 0;
+			break;
+		}
+    
+    	/* Root a monster */
+   	case GF_ROOT:
+   		{
+   			if (seen)
+   			    obvious = TRUE;
+		    
+		    /* Sometimes, supercharge the spell */
+		    if ((charm_boost > 0) && (randint1(3) == 1)) {
+				dam += dam / 2;
+			} else if (randint1(6) == 1)
+				dam += dam / 3;
+
+			/* Beguiling specialty ability */
+			if (beguile)
+				dam += dam / 2;
+				
+			/* Determine monster's power to resist. */
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
+				tmp = r_ptr->level + 20;
+			else
+				tmp = r_ptr->level + 2;
+
+			/* Adjust for magdef rune */
+			if (magdef_rune)
+				tmp -= tmp / 4;
+
+			/* Attempt a saving throw. */
+			if (tmp > randint1(dam)) {
+				note = " is unaffected!";
+				obvious = FALSE;
+			}
+			
+			/* If it fails, root the enemy */
+			else
+			{
+				if(!m_ptr->rooted)
+				{
+					note = " is stuck in place.";
+					m_ptr->rooted += damroll(2, dam / 5);
+				}
+				else
+				{
+					note = " is stuck even more.";
+					m_ptr->rooted += randint1(dam / 5);
+				}
+			}
+			
+			/* No physical damage */
 			dam = 0;
 			break;
 		}
@@ -5113,9 +6031,321 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 			break;
 		}
+		
+		/* Stun a monster */
+    case GF_STUN:
+    	{
+    		if (seen)
+    		    obvious = TRUE;
+		    
+		    /* Sometimes super-charge the spell. */
+			if ((charm_boost > 0) && (randint1(3) == 1)) {
+				dam += dam / 2;
+			} else if (randint1(6) == 1)
+				dam += dam / 3;
+
+			/* Beguiling specialty ability */
+			if (beguile)
+				dam += dam / 2;
+
+			/* Determine monster's power to resist.  */
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
+				tmp = r_ptr->level + 20;
+			else if (rf_has(r_ptr->flags, RF_UNDEAD))
+				tmp = r_ptr->level + 15;
+			else
+				tmp = r_ptr->level + 2;
+
+			/* Adjust for magdef rune */
+			if (magdef_rune)
+				tmp -= tmp / 4;
+				
+			/* Attempt a saving throw.  No rescue from previous stunning. */
+			if ((tmp > randint1(dam))
+				|| (rf_has(r_ptr->flags, RF_NO_STUN))) {
+				/* Memorize a flag */
+				if (rf_has(r_ptr->flags, RF_NO_STUN)) {
+					if (seen)
+						rf_on(l_ptr->flags, RF_NO_STUN);
+				}
+
+				/* No obvious effect */
+				note = " is unaffected!";
+				obvious = FALSE;
+			}
+
+			/* If it fails, become stunned. */
+			else {
+				/* Get confused later */
+				do_stun = damroll(p_ptr->lev/10 + 1, (dam / 5)) + 1;
+			}
+
+			/* No physical damage. */
+			dam = 0;
+			break;
+		}
+		
+		/* Charm a monster */
+    case GF_CHARM:
+    	{
+    		if (seen)
+    		    obvious = TRUE;
+			
+			/* Adjust for CHA */
+    		dam = (dam * adj_cha_charm[p_ptr->state.stat_use[A_CHR]] / 10);
+    		
+    		/* Sometime super-charge the spell */
+    		if ((charm_boost > 0) && (randint1(3) == 1))
+    		    dam += dam / 2;
+		    else if (randint1(6) == 1)
+		        dam += dam / 3;
+        
+            /* Beguiling specialty ability */
+        	if (beguile)
+                dam += dam / 2;
+        
+            /* Uniques are immune */
+        	if (rf_has(r_ptr->flags, RF_UNIQUE))
+        	{
+        	    dam = 0;
+        		note = "'s will is stronger than yours!";
+            }
+        
+            /* Determine monster's power to resist */
+        	if (rf_has(r_ptr->flags, RF_WEIRD_MIND))
+                tmp = r_ptr->level + 20;
+            else
+     		    tmp = r_ptr->level + 2;
+            
+            /* Adjust for magdef rune */
+        	if (magdef_rune)
+                tmp -= tmp / 4;
+            
+            /* Attempt a saving throw */
+        	if ((dam > 0) && (tmp > randint1(dam)))
+        	{
+        	    note = " is unaffected.";
+        	    obvious = FALSE;
+            }
+        
+            /* We've succeeded. Charm the monster. */
+            else
+            {
+        	    /* Announce */
+        	    if (rf_has(r_ptr->flags, RF_FEMALE))
+			        note = " shifts her loyalty.";
+		        else if (rf_has(r_ptr->flags, RF_MALE))
+		            note = " shifts his loyalty.";
+                else
+                    note = " shifts its loyalty.";
+                
+                /* Put the monster in the player's faction */
+                m_ptr->faction = F_PLAYER;
+            
+                /* Take the layer's target */
+            	if (target_is_set())
+                    pet_target(m_ptr);
+                else
+                    m_ptr->target = 0;
+                
+                /* Adjust group membership */
+         	    m_ptr->group = 0;
+            	m_ptr->group_leader = 0;
+            
+				/* Clear target */
+                m_ptr->threat = 0;
+            
+                /* Reset hostility */
+                m_ptr->hostile = 0;
+            
+            }
+        
+            /* No physical damage */
+            dam = 0;
+            break;
+        } 	
+    
+    
+        /* Charm an animal */
+    case GF_CHARM_ANIMAL:
+    	{
+   		    if (seen)
+   		        obvious = TRUE;
+			   
+		    if(!rf_has(r_ptr->flags, RF_ANIMAL))
+   		    {
+   		    	note = " is unaffected.";
+   		    	dam = 0;
+   		    	obvious = FALSE;
+   		    } else {
+				/* Adjust for CHA */
+	    		dam = (dam * adj_cha_charm[p_ptr->state.stat_use[A_CHR]] / 10);
+	    		
+	    		/* Sometime super-charge the spell */
+	    		if ((charm_boost > 0) && (randint1(3) == 1))
+	    		    dam += dam / 2;
+			    else if (randint1(6) == 1)
+			        dam += dam / 3;
+	        
+	            /* Beguiling specialty ability */
+	        	if (beguile)
+	                dam += dam / 2;
+	        
+	            /* Uniques are immune */
+	        	if (rf_has(r_ptr->flags, RF_UNIQUE))
+	        	{
+	        	    dam = 0;
+	        		note = "'s will is stronger than yours!";
+	            }
+	        
+	            /* Determine monster's power to resist */
+	        	if (rf_has(r_ptr->flags, RF_WEIRD_MIND))
+	                tmp = r_ptr->level + 20;
+	            else
+	     		    tmp = r_ptr->level + 2;
+	            
+	            /* Adjust for magdef rune */
+	        	if (magdef_rune)
+	                tmp -= tmp / 4;
+	            
+	            /* Attempt a saving throw */
+	        	if ((dam > 0) && (tmp > randint1(dam)))
+	        	{
+	        	    note = " is unaffected.";
+	        	    obvious = FALSE;
+	            }
+	        
+	            /* We've succeeded. Charm the monster. */
+	            else
+	            {
+	        	    /* Announce */
+	        	    if (rf_has(r_ptr->flags, RF_FEMALE))
+				        note = " shifts her loyalty.";
+			        else if (rf_has(r_ptr->flags, RF_MALE))
+			            note = " shifts his loyalty.";
+	                else
+	                    note = " shifts its loyalty.";
+	                
+	                /* Put the monster in the player's faction */
+	                m_ptr->faction = F_PLAYER;
+	            
+	                /* Take the layer's target */
+	            	if (target_is_set())
+	                    pet_target(m_ptr);
+	                else
+	                    m_ptr->target = 0;
+	                
+	                /* Adjust group membership */
+	         	    m_ptr->group = -1;
+	            	m_ptr->group_leader = -1;
+	            
+					/* Clear target */
+	                m_ptr->threat = 0;
+	            
+	                /* Reset hostility */
+	                m_ptr->hostile = 0;
+	            
+	            }
+	        }
+        
+            /* No physical damage */
+            dam = 0;
+            break;
+        } 	
+        
+        /* Charm an animal */
+    case GF_CHARM_ALLY:
+    	{
+   		    if (seen)
+   		        obvious = TRUE;
+			   
+		    if (!((rf_has(r_ptr->flags, RF_HARMONY) && (alignment >= ALIGN_HARMONY))
+    	        || (rf_has(r_ptr->flags, RF_CHAOS) && (alignment <= ALIGN_CHAOS))
+    	        || (!rf_has(r_ptr->flags, RF_CHAOS) && !rf_has(r_ptr->flags, RF_HARMONY) 
+    	        && (alignment >= ALIGN_CHAOS) && (alignment <= ALIGN_HARMONY))))
+   		    {
+   		    	note = " is unaffected.";
+   		    	dam = 0;
+   		    	obvious = FALSE;
+   		    } else {
+				/* Adjust for CHA */
+	    		dam = (dam * adj_cha_charm[p_ptr->state.stat_use[A_CHR]] / 10);
+	    		
+	    		/* Sometime super-charge the spell */
+	    		if ((charm_boost > 0) && (randint1(3) == 1))
+	    		    dam += dam / 2;
+			    else if (randint1(6) == 1)
+			        dam += dam / 3;
+	        
+	            /* Beguiling specialty ability */
+	        	if (beguile)
+	                dam += dam / 2;
+	        
+	            /* Uniques are immune */
+	        	if (rf_has(r_ptr->flags, RF_UNIQUE))
+	        	{
+	        	    dam = 0;
+	        		note = "'s will is stronger than yours!";
+	            }
+	        
+	            /* Determine monster's power to resist */
+	        	if (rf_has(r_ptr->flags, RF_WEIRD_MIND))
+	                tmp = r_ptr->level + 20;
+	            else
+	     		    tmp = r_ptr->level + 2;
+	            
+	            /* Adjust for magdef rune */
+	        	if (magdef_rune)
+	                tmp -= tmp / 4;
+	            
+	            /* Attempt a saving throw */
+	        	if ((dam > 0) && (tmp > randint1(dam)))
+	        	{
+	        	    note = " is unaffected.";
+	        	    obvious = FALSE;
+	            }
+	        
+	            /* We've succeeded. Charm the monster. */
+	            else
+	            {
+	        	    /* Announce */
+	        	    if (rf_has(r_ptr->flags, RF_FEMALE))
+				        note = " shifts her loyalty.";
+			        else if (rf_has(r_ptr->flags, RF_MALE))
+			            note = " shifts his loyalty.";
+	                else
+	                    note = " shifts its loyalty.";
+	                
+	                /* Put the monster in the player's faction */
+	                m_ptr->faction = F_PLAYER;
+	            
+	                /* Take the layer's target */
+	            	if (target_is_set())
+	                    pet_target(m_ptr);
+	                else
+	                    m_ptr->target = 0;
+	                
+	                /* Adjust group membership */
+	         	    m_ptr->group = -1;
+	            	m_ptr->group_leader = -1;
+	            
+					/* Clear target */
+	                m_ptr->threat = 0;
+	            
+	                /* Reset hostility */
+	                m_ptr->hostile = 0;
+	            
+	            }
+	        }
+        
+            /* No physical damage */
+            dam = 0;
+            break;
+        } 	
 
 		/* Stone to Mud */
 	case GF_KILL_WALL:
+	case GF_KILL_WALL_TREE:
 		{
 			/* Hurt by rock remover */
 			if (rf_has(r_ptr->flags, RF_HURT_ROCK)) {
@@ -5561,6 +6791,182 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 			break;
 		}
+		
+		/* Dispel slowed monsters */
+    case GF_DISP_SLOW:
+    	{
+    		/* Obvious */
+    		if (seen)
+    		    obvious = TRUE;
+		    
+		    /* Check is the monster is slowed */
+		    if (r_ptr->speed <= m_ptr->mspeed)
+		    {
+		    	dam = 0;
+		    	note = " is unaffected.";
+		    } else {
+		    	/* Message */
+		    	note = " shudders.";
+	    		note_dies = " dissolves.";
+	    	}
+	    	
+	    	break;
+	    }
+	    
+	    /* Dispel Stunned monsters */
+    case GF_DISP_STUN:
+    	{
+    		/* Obvious */
+    		if (seen)
+    		    obvious = TRUE;
+		    
+		    /* Check if the monster is stunned */
+		    if (!m_ptr->stunned)
+		    {
+		    	dam = 0;
+		    	note = " is not wounded.";
+		    } else {
+		    	/* Message */
+		    	note = " quivers.";
+		    	note_dies = " dissolves.";
+		    }
+		    
+		    break;
+		}
+		
+		/* Dispel Rooted monsters */
+    case GF_DISP_ROOT:
+    	{
+    		/* Obvious */
+    		if (seen)
+    		    obvious = TRUE;
+		    
+		    /* Check if the monster is rooted */
+		    if (!m_ptr->rooted)
+		    {
+		    	dam = 0;
+		    	note = " takes no further damage.";
+		    } else {
+		    	/* Message */
+		    	note = " quakes in pain.";
+		    	note_dies = " dissolves.";
+		    }
+		    
+		    break;
+		}
+		
+		/* Destroy an undead monster */
+    case GF_KILL_UNDEAD:
+    	{
+    		/* Obvious */
+    		if (seen)
+    		    obvious = TRUE;
+		    
+		    /* Check if the monster is undead */
+		    if (!rf_has(r_ptr->flags, RF_UNDEAD))
+		    {
+		    	dam = 0;
+		    	note = " is unaffected.";
+		    }
+		    else
+		    {
+		    	if (seen)
+		    	    rf_on(l_ptr->flags, RF_UNDEAD);
+		    	    
+  	            /* Uniques can resist.  Resistance is easy, but nothing decreases it. */
+  	            if (rf_has(r_ptr->flags, RF_UNIQUE))
+  	            {
+  	            	tmp = r_ptr->level + 2;
+  	            	
+  	            	/* Adjust for magdef rune */
+  	            	if (magdef_rune)
+  	            	    tmp -= tmp / 4;
+  	            	    
+      	            /* Attempt a saving throw */
+      	            if (tmp > randint1(dam))
+      	            {
+      	            	note = " hangs on to its foul existance.";
+      	            	obvious = FALSE;
+      	            	dam = 0;
+      	            	break;
+      	            }
+      	        }
+      	        
+      	        /* Ignore monsters in icky squares */
+				if (sqinfo_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
+				{
+					note = " is beyond your ability to affect it.";
+					obvious = FALSE;
+					dam = 0;
+					break;
+				}
+				
+				/* Delete the monster */
+				delete_monster_idx(cave_m_idx[y][x]);
+				
+				/* Take some damage */
+				take_hit(randint1(4), "the strain of banishing the undead", SOURCE_PLAYER);
+				
+				/* Gain alignment */
+				p_ptr->alignment++;
+				
+				/* The monster is gone! We'd better not try to touch it, so skip everything. */
+				skipped = TRUE;
+				
+			}
+			
+			break;
+		} 
+		
+		/* Challenge - force a monster to desire melee */
+    case GF_CHALLENGE:
+    	{
+    		if (seen)
+				obvious = TRUE;
+
+
+			/* Sometimes super-charge the spell. */
+			if ((charm_boost > 0) && (randint1(3) == 1)) {
+				dam += dam / 2;
+			} else if (randint1(6) == 1)
+				dam += dam / 3;
+
+			/* Beguiling specialty ability */
+			if (beguile)
+				dam += dam / 2;
+
+			/* Determine monster's power to resist.  */
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
+				tmp = r_ptr->level + 20;
+			else if (rf_has(r_ptr->flags, RF_EMPTY_MIND))
+				tmp = r_ptr->level + 15;
+			else if (rf_has(r_ptr->flags, RF_WEIRD_MIND))
+			    tmp = r_ptr->level + 10;
+			else
+				tmp = r_ptr->level + 2;
+
+			/* Adjust for magdef rune */
+			if (magdef_rune)
+				tmp -= tmp / 4;
+
+			/* Attempt a saving throw. */
+			if (tmp > randint1(dam)) {
+				
+				/* No obvious effect */
+				note = " is unaffected!";
+				obvious = FALSE;
+			}
+
+			/* If it fails, become challenged. */
+			else {
+				/* Get confused later */
+				do_challenge = damroll(3, (dam / 5)) + 1;
+			}
+
+			/* No physical damage. */
+			dam = 0;
+			break;
+		}
 
 		/* Nature's vengeance - when trees and grass attack! */
 	case GF_NATURE:
@@ -5789,7 +7195,62 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		   }
 		}
 	}
-
+	
+	/* Root monster */
+	else if (do_root)
+	{
+		if (seen)
+		    obvious = TRUE;
+		    
+        /* Already rooted */
+        if (m_ptr->rooted)
+        {
+        	note = " is held more firmly.";
+        	tmp = m_ptr->rooted + (do_root / 2);
+        }
+        
+        /* Was not rooted */
+        else
+        {
+        	note = " becomes rooted to the ground.";
+        	tmp = do_root;
+        }
+        
+        /* Apply root */
+        m_ptr->rooted = (tmp < 200) ? tmp : 200;
+    }
+    
+    /* Challenge mosnter.  Does not work on creatures that only cast */
+    else if ((do_challenge) && (!(r_ptr->freq_ranged == 100)))
+    {
+    	if (seen)
+    	    obvious = TRUE;
+    	    
+	    /* Already challenged */
+	    if (m_ptr->challenged)
+	    {
+	    	note = " glares at you in anger.";
+	    	tmp = m_ptr->challenged + (do_challenge / 3);
+	    }
+	    
+	    /* Was not challenged */
+	    else
+	    {
+	    	note = " looks at you with purpose.";
+	    	tmp = do_challenge;
+	    }
+	    
+	    /* Apply root */
+	    m_ptr->challenged = (tmp < 60) ? tmp : 60;
+	    
+	    /* Challenge forces targetting */
+	    m_ptr->hostile = who;
+	    m_ptr->target = who;
+	    
+	    /* Challenging a pet ends their petness. */
+	    if((who < 0) && (m_ptr->faction == F_PLAYER))
+	        m_ptr->faction = F_MONSTER;
+    }
 
 	/* Fear */
 	if (do_fear) {
@@ -5833,11 +7294,18 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			/* Give detailed messages if destroyed */
 			if (note)
 				msg("%s%s", m_name, note);
+			
+			/* If the attacker is a pet, the player should get partial credit */
+			if (m_list[who].faction == F_PLAYER)
+				pet_killed = TRUE;
+			
 		}
 
 		/* Damaged monster */
 		else {
 			/* Become hostile - TO DO m_ptr->hostile = who; */
+			if (dam > m_ptr->threat)
+			    m_ptr->hostile = who;
 
 			/* Give detailed messages if visible or destroyed */
 			if (note && seen)
@@ -6044,19 +7512,20 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		terrain_adjustment -= dam / 6;
 
 	/* Fire-based spells suffer, but other spells benefit slightly (player
-	 * is easier to hit).  Water spells come into their own. */
+	 * is easier to hit).  Water and electricspells come into their own. */
 	if (tf_has(f_ptr->flags, TF_WATERY)) {
 		if ((typ == GF_FIRE) || (typ == GF_HELLFIRE) ||
 			(typ == GF_PLASMA) || (typ == GF_DRAGONFIRE))
 			terrain_adjustment -= dam / 4;
-		else if ((typ == GF_WATER) || (typ == GF_STORM))
+		else if ((typ == GF_WATER) || (typ == GF_STORM)
+		    || (typ == GF_ELEC) || (typ == GF_ELEC_NO_SPREAD))
 			terrain_adjustment = dam / 4;
 		else
 			terrain_adjustment = dam / 10;
 	}
 
 	/* Cold and water-based spells suffer, and fire-based spells benefit. */
-	if (tf_has(f_ptr->flags, TF_FIERY)) {
+	if (tf_has(f_ptr->flags, TF_FIERY) || tf_has(f_ptr->flags, TF_BURNING)) {
 		if ((typ == GF_COLD) || (typ == GF_ICE) ||
 			(typ == GF_WATER) || (typ == GF_STORM))
 			terrain_adjustment -= dam / 4;
@@ -6540,6 +8009,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 		/* Standard damage -- hurts inventory, can stun. */
 	case GF_ELEC:
+	case GF_ELEC_NO_SPREAD:
 		{
 			/* Affected by terrain. */
 			dam += terrain_adjustment;
@@ -6552,6 +8022,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 		/* Standard damage -- hurts inventory */
 	case GF_FIRE:
+	case GF_SUN:
 		{
 			/* Affected by terrain. */
 			dam += terrain_adjustment;
@@ -6772,6 +8243,17 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			break;
 		}
 
+		/* Brighten -- as light, but only on lit squares */
+    case GF_BRIGHTEN:
+    	{
+    		if(!sqinfo_has(cave_info[y][x], SQUARE_GLOW))
+    		{
+    			dam = 0;
+    			break;
+    		}
+    	}
+    	/* Light must be right after brighten */
+    	
 		/* Light -- blinding */
 	case GF_LIGHT:
 		{
@@ -7091,6 +8573,28 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 			break;
 		}
 
+		/* Force on Chaos -- Force damage that ignores harmony and deals extra damage to chaos */
+    case GF_FORCE_CHAOS:
+    	{
+    		if(get_player_alignment() >= ALIGN_HARMONY)
+    		{
+    			dam = 0;
+    			break;
+    		}
+    		else if (get_player_alignment() == ALIGN_CHAOS_PURE)
+    		{
+    			dam *= 3;
+    			dam /= 2;
+    		}
+    		else if (get_player_alignment() == ALIGN_CHAOS)
+    		{
+    			dam *= 5;
+    			dam /= 4;
+    		}
+    	}
+    	
+    	/* Must go direction to force - doesn't break */
+		
 		/* Force -- mostly stun */
 	case GF_FORCE:
 		{
@@ -7583,7 +9087,6 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	switch (typ) {
 		/* Sufficiently intense cold can solidify lava. */
 	case GF_COLD:
-	case GF_ICE:
 		{
 			if (dam > randint1(900) + 300) {
 				if (tf_has(f_ptr->flags, TF_FIERY)) {
@@ -7604,6 +9107,60 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 
 			break;
 		}
+		
+		/* Ice can solidify lava, freeze water, or create icy floors */
+    case GF_ICE:
+    	{
+    		/* First handle lava */
+    		if (tf_has(f_ptr->flags, TF_FIERY))
+    		{
+    			/* Ice doesn't solidify lava easily */
+    			if (dam > randint1(900) + 300)
+    			{
+    				/* Forget the lava */
+    				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+    				
+    				/* Destroy the lava */
+    				if (randint1(3) != 1)
+    				{
+    					if (outside)
+    					    cave_set_feat(y, x, FEAT_ROAD);
+					    else
+					        cave_set_feat(y, x, FEAT_FLOOR);
+					} else
+					    cave_set_feat(y, x, FEAT_RUBBLE);
+	            }
+	        }
+	        
+	        /* Handle water */
+	        else if (tf_has(f_ptr->flags, TF_ICY))
+	        {
+	        	/* Water freezes easily */
+	        	if (dam > randint1(30) + 10)
+	        	{
+	        		/* Forget the water */
+	        		sqinfo_off(cave_info[y][x], SQUARE_MARK);
+	        		
+	        		/* Replace the water */
+	        		cave_set_feat(y, x, FEAT_ICE);
+	        	}
+	        }
+	        
+	        /* Handle Floor */
+	        else if (tf_has(f_ptr->flags, TF_FLOOR))
+	        {
+	        	/* Ice leaves patches somewhat well */
+	        	if (dam > randint1(80))
+	        	{
+	        		/* Forget the floor */
+	        		sqinfo_off(cave_info[y][x], SQUARE_MARK);
+	        		
+	        		/* Replace the floor */
+	        		cave_set_feat(y, x, FEAT_ICE);
+	        	}
+	        }
+	        break;
+	    }
 
 		/* Fire and plasma can create lava, evaporate water, and burn trees. */
 	case GF_FIRE:
@@ -7655,17 +9212,14 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 				}
 			}
 
-			/* Can burn trees if strong. */
+			/* Can burn trees easily. */
 			if ((tf_has(f_ptr->flags, TF_TREE)) &&
-				(dam > randint1(400) + 100)) {
+				(dam > randint1(300) + 10)) {
 				/* Forget the tree */
 				sqinfo_off(cave_info[y][x], SQUARE_MARK);
 
-				/* Destroy the tree */
-				if (outside)
-					cave_set_feat(y, x, FEAT_ROAD);
-				else
-					cave_set_feat(y, x, FEAT_FLOOR);
+				/* Burn the tree */
+				cave_set_feat(y, x, FEAT_TREE_BURN);
 			}
 
 			/* Clears webs. */
@@ -7673,7 +9227,80 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 				/* Remove the web */
 				remove_trap_kind(y, x, FALSE, OBST_WEB);
 			}
+			
+			/* Melts Ice easily */
+			if (tf_has(f_ptr->flags, TF_ICY))
+			{
+				if (dam > randint1(50) + 30)
+				{
+					/* Forget the ice */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+					
+					/* Melt the ice */
+					cave_set_feat(y, x, FEAT_WATER);
+				}
+			}
 
+			break;
+		}
+		
+		/* Sun -- can burn trees or evaporate water */
+    case GF_SUN:
+    	{
+    		/* Can burn trees with some difficulty. */
+			if ((tf_has(f_ptr->flags, TF_TREE)) &&
+				(dam > randint1(300) + 100)) {
+				/* Forget the tree */
+				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+				/* Burn the tree */
+				cave_set_feat(y, x, FEAT_TREE_BURN);
+			}
+			
+			if (tf_has(f_ptr->flags, TF_WATERY)) {
+				k = 0;
+
+				/* Look around for nearby water. */
+				for (d = 0; d < 8; d++) {
+					/* Extract adjacent (legal) location */
+					int yy = y + ddy_ddd[d];
+					int xx = x + ddx_ddd[d];
+					feature_type *ff_ptr = &f_info[cave_feat[yy][xx]];
+
+					/* Count the water grids. */
+					if (tf_has(ff_ptr->flags, TF_WATERY))
+						k++;
+				}
+
+				/* Water isn't easy to evaporate */
+				if (dam > randint1(600 + k * 300) + 250) {
+					/* Forget the water */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+
+					/* Destroy the water */
+					if (outside)
+						cave_set_feat(y, x, FEAT_ROAD);
+					else
+						cave_set_feat(y, x, FEAT_FLOOR);
+				}
+			}
+			
+			/* Melts Ice easily */
+			if (tf_has(f_ptr->flags, TF_ICY))
+			{
+				if (dam > randint1(60) + 40)
+				{
+					/* Forget the ice */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+					
+					/* Melt the ice */
+					cave_set_feat(y, x, FEAT_WATER);
+				}
+			}
+			
+			/* Light the square */
+			sqinfo_on(cave_info[y][x], SQUARE_GLOW);
+			
 			break;
 		}
 
@@ -7753,8 +9380,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 				}
 			}
 
-			/* Require strong attack.  Require floor. */
-			if ((dam >= 60) && (tf_has(f_ptr->flags, TF_FLOOR))) {
+			/* Require strong attack (Less than FA).  Require floor. */
+			if ((dam >= 25) && (tf_has(f_ptr->flags, TF_FLOOR))) {
 				k = 0;
 
 				/* Look around for nearby water. */
@@ -7770,7 +9397,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 				}
 
 				/* If enough water available, make pool. */
-				if ((dam + (k * 20)) > 100 + (randint0(400))) {
+				if ((dam + (k * 20)) > 40 + (randint0(300))) {
 					/* Forget the floor */
 					sqinfo_off(cave_info[y][x], SQUARE_MARK);
 
@@ -7778,8 +9405,48 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 					cave_set_feat(y, x, FEAT_WATER);
 				}
 			}
+			
+			/* Water can also solidify lava */
+			if (tf_has(f_ptr->flags, TF_FIERY))
+    		{
+    			/* Lava is hard to solidify */
+    			/* Water solidifies easier */
+    			if (dam > randint1(900) + 300 - ((typ == GF_WATER) ? 200 : 0))
+    			{
+    				/* Forget the lava */
+    				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+    				
+    				/* Destroy the lava */
+    				if (randint1(3) != 1)
+    				{
+    					if (outside)
+    					    cave_set_feat(y, x, FEAT_ROAD);
+					    else
+					        cave_set_feat(y, x, FEAT_FLOOR);
+					} else
+					    cave_set_feat(y, x, FEAT_RUBBLE);
+	            }
+	        }
 			break;
 		}
+		
+		/* Strong Wind - can create strong winds */
+    case GF_STRONG_WIND:
+    	{
+    		/* Wind patches are more random than strength based */
+    		if (tf_has(f_ptr->flags, TF_FLOOR))
+    		{
+    			if (randint1(2) == 1)
+    			{
+    				/* Forget the floor */
+    				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+    				
+    				/* Create the wind */
+    				cave_set_feat(y, x, FEAT_WIND);
+    			}
+    		}
+    		break;
+    	}
 
 		/* Nexus - various effects if not resisted, mostly movement */
 	case GF_NEXUS:
@@ -7825,16 +9492,26 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 			/* Now have fun with the surroundings */
 			if (dam > randint1(300)) {
 				int i;
-				byte terrain_type[7] =
+				/* Chaos is here multiple times to make it more common */
+				byte terrain_type[12] =
 					{ FEAT_FLOOR, FEAT_RUBBLE, FEAT_WATER,
 					FEAT_TREE, FEAT_TREE2, FEAT_GRASS,
-					FEAT_DUNE
+					FEAT_DUNE, FEAT_WIND, FEAT_ICE, FEAT_CHAOS,
+					FEAT_CHAOS, FEAT_CHAOS
 				};
+				
+				if(tf_has(f_ptr->flags, TF_HARMONY))
+				{
+					/* Remove Harmony terrain */
+					sqinfo_off(cave_info[y][x], SQUARE_MARK);
+					cave_set_feat(y, x, FEAT_FLOOR);
+				}
 
 				/* Terrain is permuted */
-				for (i = 0; i < 7; i++) {
+				/* Only go up to 10, since Chaos has multiple entries */
+				for (i = 0; i < 10; i++) {
 					if (cave_feat[y][x] == terrain_type[i])
-						cave_set_feat(y, x, terrain_type[randint0(7)]);
+						cave_set_feat(y, x, terrain_type[randint0(12)]);
 				}
 			}
 			break;
@@ -7911,6 +9588,18 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 			}
 			break;
 		}
+		
+		/* Create Harmony */
+    case GF_MAKE_HARMONY:
+    	{
+    		/* Consistently makes Harmonious Terrain */
+    		if (tf_has(f_ptr->flags, TF_FLOOR))
+    		{
+    			sqinfo_off(cave_info[y][x], SQUARE_MARK);
+    			cave_set_feat(y, x, FEAT_HARMONY);
+    		}
+    		break;
+    	}
 
 		/* All other projection types have no effect. */
 	default:
@@ -7969,6 +9658,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
  *   who: Index of "source" monster (negative for the character)
  *   rad: Radius of explosion (0 = beam/bolt, 1 to 20 = ball), or maximum
  *	  length of arc from the source.
+ *	 source_y,source_x: Origin location.
  *   y,x: Target location (or location to travel towards)
  *   dam: Base damage to apply to monsters, terrain, objects, or player
  *   typ: Type of projection (fire, frost, dispel demons etc.)
@@ -8069,7 +9759,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
  *
  * If the source grid is not the same as the target, we project along the path 
  *   between them.  Bolts stop if they hit anything, beams stop if they hit a 
- *   wall, and balls and arcs may exhibit either bahavior.  When they reach 
+ *   wall, and balls and arcs may exhibit either behavior.  When they reach
  *   the final grid in the path, balls and arcs explode.  We do not allow 
  * beams to be combined with explosions.
  * Balls affect all floor grids in LOS (optionally, also wall grids adjacent 
@@ -8108,7 +9798,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
  * in the blast radius, in case the illumination of the grid was changed,
  * and "update_view()" and "update_monsters()" need to be called.
  */
-bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
+bool project(int who, int rad, int source_y, int source_x, int y, int x, int dam, int typ, int flg,
 			 int degrees_of_arc, byte diameter_of_source)
 {
 	int py = p_ptr->py;
@@ -8116,6 +9806,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 	int i, j, k, dist;
 
+	int mod_damage = dam;
 	u32b dam_temp;
 
 	int y0, x0;
@@ -8154,11 +9845,21 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	/* Distance to each of the affected grids. */
 	byte gd[256];
 
+	/* Coordinates for firing more shots */
+	byte firex[256], firey[256];
+
+	/* Number of additional shots */
+	int fire_count = 0;
+
 	/* Precalculated damage values for each distance. */
-	int *dam_at_dist = malloc((MAX_RANGE + 1) * sizeof(*dam_at_dist));
+	u32b *dam_at_dist = malloc((MAX_RANGE + 1) * sizeof(*dam_at_dist));
 
 	/* Hack -- Flush any pending output */
 	handle_stuff(p_ptr);
+
+	/* Set up the source of the attack */
+	y1 = source_y;
+	x1 = source_x;
 
 	/* Hack -- Jump to target */
 	if (flg & (PROJECT_JUMP)) {
@@ -8169,45 +9870,41 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		flg &= ~(PROJECT_JUMP);
 	}
 
-	/* Start at player */
+	/* Cast by the player */
 	else if (who < 0) {
-		y1 = py;
-		x1 = px;
 
 		/* Add rune of power effect */
 		if (cave_trap_specific(py, px, RUNE_POWER))
-			dam += dam / 5;
+			mod_damage += mod_damage / 5;
 
 		/* Add rune of elements effect */
 		if (cave_trap_specific(py, px, RUNE_ELEMENTS)) {
 			if ((typ == GF_FIRE) || (typ == GF_COLD) || (typ == GF_ELEC)
 				|| (typ == GF_ACID) || (typ == GF_PLASMA)
 				|| (typ == GF_ICE))
-				dam += dam / 5;
+				mod_damage += mod_damage / 5;
 			else if ((typ == GF_HELLFIRE) || (typ == GF_DRAGONFIRE)
 					 || (typ == GF_STORM))
-				dam += dam / 10;
+				mod_damage += mod_damage / 10;
 		}
 	}
 
 	/* Start at monster */
 	else if (who > 0) {
-		y1 = m_list[who].fy;
-		x1 = m_list[who].fx;
 
 		/* Subtract rune of power effect */
 		if (cave_trap_specific(py, px, RUNE_POWER))
-			dam -= dam / 5;
+			mod_damage -= mod_damage / 5;
 
 		/* Subtract rune of power effect */
 		if (cave_trap_specific(py, px, RUNE_ELEMENTS)) {
 			if ((typ == GF_FIRE) || (typ == GF_COLD) || (typ == GF_ELEC)
 				|| (typ == GF_ACID) || (typ == GF_PLASMA)
 				|| (typ == GF_ICE))
-				dam -= dam / 5;
+				mod_damage -= mod_damage / 5;
 			else if ((typ == GF_HELLFIRE) || (typ == GF_DRAGONFIRE)
 					 || (typ == GF_STORM))
-				dam -= dam / 10;
+				mod_damage -= mod_damage / 10;
 		}
 	}
 
@@ -8417,7 +10114,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 					continue;
 
 				/* Some explosions are allowed to affect one layer of walls */
-				/* All exposions can affect one layer of rubble or trees -BR- */
+				/* All explosions can affect one layer of rubble or trees -BR- */
 				if ((flg & (PROJECT_THRU)) ||
 					(tf_has(f_ptr->flags, TF_PASSABLE))) {
 					/* If this is a wall grid, ... */
@@ -8501,15 +10198,15 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 		/* Standard damage calc. for 10' source diameters, or at origin. */
 		else if ((!diameter_of_source) || (i == 0)) {
-			dam_temp = (dam + i) / (i + 1);
+			dam_temp = (mod_damage + i) / (i + 1);
 		}
 
 		/* If a particular diameter for the source of the explosion's energy is 
 		 * given, calculate an adjusted damage. */
 		else {
-			dam_temp = (diameter_of_source * dam) / ((i + 1) * 10);
-			if (dam_temp > (u32b) dam)
-				dam_temp = dam;
+			dam_temp = (diameter_of_source * mod_damage) / ((i + 1) * 10);
+			if (dam_temp > (u32b) mod_damage)
+				dam_temp = mod_damage;
 		}
 
 		/* Store it. */
@@ -8662,11 +10359,19 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 			/* Affect the monster in the grid */
 			if (project_m(who, y, x, dam_at_dist[gd[i]], typ, flg))
+			{
 				notice = TRUE;
+				if(flg & (PROJECT_BOUNCE))
+				{
+					firex[fire_count] = x;
+					firey[fire_count] = y;
+					fire_count++;
+				}
+			}
 		}
 
 		/* Player affected one monster (without "jumping") */
-		if ((who < 0) && (project_m_n == 1) && !(flg & (PROJECT_JUMP))) {
+		if ((who < 0) && (project_m_n == 1) && !(flg & (PROJECT_JUMP)) && !(flg & (PROJECT_BOUNCE))) {
 			/* Location */
 			x = project_m_x;
 			y = project_m_y;
@@ -8713,6 +10418,26 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		/* Affect marked grid */
 		if (project_t(who, y, x, dam_at_dist[gd[i]], typ, flg))
 			notice = TRUE;
+	}
+
+	/* "Chain" the shot */
+	/* We only care if the first shot is noticed, so return nothing */
+	if (fire_count && (flg & (PROJECT_BOUNCE)))
+	{
+		for (i = 0; i < fire_count; i++)
+		{
+			int ty, tx;
+
+			/* Pick a random direction. Can't pick '5' */
+			int direction = randint1(8);
+			if (direction >= 5)
+				direction++;
+
+			ty = firey[i] + ddy[direction];
+			tx = firex[i] + ddx[direction];
+
+			project(who, rad, firey[i], firex[i], ty, tx, dam, typ, flg, degrees_of_arc, diameter_of_source);
+		}
 	}
 
 	/* Update stuff if needed */

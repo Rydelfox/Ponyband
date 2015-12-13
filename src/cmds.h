@@ -84,7 +84,7 @@ extern void logbugf(const char *s1, ...);
 bool search(bool verbose);
 extern byte py_pickup(int pickup, int y, int x);
 extern void fall_off_cliff(void);
-extern void move_player(int dir);
+extern void move_player(int dir, bool no_options);
 
 /* cmd2.c */
 int count_feats(int *y, int *x, int flag, bool under);

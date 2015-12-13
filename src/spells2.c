@@ -44,6 +44,42 @@
 static bitflag el_to_proof[OF_SIZE];
 
 /**
+ * Detect is a square is within a certain range of a tree.
+ * Helper function for some druid spells
+ */
+static bool near_tree(int y, int x, int rad)
+{
+	/* Avoid checking out of bounds */
+	int min_y = y - rad > 0 ? y - rad : 0;
+	int min_x = x - rad > 0 ? x - rad : 0;
+	int max_y = y + rad < DUNGEON_HGT ? y + rad : DUNGEON_HGT - 1;
+	int max_x = x + rad < DUNGEON_WID ? x + rad : DUNGEON_WID - 1;
+	
+	feature_type *f_ptr;
+	
+	/* Scan over a square around the target */
+	for (int i = min_y; i < max_y; i++)
+	{
+		for (int j = min_x; j < max_x; j++)
+		{
+			/* Distance may still be out of range, due to angles */
+			if (distance(i, j, y, x) > rad)
+				continue;
+			
+			/* Load the square */
+			f_ptr = &f_info[cave_feat[y][x]];
+			
+			/* Check for a tree */
+			if (tf_has(f_ptr->flags, TF_TREE))
+				return TRUE;
+		}
+	}
+	
+	/* We did not find a tree */
+	return FALSE;
+}
+
+/**
  * Alter player's shape.  Taken from Sangband.
  */
 void shapechange(s16b shape)
@@ -227,7 +263,7 @@ bool el_menu(void)
 	u16b *choice;
 
 	/* See how many attacks available */
-	num = (p_ptr->lev - 20) / 7;
+	num = (p_ptr->lev - 19) / 7;
 
 	/* Create the array */
 	choice = C_ZNEW(num, u16b);
@@ -272,7 +308,7 @@ bool el_menu(void)
 }
 
 /**
- * Choose a paladin elemental attack. -LM-
+ * Choose a elemental attack. -LM-
  */
 bool choose_ele_attack(void)
 {
@@ -500,6 +536,117 @@ void dimen_door(void)
 		teleport_player_to(ny, nx, TRUE);
 }
 
+/**
+ * Controlled Teleportation in line of sight
+ */
+void dimen_door_los(void)
+{
+	s16b ny;
+	s16b nx;
+	bool okay;
+	bool inLOS = FALSE;
+
+	
+	while (!inLOS)
+	{
+	    okay = target_set_interactive(TARGET_LOOK | TARGET_GRID, -1, -1);
+	    if (!okay)
+		    return;
+
+	    /* grab the target coords. */
+	    target_get(&nx, &ny);
+	
+	    /* Test for line of sight */
+	    inLOS = los(p_ptr->py, p_ptr->px, ny, nx);
+	    if(!inLOS)
+	    {
+		    bell("You can only teleport where you can see!");
+		}
+	}
+		
+
+	/* Test for empty floor, forbid vaults or too large a distance, and insure
+	 * that this spell is never certain. */
+	if (!cave_empty_bold(ny, nx)
+		|| sqinfo_has(cave_info[ny][nx], SQUARE_ICKY)
+		|| (distance(ny, nx, p_ptr->py, p_ptr->px) > 25)
+		|| (randint0(p_ptr->lev) == 0)) {
+		msg("You fail to exit the astral plane correctly!");
+		p_ptr->energy -= 50;
+		teleport_player(15, FALSE);
+		handle_stuff(p_ptr);
+	}
+
+	/* Controlled teleport. */
+	else
+		teleport_player_to(ny, nx, TRUE);
+}
+
+/**
+ * Controlled teleportation.
+ * Must exit through a tree.
+ */
+void wood_walk(void)
+{
+	s16b ny;
+	s16b nx;
+	bool okay;
+	bool inTree = FALSE;
+	
+	feature_type *f_ptr;
+
+	
+	while (!inTree)
+	{
+	    okay = target_set_interactive(TARGET_LOOK | TARGET_GRID, -1, -1);
+	    if (!okay)
+		    return;
+
+	    /* grab the target coords. */
+	    target_get(&nx, &ny);
+		
+		/* Get details of the location */
+		f_ptr = &f_info[cave_feat[ny][nx]];
+	
+	    /* Test for a tree */
+		/* Only trees the player is aware of count */
+	    inTree = (tf_has(f_ptr->flags, TF_TREE) 
+			&& ((sqinfo_has(cave_info[ny][nx], SQUARE_SEEN))
+			|| (sqinfo_has(cave_info[ny][nx], SQUARE_MARK))));
+	    if(!inTree)
+	    {
+		    bell("You can only exit at a tree!");
+		}
+	}
+		
+
+	/* Test for empty floor, forbid vaults or too large a distance, and insure
+	 * that this spell is never certain. */
+	if (!cave_empty_bold(ny, nx)
+		|| sqinfo_has(cave_info[ny][nx], SQUARE_ICKY)
+		|| (distance(ny, nx, p_ptr->py, p_ptr->px) > 25)
+		|| (randint0(p_ptr->lev) == 0)) {
+		msg("You fail to exit the astral plane correctly!");
+		p_ptr->energy -= 50;
+		teleport_player(15, FALSE);
+		handle_stuff(p_ptr);
+	}
+
+	/* Controlled teleport. */
+	else
+		teleport_player_to(ny, nx, TRUE);
+}
+
+/**
+ * Turn several of the surrounding squares into harmonious land.
+ * This land treats casters as aligned with harmony and damages
+ * creatures of chaos.
+ */
+bool create_harmony_land(int rad)
+{
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	return (project(-1, rad, p_ptr->py, p_ptr->px, p_ptr->py, p_ptr->px, 0, GF_MAKE_HARMONY, PROJECT_GRID, 0, 0));
+}
 
 /**
  * Rebalance Weapon.  This is a rather powerful spell, because it can be 
@@ -1005,7 +1152,41 @@ void identify_pack(void)
 }
 
 
+/**
+ * Identify all potions, scrolls, and staves
+ */
+void nature_lore(void)
+{
+	int i;
+	
+	/* Simply identify and know appropriate items */
+	for (i = 0; i < INVEN_TOTAL; i++)
+	{
+		object_type *o_ptr = &p_ptr->inventory[i];
+		
+		/* Skip non-objects */
+		if (!o_ptr->k_idx)
+			continue;
+		
+		/* Skip objects of the wrong type */
+		if (!((o_ptr->tval == TV_STAFF) ||
+			(o_ptr->tval == TV_SCROLL) ||
+			(o_ptr->tval == TV_POTION)))
+			continue;
+		
+		/* Identify it */
+		identify_object(o_ptr);
+	}
+	
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
 
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
+
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
+}
 
 
 
@@ -2395,6 +2576,80 @@ bool detect_monsters_living(int range, bool show)
 	return (flag);
 }
 
+/**
+ * Detect all undead monsters within range.
+ */
+bool detect_monsters_undead(int range, bool show)
+{
+	int i, y, x;
+
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
+	bool flag = FALSE;
+
+	int num = 0;
+	int num_off = 0;
+	
+	/* Hack - flash the effected region on the current panel */
+	if (show)
+		animate_detect(range);
+
+	/* Scan monsters */
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx)
+			continue;
+
+		/* Location */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+
+		/* check range */
+		if (distance(py, px, y, x) > range)
+			continue;
+		
+		/* Detect all undead monsters */
+		if(rf_has(r_ptr->flags, RF_UNDEAD))
+		{
+			/* Optimize -- Repair flags */
+			repair_mflag_mark = repair_mflag_show = TRUE;
+			
+			/* Hack -- Detect the monster */
+			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
+			
+			/* Update the monster */
+			update_mon(i, FALSE);
+			
+			/* increment number found */
+			num++;
+			
+			/* increment number found offscreen */
+			if (!panel_contains(y, x))
+			   num_off++;
+        }
+    }
+    
+    /* Found some */
+	if (num > 0) {
+
+		/* Obvious */
+		flag = TRUE;
+
+		/* Print success message */
+		if (num_off > 0)
+			msg("You detect the undead (%i offscreen).", num_off);
+		else
+			msg("You detect the undead.");
+
+	}
+	
+	/* Result */
+	return (flag);
+}
 
 
 /**
@@ -2431,6 +2686,164 @@ bool detect_all(int range, bool show)
 	return (detect);
 }
 
+bool detect_nature_awareness(int range, bool show)
+{
+	int y, x;
+	int i;
+	
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+	
+	bool detect = FALSE;
+	
+	feature_type *f_ptr = NULL;
+	
+	/* Hack - flash the effected region on the current panel */
+	if (show)
+		animate_detect(range);
+	
+	/* Scan the map */
+	for (y = 0; y < DUNGEON_HGT; y++) {
+		for (x = 0; x < DUNGEON_WID; x++) {
+			/* check range */
+			if (distance(py, px, y, x) <= range) {
+				/* Check for trees */
+				if (near_tree(2, y, x))
+				{
+					detect = TRUE;
+					
+					/* Reveal invisible traps */
+					if (cave_invisible_trap(y, x))
+					{
+						reveal_trap(y, x, 100, FALSE);
+					}
+				
+					/* Notice existing traps */
+					cave_player_trap(y, x);
+				
+					/* Mark grid as trap detected */
+					sqinfo_on(cave_info[y][x], SQUARE_DTRAP);
+				
+					/* Detect secret doors */
+					if(cave_feat[y][x] == FEAT_SECRET)
+					{
+						/* Pick a door */
+						place_closed_door(y, x);
+					}
+				
+					/* Set the feature */
+					f_ptr = &f_info[cave_feat[y][x]];
+					
+					/* Detect Doors and special terrain */
+					if(tf_has(f_ptr->flags, TF_DOOR_ANY) ||
+						tf_has(f_ptr->flags, TF_TREE) ||
+						tf_has(f_ptr->flags, TF_FIERY) ||
+						tf_has(f_ptr->flags, TF_WATERY))
+					{
+						/* Hack -- Memorize */
+						sqinfo_on(cave_info[y][x], SQUARE_MARK);
+						
+						/* Redraw */
+						light_spot(y, x);
+					}	
+				}
+			}
+		}
+	}
+	
+	/* Objects are searched through a different method */
+	for (i = 1; i < o_max; i++)
+	{
+		object_type *o_ptr = &o_list[i];
+		
+			/* Skip dead objects */
+		if (!o_ptr->k_idx)
+			continue;
+
+		/* Skip held objects */
+		if (o_ptr->held_m_idx)
+			continue;
+
+		/* Location */
+		y = o_ptr->iy;
+		x = o_ptr->ix;
+
+		/* check range */
+		if (distance(py, px, y, x) > range)
+			continue;
+			
+		/* check for trees */
+		if (!near_tree(y, x, 2))
+			continue;
+		
+		/* Detect "real" objects */
+		if (o_ptr->tval != TV_GOLD) 
+		{
+			/* Hack -- memorize it */
+			o_ptr->marked = TRUE;
+
+			/* Redraw */
+			light_spot(y, x);
+
+			/* Found something */
+			if (!squelch_hide_item(o_ptr))
+				detect = TRUE;
+		}
+	}
+	
+	/* Check for monsters within range */
+	for(i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx)
+			continue;
+
+		/* Location */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+
+		/* check range */
+		if (distance(py, px, y, x) > range)
+			continue;
+		
+		/* check for trees */
+		if (!near_tree(2, y, x))
+			continue;
+
+		/* Detect all non-invisible monsters */
+		if (!(rf_has(r_ptr->flags, RF_INVISIBLE))) {
+			/* Optimize -- Repair flags */
+			repair_mflag_mark = repair_mflag_show = TRUE;
+
+			/* Hack -- Detect the monster */
+			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
+
+			/* Update the monster */
+			update_mon(i, FALSE);
+
+			/* found something */
+			detect = true;
+		}
+	}
+	
+	/* Found something */
+	if (detect)
+	{
+		/* Print success message */
+		msg("Nature has revealed its secrets.");
+	} else {
+		msg("The land around you feels barren.");
+	}
+	
+	/* Redraw DTrap Status */
+	p_ptr->redraw |= (PR_DTRAP);
+	
+	/* Result */
+	return (detect);
+}
 
 
 /**
@@ -3947,7 +4360,7 @@ void grow_trees_and_grass(bool powerful)
 				continue;
 
 			/* Probably grass, otherwise a tree */
-			if ((randint0(4) == 0) || powerful) {
+			if ((randint0(3) == 0) || powerful) {
 				if (p_ptr->depth < 40)
 					cave_set_feat(y, x, FEAT_TREE);
 				else
@@ -4145,7 +4558,7 @@ bool project_los_not_player(int y1, int x1, int dam, int typ)
 		}
 
 		/* Jump directly to the target monster */
-		if (project(-1, 0, y, x, dam, typ, flg, 0, 0))
+		if (project(-1, 0, y, x, y, x, dam, typ, flg, 0, 0))
 			obvious = TRUE;
 	}
 
@@ -4166,8 +4579,11 @@ static bool project_hack(int typ, int dam)
 	int flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
 
 	bool obvious = FALSE;
-
-
+	
+	/* For healing the living, include the player */
+	if (typ == GF_HEAL_LIFE)
+        flg |= PROJECT_PLAY;
+	
 	/* Affect all (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
@@ -4185,12 +4601,41 @@ static bool project_hack(int typ, int dam)
 			continue;
 
 		/* Jump directly to the target monster */
-		if (project(-1, 0, y, x, dam, typ, flg, 0, 0))
+		if (project(-1, 0, y, x, y, x, dam, typ, flg, 0, 0))
 			obvious = TRUE;
 	}
 
 	/* Result */
 	return (obvious);
+}
+
+
+/**
+ * Due to needing additional information from sub-functions
+ * that no other spell needs, just recreate project_hook
+ * and project here.
+ *
+ * If it works, choose a random direction and fire another
+ * chain lightning.
+ */
+bool chain_lightning(int type, int dir, int dam)
+{
+	int flg = (PROJECT_STOP | PROJECT_THRU | PROJECT_KILL | PROJECT_BOUNCE);
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+	
+	s16b ty, tx;
+	
+	/* Use the given direction */
+	ty = py + ddy[dir];
+	tx = px + ddx[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay())
+		target_get(&tx, &ty);
+	
+	/* Fire the bolt */
+	return project(-1, 0, py, px, ty, tx, dam, type, flg, 0, 0);
 }
 
 
@@ -4219,6 +4664,14 @@ bool sleep_monsters(int dam)
 }
 
 /**
+ * Sleep animals
+ */
+bool sleep_animals(int dam)
+{
+    return (project_hack(GF_SLEEP_ANIMAL, dam));
+}
+
+/**
  * Frighten monsters. -LM-
  */
 bool fear_monsters(int dam)
@@ -4242,6 +4695,13 @@ bool banish_evil(int dist)
 	return (project_hack(GF_AWAY_EVIL, dist));
 }
 
+/**
+ * Remove undead
+ */
+bool remove_undead(int dist)
+{
+	return (project_hack(GF_KILL_UNDEAD, dist));
+}
 
 /**
  * Turn undead
@@ -4323,6 +4783,62 @@ bool dispel_light_hating(int dam)
 	return (project_hack(GF_LIGHT_WEAK, dam));
 }
 
+/**
+ * Dispel slowed monsters
+ */
+bool dispel_slowed(int dam)
+{
+	return (project_hack(GF_DISP_SLOW, dam));
+}
+
+/**
+ * Dispel stunned monsters
+ */
+bool dispel_stunned(int dam)
+{
+	return (project_hack(GF_DISP_STUN, dam));
+}
+
+/**
+ * Dispel Rooted and paralyzed monsters
+ */
+bool dispel_root_para(int dam)
+{
+	return (project_hack(GF_DISP_ROOT, dam));
+}
+
+/**
+ * Heal living creatures 
+ */
+bool undispel_living(int heal)
+{
+	return (project_hack(GF_HEAL_LIFE, heal));
+}
+
+/**
+ * Heal natural creatures
+ */
+bool heal_animals(int heal)
+{
+	return (project_hack(GF_HEAL_ANIMAL, heal));
+}
+
+/**
+ * Heal animals
+ */
+bool heal_monsters(int heal)
+{
+    return (project_hack(GF_HEAL_ANIMAL, heal));
+}
+
+/**
+ * Damage monsters who are standing on a permalit square.
+ */
+bool brighten(int dam)
+{
+	return (project_hack(GF_BRIGHTEN, dam));
+}
+
 /** 
  * Trees and grass hurt monsters
  */
@@ -4371,6 +4887,16 @@ bool teleport_all(int dam)
 bool cacophony(int dam)
 {
 	return (project_hack(GF_SOUND, dam));
+}
+
+/**
+ * Summon animals to act as pets.
+ */
+void summon_animals(void)
+{
+	sound(MSG_SUM_MONSTER);
+	for (int i = 0; i < randint1(3); i++)
+		summon_specific(p_ptr->py, p_ptr->px, FALSE, p_ptr->depth, SUMMON_ANIMAL, F_PLAYER);
 }
 
 /**
@@ -4990,6 +5516,10 @@ void earthquake(int cy, int cx, int r, bool volcano)
 							/* Hack -- no safety on glyph of warding */
 							if (cave_trap_specific(y, x, RUNE_PROTECT))
 								continue;
+								
+							/* Bigger hack -- no safety on explosive rune */
+							if (cave_trap_specific(y, x, RUNE_EXPLOSIVE))
+							    continue;
 
 							/* Important -- Skip "quake" grids */
 							if (map[16 + y - cy][16 + x - cx])
@@ -5349,9 +5879,13 @@ static void cave_temp_room_light(void)
  *
  * This routine is used (only) by "unlight_room()"
  */
-static void cave_temp_room_unlight(void)
+/*
+ * Hack: This function now counts the squares it unlights for various spells
+ */
+static int cave_temp_room_unlight(void)
 {
 	int i;
+	int count = 0;
 
 	/* Apply flag changes */
 	for (i = 0; i < temp_n; i++) {
@@ -5361,6 +5895,9 @@ static void cave_temp_room_unlight(void)
 
 		/* No longer in the array */
 		sqinfo_off(cave_info[y][x], SQUARE_TEMP);
+		
+		/* Count if the square is lit */
+		count += sqinfo_has(cave_info[y][x], SQUARE_GLOW);
 
 		/* Darken the grid */
 		sqinfo_off(cave_info[y][x], SQUARE_GLOW);
@@ -5390,6 +5927,8 @@ static void cave_temp_room_unlight(void)
 
 	/* None left */
 	temp_n = 0;
+	
+	return count;
 }
 
 
@@ -5469,7 +6008,7 @@ void light_room(int y1, int x1)
 /**
  * Darken all rooms containing the given location
  */
-void unlight_room(int y1, int x1)
+int unlight_room(int y1, int x1)
 {
 	int i, x, y;
 
@@ -5498,7 +6037,7 @@ void unlight_room(int y1, int x1)
 	}
 
 	/* Now, darken them all at once */
-	cave_temp_room_unlight();
+	return cave_temp_room_unlight();
 }
 
 
@@ -5520,7 +6059,7 @@ bool light_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void) project(-1, rad, py, px, dam, GF_LIGHT_WEAK, flg, 0, 0);
+	(void) project(-1, rad, py, px, py, px, dam, GF_LIGHT_WEAK, flg, 0, 0);
 
 	/* Light up the room */
 	light_room(py, px);
@@ -5547,13 +6086,78 @@ bool unlight_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void) project(-1, rad, py, px, dam, GF_DARK_WEAK, flg, 0, 0);
+	(void) project(-1, rad, py, px, py, px, dam, GF_DARK_WEAK, flg, 0, 0);
 
 	/* Light up the room */
 	unlight_room(py, px);
 
 	/* Assume seen */
 	return (TRUE);
+}
+
+/**
+ * Light random areas in the vicinity.
+ */
+bool natural_light(int num_lights, int radius)
+{
+	int x, y;
+	
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+	
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+	
+	/* Makes sure we have a sane number of lights */
+	if (num_lights <= 0)
+		return FALSE;
+	
+	for (int i = 0; i < num_lights; i++)
+	{
+		int r, angle;
+		double unit_r;
+
+		/* The area around the player is already illuminated, so tend toward distance */
+		int r1 = randint0(radius - 1);
+		int r2 = randint0(radius - 1);
+		if (r1 > r2)
+			r = r1;
+		else
+			r = r2;
+
+		/* r*sin(angle) and r*cos(angle) cluster near the middle
+		 * Instead, use sqrt(r)sin(angle), but this needs r to be between 0 and 1
+		 */
+		unit_r = (double)r / radius;
+
+		/* Deal with angle as an int storing 4* the actual angle in radians */
+		angle = randint0(25);
+
+		x = (my_dblsqrt(unit_r) * my_cos[angle] / 100) * radius;
+		y = (my_dblsqrt(unit_r) * my_sin[angle] / 100) * radius;
+		
+		/* Push slightly away from the player */
+		if (x > 0) x++;
+		if (x < 0) x--;
+		if (y > 0) y++;
+		if (y < 0) y--;
+
+		y += py;
+		x += px;
+
+		/* Skip grids the player can't see */
+		if (!player_has_los_bold(y, x))
+		{
+			/* Don't always redo it, to reduce time wasted in small areas */
+			if (randint0(2) == 0)
+				i--;
+			continue;
+		}
+
+
+		project(-1, 1, p_ptr->py, p_ptr->px, y, x, damroll(3, 2 + p_ptr->lev / 5), GF_LIGHT, flg, 0, 0);
+	}
+	
+	return TRUE;
 }
 
 
@@ -5588,7 +6192,18 @@ bool fire_ball(int typ, int dir, int dam, int rad, bool jump)
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	return (project(-1, rad, ty, tx, dam, typ, flg, 0, 0));
+	return (project(-1, rad, py, px, ty, tx, dam, typ, flg, 0, 0));
+}
+
+/**
+ * Cast a ball spell on a specific location
+ * Affect grids, objects, and monsters
+ */
+bool explode(int typ, int y, int x, int dam, int rad)
+{
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP | PROJECT_PLAY;
+	
+	return (project(-1, rad, p_ptr->py, p_ptr->px, y, x, dam, typ, flg, 0, 0));
 }
 
 
@@ -5623,7 +6238,7 @@ bool fire_sphere(int typ, int dir, int dam, int rad,
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	return (project
-			(-1, rad, ty, tx, dam, typ, flg, 0, diameter_of_source));
+			(-1, rad, py, px, ty, tx, dam, typ, flg, 0, diameter_of_source));
 }
 
 
@@ -5652,7 +6267,7 @@ bool fire_cloud(int typ, int dir, int dam, int rad)
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	return (project(-1, rad, ty, tx, dam, typ, flg, 0, 0));
+	return (project(-1, rad, py, px, ty, tx, dam, typ, flg, 0, 0));
 }
 
 /**
@@ -5669,13 +6284,17 @@ bool fire_meteor(int who, int typ, int y, int x, int dam, int rad,
 	int flg =
 		PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL |
 		PROJECT_JUMP;
+	int sy, sx;
 
 	if (hurt_player)
 		flg |= PROJECT_PLAY;
 
+	sy = (who < 0) ? p_ptr->py : m_list[who].fy;
+	sx = (who < 0) ? p_ptr->px : m_list[who].fx;
+
 
 	/* Analyze the "target" and the caster. */
-	return (project(who, rad, y, x, dam, typ, flg, 0, 0));
+	return (project(who, rad, sy, sx, y, x, dam, typ, flg, 0, 0));
 }
 
 
@@ -5735,7 +6354,7 @@ bool fire_arc(int typ, int dir, int dam, int rad, int degrees_of_arc)
 	/* Analyze the "dir" and the "target".  Use the given degrees of arc, and
 	 * the calculated source diameter. */
 	return (project
-			(-1, rad, ty, tx, dam, typ, flg, degrees_of_arc,
+			(-1, rad, py, px, ty, tx, dam, typ, flg, degrees_of_arc,
 			 (byte) diameter_of_source));
 }
 
@@ -5763,7 +6382,7 @@ static bool project_hook(int typ, int dir, int dam, int flg)
 		target_get(&tx, &ty);
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(-1, 0, ty, tx, dam, typ, flg, 0, 0));
+	return (project(-1, 0, py, px, ty, tx, dam, typ, flg, 0, 0));
 }
 
 
@@ -5824,6 +6443,12 @@ bool wall_to_mud(int dir)
 	return (project_hook(GF_KILL_WALL, dir, 20 + randint1(30), flg));
 }
 
+bool wall_to_tree(int dir)
+{
+	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	return (project_hook(GF_KILL_WALL_TREE, dir, 20 + randint1(30), flg));
+}
+
 bool wall_to_mud_hack(int dir, int dam)
 {
 	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -5848,7 +6473,7 @@ bool disarm_trap(int dir)
 
 	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM;
 
-	return (project(-1, 0, ty, tx, 0, GF_KILL_TRAP, flg, 0, 0));
+	return (project(-1, 0, p_ptr->py, p_ptr->px, ty, tx, 0, GF_KILL_TRAP, flg, 0, 0));
 
 }
 
@@ -5900,6 +6525,30 @@ bool fear_monster(int dir, int dam)
 	return (project_hook(GF_TURN_ALL, dir, dam, flg));
 }
 
+bool charm_monster(int dir, int dam)
+{
+	int flg = PROJECT_STOP | PROJECT_KILL;
+	return (project_hook(GF_CHARM, dir, dam, flg));
+}
+
+bool charm_animal(int dir, int dam)
+{
+	int flg = PROJECT_STOP | PROJECT_KILL;
+	return (project_hook(GF_CHARM_ANIMAL, dir, dam, flg));
+}
+
+bool root_monster(int dir, int dam)
+{
+	int flg = PROJECT_STOP | PROJECT_KILL;
+	return (project_hook(GF_ROOT, dir, dam, flg));
+}
+
+bool stun_monster(int dir, int dam)
+{
+	int flg = PROJECT_STOP | PROJECT_KILL;
+	return (project_hook(GF_STUN, dir, dam, flg));
+}
+
 bool dispel_an_undead(int dir, int dam)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
@@ -5936,7 +6585,7 @@ bool door_creation(void)
 	int px = p_ptr->px;
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(-1, 1, py, px, 0, GF_MAKE_DOOR, flg, 0, 0));
+	return (project(-1, 1, py, px, py, px, 0, GF_MAKE_DOOR, flg, 0, 0));
 }
 
 bool trap_creation(void)
@@ -5955,8 +6604,70 @@ bool trap_creation(void)
 			place_trap(y, x, -1, p_ptr->depth);
 	}
 
-	return (project(-1, 1, py, px, 0, GF_MAKE_TRAP, flg, 0, 0));
+	return (project(-1, 1, py, px, py, px, 0, GF_MAKE_TRAP, flg, 0, 0));
 }
+
+bool wood_wall(int rad)
+{
+	int flg = PROJECT_GRID | PROJECT_ITEM;
+	bool success = project(0, rad, p_ptr->py, p_ptr->px, p_ptr->py, p_ptr->px, 0, GF_WOOD_WALL, flg, 0, 0);
+	
+	/* Update Stuff */
+	p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
+	
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP | PR_MONLIST | PR_ITEMLIST);
+	
+	return success;
+}
+
+bool create_wall(void)
+{
+	int y, x, dir;
+
+	feature_type *f_ptr;
+	/* First, get the direction.  Don't prompt for non-direction targetting, but allow mouse clicks */
+	if (!get_rep_dir(&dir))
+		return FALSE;
+
+	/* Next, determine what square this is */
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
+
+	/* See if that is a valid place to put a wall */
+	/* Fail if the square is occupied */
+	if (cave_m_idx[y][x] != 0)
+		return FALSE;
+	/* Check the terrain */
+	f_ptr = &f_info[cave_feat[y][x]];
+	if(!tf_has(f_ptr->flags, TF_PASSABLE))
+	{
+		/* Only impassable terrain this works on is doors */
+		if (!tf_has(f_ptr->flags, TF_DOOR_CLOSED))
+			return FALSE;
+	}
+	
+	/* Place the wall */
+	cave_set_feat(y, x, FEAT_WALL_EXTRA);
+	/* Don't perform any more alterations */
+	sqinfo_off(cave_info[y][x], SQUARE_MARK);
+	/* Walls don't glow */
+	sqinfo_off(cave_info[y][x], SQUARE_GLOW);
+	
+	/* Update Stuff */
+	p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
+	
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP | PR_MONLIST | PR_ITEMLIST);
+	
+	return TRUE;
+}
+
+bool breaking(int dir)
+{	
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	return project_hook(GF_BREAKING, dir, 1, flg);
+}	
 
 bool destroy_doors_touch(void)
 {
@@ -5964,7 +6675,7 @@ bool destroy_doors_touch(void)
 	int px = p_ptr->px;
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(-1, 1, py, px, 0, GF_KILL_DOOR, flg, 0, 0));
+	return (project(-1, 1, py, px, py, px, 0, GF_KILL_DOOR, flg, 0, 0));
 }
 
 bool sleep_monsters_touch(int dam)
@@ -5973,5 +6684,5 @@ bool sleep_monsters_touch(int dam)
 	int px = p_ptr->px;
 
 	int flg = PROJECT_KILL | PROJECT_HIDE;
-	return (project(-1, 1, py, px, dam, GF_OLD_SLEEP, flg, 0, 0));
+	return (project(-1, 1, py, px, py, px, dam, GF_OLD_SLEEP, flg, 0, 0));
 }

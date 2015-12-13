@@ -393,9 +393,7 @@ const char *magic_desc[REALM_MAX][MD_MAX] =
     {"prayer",       "pray",     "You lost your concentration!",
      "holy book",  "holy book"},
     {"druidic lore", "use",     "You lost your concentration!",
-     "stone",      "stone of lore"},
-    {"ritual",       "perform", "You perform the ritual incorrectly!",
-     "tome",       "tome"},
+     "stone",      "stone of lore"}
 };
 
 const char *feel_text[FEEL_MAX] =
@@ -786,4 +784,34 @@ byte get_angle_to_grid[41][41] =
   { 111, 112, 113, 114, 114, 115, 116, 117, 118, 119, 120, 122, 123, 124, 126, 127, 129, 130, 132, 133, 135, 137, 138, 140, 141, 143, 144, 146, 147, 148, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 159 },
   { 112, 113, 114, 114, 115, 116, 117, 118, 119, 120, 121, 122, 124, 125, 126, 128, 129, 131, 132, 133, 135, 137, 138, 139, 141, 142, 144, 145, 146, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159 },
   { 113, 114, 114, 115, 116, 117, 118, 118, 120, 121, 122, 123, 124, 125, 127, 128, 129, 131, 132, 134, 135, 136, 138, 139, 141, 142, 143, 145, 146, 147, 148, 149, 150, 152, 152, 153, 154, 155, 156, 157, 158 }
+};
+
+/*
+ * Cosine lookup table.  Takes 4 * the actual angle in radians, for precision
+ * Values stored are multiplied by 100.
+ */
+int my_cos[26] =
+{
+	100, 97, 88, 73,
+	54, 31, 7, -18,
+	-42, -63, -80, -82,
+	-99, -99, -94, -82,
+	-65, -45, -21, -4,
+	28, 51, 71, 86,
+	96, 100
+};
+
+/*
+ * Sine lookup table.  Takes 4 * the actual angle in radians, for precision
+ * Values stored are multiplied by 100.
+ */
+int my_sin[26] =
+{
+	0, 25, 48, 68,
+	84, 95, 100, 98,
+	91, 78, 60, 38,
+	14, -11, -35, -57,
+	-78, -90, -99, -100,
+	-96, -86, -71, -51,
+	-28, -3
 };

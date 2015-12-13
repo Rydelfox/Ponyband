@@ -647,7 +647,7 @@ static void prt_deci(const char *header, int num, int deci, int row,
  */
 void display_player_sml(void)
 {
-	int i, j;
+	int i, j, n;
 
 	byte a;
 	wchar_t c;
@@ -661,6 +661,14 @@ void display_player_sml(void)
 
 	object_type *o_ptr;
 	char tmp[32];
+
+	char slots[13];
+
+	for(i = 0; i < 12; i++)
+		slots[i] = ' ';
+	for(i = 0; i < (10 + rp_ptr->num_rings); i++)
+		slots[i] = 'a' + i;
+	slots[12] = '@';
 
 	/* Erase screen */
 	clear_from(0);
@@ -679,7 +687,7 @@ void display_player_sml(void)
 	c_put_str(TERM_L_BLUE, cp_ptr->name, 2, 37);
 
 	/* Header and Footer */
-	put_str("abcdefghijkl", 3, 25);
+	put_str(slots, 3, 25);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++) {
@@ -699,9 +707,38 @@ void display_player_sml(void)
 	}
 
 	/* Process equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+	n = INVEN_WIELD + 1;
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++, n++) {
 		/* Access object */
 		o_ptr = &p_ptr->inventory[i];
+
+		/* Skip unusable slots */
+		if ((i == INVEN_RIGHT) && (rp_ptr->num_rings < 2))
+		{
+			n--;
+			continue;
+		}
+		else if ((i == INVEN_LEFT) && (rp_ptr->num_rings < 1))
+		{
+			n--;
+			continue;
+		}
+		if (player_has(PF_QUADRUPED))
+		{
+			if (i == INVEN_HANDS)
+			{
+				n--;
+				continue;
+			}
+		}
+		else
+		{
+			if (i == INVEN_HIND)
+			{
+				n--;
+				continue;
+			}
+		}
 
 		/* Initialize color based of sign of pval. */
 		for (j = 0; j < A_MAX; j++) {
@@ -853,12 +890,11 @@ extern int make_dump(char_attr_line * line, int mode)
 	struct store_type *st_ptr = NULL;
 
 	char o_name[120];
-	char slots[14];
+	char slots[14] = "             ";
 
 	char buf[100];
 	char buf1[20];
 	char buf2[20];
-	char *ring_space = malloc(sizeof(char) * 3);
 
 	bool red;
 
@@ -905,24 +941,12 @@ extern int make_dump(char_attr_line * line, int mode)
 		"Smart cheat"
 	};
 	
-	switch(rp_ptr->num_rings)
-	{
-    case 0:
-        ring_space = "   ";
-        break;
-    case 1:
-        ring_space = "  ";
-        break;
-    default:
-        ring_space = " ";
-        break;
-    }
-	
-	for(i = 0; i < 13; i++);
-	    slots[i] = ' ';
-    for(i = 0; i < 10 + rp_ptr->num_rings; i++)
+	/* for(i = 0; i < 14; i++);
+	    slots[i] = '.'; */
+    for(i = 0; i < (10 + rp_ptr->num_rings); i++)
 	    slots[i] = 'a' + i;
-    slots[13] = '@';
+    slots[12] = '@';
+    slots[13] = '\0';
 
 	/* Get the store number of the home */
 	if (have_home) {
@@ -1291,7 +1315,6 @@ extern int make_dump(char_attr_line * line, int mode)
 
 		/* End of mode 0 */
 		if (mode == 0) {
-		    free(ring_space);
 			return (current_line);
 		}
 
@@ -1357,7 +1380,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_ptr = (char_attr *) & line[current_line];
 
 	/* Header */
-	sprintf(buf, "%s%s          %s%s", slots, ring_space, slots, ring_space);
+	sprintf(buf, "%s            %s", slots, slots);
 	dump_put_str(TERM_WHITE, buf, 6);
 	current_line++;
 
@@ -1383,6 +1406,34 @@ extern int make_dump(char_attr_line * line, int mode)
 				 i++, n++) {
 				object_type *o_ptr;
 
+				/* Skip unusable slots */
+				if ((i == INVEN_RIGHT) && (rp_ptr->num_rings < 2))
+				{
+				    n--;
+					continue;
+				}
+				else if ((i == INVEN_LEFT) && (rp_ptr->num_rings < 1))
+				{
+					n--;
+					continue;
+				}
+				if (player_has(PF_QUADRUPED))
+				{
+					if (i == INVEN_HANDS)
+					{
+						n--;
+						continue;
+					}
+				}
+				else
+				{
+					if (i == INVEN_HIND)
+					{
+						n--;
+						continue;
+					}
+				}
+				
 				/* Object */
 				o_ptr = &p_ptr->inventory[i];
 
@@ -1406,6 +1457,11 @@ extern int make_dump(char_attr_line * line, int mode)
 								  k_idx ? TERM_L_WHITE : TERM_SLATE), ".",
 								 n);
 				}
+			}
+			/* Add for missing rings */
+			for (i = 0; i < 2 - rp_ptr->num_rings; i++, n++)
+			{
+				dump_put_str(TERM_SLATE, ".", n);
 			}
 
 			/* Check flags */
@@ -1433,7 +1489,7 @@ extern int make_dump(char_attr_line * line, int mode)
 		dump_ptr = (char_attr *) & line[current_line];
 
 		/* Header */
-		sprintf(buf, "%s%s          %s%s", slots, ring_space, slots, ring_space);
+		sprintf(buf, "%s             %s", slots, slots);
 		dump_put_str(TERM_WHITE, buf,
 					 6);
 		current_line++;
@@ -1460,6 +1516,34 @@ extern int make_dump(char_attr_line * line, int mode)
 			for (n = 6, i = INVEN_WIELD; i < INVEN_TOTAL; i++, n++) {
 				object_type *o_ptr;
 				bitflag objflags[OF_SIZE];
+				
+				/* Skip unusable ring slots */
+				if ((i == INVEN_RIGHT) && (rp_ptr->num_rings < 2))
+				{
+				    n--;
+					continue;
+				}
+				else if ((i == INVEN_LEFT) && (rp_ptr->num_rings < 1))
+				{
+					n--;
+					continue;
+				}
+				if (player_has(PF_QUADRUPED))
+				{
+					if (i == INVEN_HANDS)
+					{
+						n--;
+						continue;
+					}
+				}
+				else
+				{
+					if (i == INVEN_HIND)
+					{
+						n--;
+						continue;
+					}
+				}
 
 				/* Object */
 				o_ptr = &p_ptr->inventory[i];
@@ -1468,17 +1552,7 @@ extern int make_dump(char_attr_line * line, int mode)
 				of_wipe(objflags);
 				of_copy(objflags, o_ptr->flags_obj);
 				of_inter(objflags, o_ptr->id_obj);
-				
-				/* Make sure slot is a valid equipment slot */
-				if(((i == INVEN_RIGHT) && (rp_ptr->num_rings <= 1)) ||
-                    ((i == INVEN_LEFT) && (rp_ptr->num_rings <= 0)) ||
-                    ((i == INVEN_HANDS) && (player_has(PF_QUADRUPED))) ||
-                    ((i == INVEN_HIND) && (!player_has(PF_QUADRUPED)))) {
-                    dump_put_str((o_ptr->k_idx ? TERM_L_WHITE : TERM_SLATE),
-				         ".", n);
-                }
 
-				
 				/* Check flags */
 				if ((o_ptr->k_idx) && of_has(objflags, flag)) {
 					dump_put_str(TERM_WHITE, "+", n);
@@ -1490,6 +1564,10 @@ extern int make_dump(char_attr_line * line, int mode)
 								  k_idx ? TERM_L_WHITE : TERM_SLATE), ".",
 								 n);
 				}
+			}
+			for (i=0; i < 2 - rp_ptr->num_rings; i++, n++)
+			{
+				dump_put_str(TERM_SLATE, ".", n);
 			}
 
 			/* Check flags */
@@ -1526,18 +1604,37 @@ extern int make_dump(char_attr_line * line, int mode)
 			/* Check equipment */
 			for (n = 31, i = INVEN_WIELD; i < INVEN_TOTAL; i++, n++) {
 				object_type *o_ptr;
+				/* Skip unusable ring slots */
+				if ((i == INVEN_RIGHT) && (rp_ptr->num_rings < 2))
+				{
+					n--;
+					continue;
+				}
+				else if ((i == INVEN_LEFT) && (rp_ptr->num_rings < 1))
+				{
+					n--;
+					continue;
+				}
+				if (player_has(PF_QUADRUPED))
+				{
+					if (i == INVEN_HANDS)
+					{
+						n--;
+						continue;
+					}
+				}
+				else
+				{
+					if (i == INVEN_HIND)
+					{
+						n--;
+						continue;
+					}
+				}
 
 				/* Object */
 				o_ptr = &p_ptr->inventory[i];
 				
-				/* Make sure slot is a valid equipment slot */
-				if(((i == INVEN_RIGHT) && (rp_ptr->num_rings <= 1)) ||
-                    ((i == INVEN_LEFT) && (rp_ptr->num_rings <= 0)) ||
-                    ((i == INVEN_HANDS) && (player_has(PF_QUADRUPED))) ||
-                    ((i == INVEN_HIND) && (!player_has(PF_QUADRUPED)))) {
-                    dump_put_str((o_ptr->k_idx ? TERM_L_WHITE : TERM_SLATE),
-				         ".", n);
-                }
 
 				/* Check flags */
 				if (o_ptr->bonus_other[y] != BONUS_BASE) {
@@ -1576,6 +1673,10 @@ extern int make_dump(char_attr_line * line, int mode)
 								  k_idx ? TERM_L_WHITE : TERM_SLATE), ".",
 								 n);
 				}
+			}
+			for (i=0; i < 2 - rp_ptr->num_rings; i++, n++)
+			{
+				dump_put_str(TERM_SLATE, ".", n);
 			}
 
 			/* Player flags */
@@ -1654,13 +1755,15 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_ptr = (char_attr *) & line[current_line];
 
 
+	/* Don't want to display the player slot */
+	slots[13] = ' ';
 	/* Print out the labels for the columns */
 	dump_put_str(TERM_WHITE, "Stat", 0);
 	dump_put_str(TERM_BLUE, "Intrnl", 5);
 	dump_put_str(TERM_L_BLUE, "Rce CMk Cls Oth", 12);
 	dump_put_str(TERM_L_GREEN, "Actual", 28);
 	dump_put_str(TERM_YELLOW, "Currnt", 35);
-	dump_put_str(TERM_WHITE, "abcdefghijkl", 46);
+	dump_put_str(TERM_WHITE, slots, 46);
 	current_line++;
 
 	/* Display the stats */
@@ -1699,6 +1802,14 @@ extern int make_dump(char_attr_line * line, int mode)
 			char c;
 
 			col = 46 + j - INVEN_WIELD;
+
+			/* Skip bad rings */
+			if ((j == INVEN_RIGHT) && (rp_ptr->num_rings < 2))
+				continue;
+			else if ((j == INVEN_LEFT) && (rp_ptr->num_rings < 1))
+				continue;
+			else if (j > INVEN_RIGHT)
+				col -= (2 - rp_ptr->num_rings);
 
 			/* Access object */
 			o_ptr = &p_ptr->inventory[j];
@@ -1749,7 +1860,6 @@ extern int make_dump(char_attr_line * line, int mode)
 
 		current_line++;
 	}
-	free(ring_space);
 
 	/* End of mode 1 */
 	if (mode == 1) 

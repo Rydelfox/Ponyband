@@ -1099,5 +1099,5 @@ void run_step(int dir)
 	update_action(dir);
 
 	/* Move the player */
-	move_player(p_ptr->run_cur_dir);
+	move_player(p_ptr->run_cur_dir, FALSE);
 }

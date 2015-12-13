@@ -477,6 +477,10 @@ static void find_range(monster_type * m_ptr)
 			 (m_ptr->mspeed < p_ptr->state.pspeed))
 		m_ptr->min_range = 1;
 
+	/* Challenged monsters stay close regardless */
+	if (m_ptr->challenged)
+	    m_ptr->min_range = 0;
+	    
 	/* Now find prefered range */
 	m_ptr->best_range = m_ptr->min_range;
 
@@ -496,10 +500,14 @@ static void find_range(monster_type * m_ptr)
 			m_ptr->best_range = 6;
 	}
 	
+	/* Challenged monsters want to be close, but are still able to hack-and-back */
+	if (m_ptr->challenged)
+	    m_ptr->best_range = 0;
+	
 	/* Allow faster melee monsters to hack-and-back - based off Unangband code by Andrew Doull */
 	if((m_ptr->mspeed > 115) && r_ptr->freq_ranged <= 24) {
 	    /* Hand-and-back against another monster */
-	    if((m_ptr->target > 0)(cave_m_idx[m_ptr->ty][m_ptr-<tx]) && distance(m_ptr->ty, m_ptr->tx, m_ptr->fy, m_ptr->fx) == 1) {
+	    if((m_ptr->target > 0) && (cave_m_idx[m_ptr->ty][m_ptr->tx]) && (distance(m_ptr->ty, m_ptr->tx, m_ptr->fy, m_ptr->fx) == 1)) {
 	       
 	       monster_type *n_ptr = &m_list[cave_m_idx[m_ptr->ty][m_ptr->tx]];
 	       
@@ -525,11 +533,11 @@ static void find_range(monster_type * m_ptr)
        else if ((m_ptr->target < 0) && (m_ptr->cdis == 1))
        {
            /* Enough of a differential. This doesn't have to be exact */
-           if ((p_ptr->pspeed < m_ptr->mspeed - 5) &&
+           if ((p_ptr->state.pspeed < m_ptr->mspeed - 5) &&
            
               /* This is more important. The player will be able to act before we can act again.
                * Therefore, we are currently doing our last move. */
-              (p_ptr->energy + extract_energy[p_ptr->pspeed] >= 100))
+              (p_ptr->energy + extract_energy[p_ptr->state.pspeed] >= 100))
            {
                   m_ptr->best_range = 4;
                   
@@ -1243,7 +1251,6 @@ static void remove_useless_spells(int m_idx, bool los)
 static void remove_pet_summons(int m_idx)
 {
     monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Check if the monster is the player's pet */
 	if(m_ptr->faction != F_PLAYER)
@@ -1369,7 +1376,6 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 	bool is_harass = FALSE;
 	bool is_best_harass = FALSE;
 	bool is_breath = FALSE;
-	bool is_pet = m_ptr->faction == F_PLAYER;
 
 	int i, py = p_ptr->py, px = p_ptr->px, ty, tx;
 	int breath_hp, breath_maxhp, path, spaces;
@@ -1695,8 +1701,8 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 		}
 
 
-		/* Only fiery or strong flying creatures can handle lava */
-		if (tf_has(f_ptr->flags, TF_FIERY)) {
+		/* Only fiery or strong flying creatures can handle lava or fire */
+		if ((tf_has(f_ptr->flags, TF_FIERY)) || (tf_has(f_ptr->flags, TF_BURNING))) {
 			if (rf_has(r_ptr->flags, RF_IM_FIRE))
 				return (TRUE);
 			else if (rf_has(r_ptr->flags, RF_FLYING)) {
@@ -1711,6 +1717,22 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 			}
 
 			return (FALSE);
+		}
+		
+		/* Only strong chaotic creatures will move on harmonious terrain */
+		if (tf_has(f_ptr->flags, TF_HARMONY)) {
+			if (rf_has(r_ptr->flags, RF_CHAOS)) {
+				/* Get HPs */
+				int hp = (rf_has(r_ptr->flags, RF_FORCE_MAXHP)
+						  ? (r_ptr->hdice * r_ptr->hside) :
+						  (r_ptr->hdice * (r_ptr->hside + 1) / 2));
+		        
+		        /* only strong monsters */
+		        if (hp > 100)
+		            return (TRUE);
+		    }
+		    
+		    return (FALSE);
 		}
 
 		/* Only flying monsters can, well, fly */
@@ -1880,8 +1902,8 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 		}
 
 
-		/* Lava */
-		if (tf_has(f_ptr->flags, TF_FIERY)) {
+		/* Lava and fire */
+		if (tf_has(f_ptr->flags, TF_FIERY) || tf_has(f_ptr->flags, TF_BURNING)) {
 			/* Only fiery or strong flying creatures will cross lava */
 			if (rf_has(r_ptr->flags, RF_IM_FIRE))
 				return (move_chance);
@@ -1937,7 +1959,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 	}
 
 
-	/* Feature is tecnically impassable as it stands */
+	/* Feature is technically impassable as it stands */
 	else {
 		/* Can the monster move easily through walls? */
 		bool move_wall = FALSE;
@@ -2966,6 +2988,16 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 		}
 	}
 
+	/* Pets too far away from the player will move toward him */
+	if((!*fear) && (m_ptr->faction == F_PLAYER)
+		&& (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > follow_distance)) {
+		if(motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px) == 5)
+			return (FALSE);
+		*ty = m_ptr->fy + ddy[motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)];
+		*tx = m_ptr->fx + ddx[motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)];
+		return (TRUE);
+	}
+
 
 	/* If the character is adjacent, attack or back off.  */
 	if ((!*fear) && (m_ptr->cdis <= 1)) {
@@ -2994,7 +3026,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 	if (((!*fear) && (rf_has(r_ptr->flags, RF_FRIENDS))
 		&& (rf_has(r_ptr->flags, RF_ANIMAL)) && (m_ptr->hp == m_ptr->maxhp)
 		&& (!((rf_has(r_ptr->flags, RF_PASS_WALL))
-			  || (rf_has(r_ptr->flags, RF_KILL_WALL))))) && (m_ptr->faction != F_PLAYER)) {
+			  || (rf_has(r_ptr->flags, RF_KILL_WALL))))) && (m_ptr->faction != F_PLAYER) && (!m_ptr->challenged)) {
 		/* Animal has to be willing to melee */
 		if (m_ptr->min_range == 1) {
 			/* 
@@ -3093,16 +3125,6 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 			return (TRUE);
 		}
 	}
-	
-	/* Pets too far away from the player will move toward him */
-	if((!*fear) && (m_ptr->faction == F_PLAYER) 
-        && (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > follow_distance)) {
-        if(motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px) == 5)
-            return (FALSE);
-        *ty = m_ptr->fy + ddy_ddd[motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)];
-        *tx = m_ptr->fx + ddx_ddd[motion_dir(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)];
-        return (TRUE);
-    }
 
 	/* Monster can go through rocks - head straight for target */
 	if ((!*fear)
@@ -3361,6 +3383,8 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 
 	int feat;
 	feature_type *f_ptr;
+	
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	bool seen = FALSE;
 	bool stun = FALSE;
@@ -3424,6 +3448,24 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 		} else {
 			if (seen)
 				msg("%s is burnt by lava.", m_name);
+		}
+	}
+	
+	/* Harmony */
+	else if (tf_has(f_ptr->flags, TF_HARMONY)) {
+		/* Assume death */
+		const char *note_dies = " is vaporized by the forces of harmony!";
+		
+		/* Only affect chaotic creatures */
+		if (rf_has(r_ptr->flags, RF_CHAOS)) {
+			if (mon_take_hit
+			    (cave_m_idx[m_ptr->fy][m_ptr->fx], 10 + m_ptr->maxhp / 40,
+			     &fear, note_dies, SOURCE_ENVIRONMENTAL)) {
+			    death = TRUE;
+		    } else {
+			    if (seen)
+				    msg("%s is burnt by the forces of harmony.", m_name);
+		    }
 		}
 	}
 
@@ -3506,6 +3548,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 	bool avoid = FALSE;
 	bool passable = FALSE;
 	bool look_again = FALSE;
+	
 
 	int chance;
 
@@ -3947,9 +3990,11 @@ static bool push_aside(monster_type * m_ptr, monster_type * n_ptr)
 /**
  * Separate, coordinate-based push_aside function, for when the player pushes a monster
  */
-bool push_aside(int fy, int fx, monster_type *n_ptr)
+bool push_aside_player(int fy, int fx, monster_type *n_ptr)
 {
-    /* Get racial information about the second monster */
+    int i, y, x;
+    int dir = 5;
+	/* Get racial information about the second monster */
 	monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 	
 	/* Fail if monster has already been pushed */
@@ -4371,6 +4416,9 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 	/* Existing monster location, proposed new location */
 	int oy, ox, ny, nx;
+	
+	/* Direction */
+	int dir;
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -4381,6 +4429,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	/* Default move, default lack of view */
 	bool do_move = TRUE;
 	bool do_view = FALSE;
+	bool icy_slide = FALSE;
 
 	/* Assume nothing */
 	bool did_open_door = FALSE;
@@ -4399,11 +4448,17 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	/* Get the destination */
 	ny = ty;
 	nx = tx;
+	
+	dir = get_direction(oy, ox, ny, nx);
 
 	/* Check Bounds */
 	if (!in_bounds(ny, nx))
 		return;
 
+	/* Check if the monster is rooted */
+	if (m_ptr->rooted)
+	     do_move = FALSE;
+	
 	/* The grid is occupied by the player. */
 	if ((cave_m_idx[ny][nx] < 0) && (m_ptr->hostile < 0)) {
 		/* SJGU Reset the monster's target (to deal with players hidden by
@@ -4597,7 +4652,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 			}
 			
 			/* If the monster can't be pushed, don't move */
-			else if ((m_ptr->mflag & (MFLAG_PUSH) || (n_ptr->mflag & (MLAG_PUSH)))
+			else if ((m_ptr->mflag & (MFLAG_PUSH)) || (n_ptr->mflag & (MFLAG_PUSH)))
 			{
 			    do_move = FALSE;
 			}
@@ -4739,6 +4794,34 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		/* Check for runes of instability */
 		if (cave_trap_specific(ny, nx, RUNE_QUAKE))
 			earthquake(ny, nx, 4, FALSE);
+		
+		/* Check for explosive runes */
+		if (cave_trap_specific(ny, nx, RUNE_EXPLOSIVE))
+		{
+		    explode(GF_FIRE, ny, nx, damroll(3, p_ptr->lev) + 3 * p_ptr->lev, 3);
+		    if (sqinfo_has(cave_info[ny][nx], SQUARE_MARK)) {
+		    	msg("The explosive rune detinates!");
+		    }
+
+
+		    /* Possibly remove the rune */
+		    if(randint1(2) == 1)
+		    {
+		    	/* Forget the rune */
+		    	sqinfo_off(cave_info[ny][nx], SQUARE_MARK);
+
+		    	/* Break the rune */
+		    	remove_trap_kind(ny, nx, FALSE, RUNE_EXPLOSIVE);
+		    }
+		}
+		
+		/* Check for ice */
+		if (tf_has(f_ptr->flags, TF_ICY)) {
+			if(!rf_has(r_ptr->flags, RF_IM_COLD)){
+				if (randint1(5) != 1)
+				    icy_slide = TRUE;
+            }
+        }
 
 		/* 
 		 * If a member of a monster group capable of smelling hits a 
@@ -4811,119 +4894,128 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = cave_o_idx[ny][nx]; this_o_idx;
-			 this_o_idx = next_o_idx) {
-			object_type *o_ptr;
-
-			/* Acquire object */
-			o_ptr = &o_list[this_o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
-			/* Skip gold */
-			if (o_ptr->tval == TV_GOLD)
-				continue;
-
-			/* Take or kill objects on the floor */
-			if ((rf_has(r_ptr->flags, RF_TAKE_ITEM))
-				|| (rf_has(r_ptr->flags, RF_KILL_ITEM))) {
-				bitflag mon_flags[RF_SIZE];
-
-				char m_name[80];
-				char o_name[120];
-
-				/* Wipe the flags */
-				rf_wipe(mon_flags);
-
-				/* Acquire the object name */
-				object_desc(o_name, sizeof(o_name), o_ptr,
-							ODESC_PREFIX | ODESC_FULL);
-
-				/* Acquire the monster name */
-				monster_desc(m_name, sizeof(m_name), m_ptr, 0x104);
-
-				/* React to objects that hurt the monster */
-				if (o_slay(o_ptr, P_SLAY_DRAGON))
-					rf_on(mon_flags, RF_DRAGON);
-				if (o_slay(o_ptr, P_SLAY_TROLL))
-					rf_on(mon_flags, RF_TROLL);
-				if (o_slay(o_ptr, P_SLAY_GIANT))
-					rf_on(mon_flags, RF_GIANT);
-				if (o_slay(o_ptr, P_SLAY_ORC))
-					rf_on(mon_flags, RF_ORC);
-				if (o_slay(o_ptr, P_SLAY_DEMON))
-					rf_on(mon_flags, RF_DEMON);
-				if (o_slay(o_ptr, P_SLAY_UNDEAD))
-					rf_on(mon_flags, RF_UNDEAD);
-				if (o_slay(o_ptr, P_SLAY_ANIMAL))
-					rf_on(mon_flags, RF_ANIMAL);
-				if (o_slay(o_ptr, P_SLAY_EVIL))
-					rf_on(mon_flags, RF_EVIL);
-
-				/* The object cannot be picked up by the monster */
-				if (artifact_p(o_ptr)
-					|| rf_is_inter(r_ptr->flags, mon_flags)) {
-					/* Only give a message for "take_item" */
-					if (rf_has(r_ptr->flags, RF_TAKE_ITEM)) {
-						/* Take note */
-						did_take_item = TRUE;
-
-						/* Describe observable situations */
-						if (m_ptr->ml && player_has_los_bold(ny, nx)
-							&& !squelch_hide_item(o_ptr)) {
-							/* Dump a message */
-							msg("%s tries to pick up %s, but fails.",
-								m_name, o_name);
+		/* Skip if sliding */
+		if (!icy_slide)
+		{
+			for (this_o_idx = cave_o_idx[ny][nx]; this_o_idx;
+				 this_o_idx = next_o_idx) {
+				object_type *o_ptr;
+	
+				/* Acquire object */
+				o_ptr = &o_list[this_o_idx];
+	
+				/* Acquire next object */
+				next_o_idx = o_ptr->next_o_idx;
+	
+				/* Skip gold */
+				if (o_ptr->tval == TV_GOLD)
+					continue;
+	
+				/* Take or kill objects on the floor */
+				if ((rf_has(r_ptr->flags, RF_TAKE_ITEM))
+					|| (rf_has(r_ptr->flags, RF_KILL_ITEM))) {
+					bitflag mon_flags[RF_SIZE];
+	
+					char m_name[80];
+					char o_name[120];
+	
+					/* Wipe the flags */
+					rf_wipe(mon_flags);
+	
+					/* Acquire the object name */
+					object_desc(o_name, sizeof(o_name), o_ptr,
+								ODESC_PREFIX | ODESC_FULL);
+	
+					/* Acquire the monster name */
+					monster_desc(m_name, sizeof(m_name), m_ptr, 0x104);
+	
+					/* React to objects that hurt the monster */
+					if (o_slay(o_ptr, P_SLAY_DRAGON))
+						rf_on(mon_flags, RF_DRAGON);
+					if (o_slay(o_ptr, P_SLAY_TROLL))
+						rf_on(mon_flags, RF_TROLL);
+					if (o_slay(o_ptr, P_SLAY_GIANT))
+						rf_on(mon_flags, RF_GIANT);
+					if (o_slay(o_ptr, P_SLAY_ORC))
+						rf_on(mon_flags, RF_ORC);
+					if (o_slay(o_ptr, P_SLAY_DEMON))
+						rf_on(mon_flags, RF_DEMON);
+					if (o_slay(o_ptr, P_SLAY_UNDEAD))
+						rf_on(mon_flags, RF_UNDEAD);
+					if (o_slay(o_ptr, P_SLAY_ANIMAL))
+						rf_on(mon_flags, RF_ANIMAL);
+					if (o_slay(o_ptr, P_SLAY_EVIL))
+						rf_on(mon_flags, RF_EVIL);
+	
+					/* The object cannot be picked up by the monster */
+					if (artifact_p(o_ptr)
+						|| rf_is_inter(r_ptr->flags, mon_flags)) {
+						/* Only give a message for "take_item" */
+						if (rf_has(r_ptr->flags, RF_TAKE_ITEM)) {
+							/* Take note */
+							did_take_item = TRUE;
+	
+							/* Describe observable situations */
+							if (m_ptr->ml && player_has_los_bold(ny, nx)
+								&& !squelch_hide_item(o_ptr)) {
+								/* Dump a message */
+								msg("%s tries to pick up %s, but fails.",
+									m_name, o_name);
+							}
 						}
 					}
-				}
-
-				/* Pick up the item */
-				else if (rf_has(r_ptr->flags, RF_TAKE_ITEM)) {
-					object_type *i_ptr;
-					object_type object_type_body;
-
-					/* Take note */
-					did_take_item = TRUE;
-
-					/* Describe observable situations */
-					if (player_has_los_bold(ny, nx)
-						&& !squelch_hide_item(o_ptr)) {
-						/* Dump a message */
-						msg("%s picks up %s.", m_name, o_name);
+	
+					/* Pick up the item */
+					else if (rf_has(r_ptr->flags, RF_TAKE_ITEM)) {
+						object_type *i_ptr;
+						object_type object_type_body;
+	
+						/* Take note */
+						did_take_item = TRUE;
+	
+						/* Describe observable situations */
+						if (player_has_los_bold(ny, nx)
+							&& !squelch_hide_item(o_ptr)) {
+							/* Dump a message */
+							msg("%s picks up %s.", m_name, o_name);
+						}
+	
+						/* Get local object */
+						i_ptr = &object_type_body;
+	
+						/* Obtain local object */
+						object_copy(i_ptr, o_ptr);
+	
+						/* Delete the object */
+						delete_object_idx(this_o_idx);
+	
+						/* Carry the object */
+						(void) monster_carry(cave_m_idx[m_ptr->fy][m_ptr->fx],
+											 i_ptr);
 					}
-
-					/* Get local object */
-					i_ptr = &object_type_body;
-
-					/* Obtain local object */
-					object_copy(i_ptr, o_ptr);
-
-					/* Delete the object */
-					delete_object_idx(this_o_idx);
-
-					/* Carry the object */
-					(void) monster_carry(cave_m_idx[m_ptr->fy][m_ptr->fx],
-										 i_ptr);
-				}
-
-				/* Destroy the item */
-				else {
-					/* Take note */
-					did_kill_item = TRUE;
-
-					/* Describe observable situations */
-					if (player_has_los_bold(ny, nx)
-						&& !squelch_hide_item(o_ptr)) {
-						/* Dump a message */
-						msg("%s crushes %s.", m_name, o_name);
+	
+					/* Destroy the item */
+					else {
+						/* Take note */
+						did_kill_item = TRUE;
+	
+						/* Describe observable situations */
+						if (player_has_los_bold(ny, nx)
+							&& !squelch_hide_item(o_ptr)) {
+							/* Dump a message */
+							msg("%s crushes %s.", m_name, o_name);
+						}
+	
+						/* Delete the object */
+						delete_object_idx(this_o_idx);
 					}
-
-					/* Delete the object */
-					delete_object_idx(this_o_idx);
 				}
 			}
+		}
+		
+		/* Slide forward on ice */
+		else {
+			process_move(m_ptr, ny + 99 * ddy[dir], nx + 99 * ddx[dir], FALSE);
 		}
 
 
@@ -5004,6 +5096,13 @@ static void process_monster(monster_type * m_ptr)
 	/* Monster can act - reset the push flag */
 	m_ptr->mflag &= ~(MFLAG_PUSH);
 
+	/* Make sure pets don't have groups or leadership */
+	if(m_ptr->faction == F_PLAYER)
+	{
+		m_ptr->group = 0;
+		m_ptr->group_leader = 0;
+	}
+
 
 	/* If monster is sleeping, or in stasis, it loses its turn. */
 	if ((m_ptr->csleep) || (m_ptr->stasis))
@@ -5018,26 +5117,26 @@ static void process_monster(monster_type * m_ptr)
     /* Avoid fighting allies */
     if(m_ptr->hostile > 0) {
         if(get_reaction(m_ptr->faction, m_list[m_ptr->hostile].faction) == REACT_ALLY) {
-            m_ptr->threat *= .8;
+            m_ptr->threat -= m_ptr->threat / 4;
             if(m_ptr->threat <= damroll(1, r_ptr->level))
                 m_ptr->hostile = 0;
         }
     } else if (m_ptr->hostile == -1) {
         if(get_reaction(m_ptr->faction, F_PLAYER) == REACT_ALLY) {
-            m_ptr->threat *= .8;
+            m_ptr->threat -= m_ptr->threat / 4;
             if(m_ptr->threat <= damroll(1, 2 * p_ptr->lev))
                 m_ptr->hostile = 0;
         }
     }
     
-    /* Additional reducation against group and leader */
+    /* Additional reduction against group and leader */
     if(m_ptr->hostile == m_ptr->group_leader) {
-        m_ptr->threat *= .8;
+        m_ptr->threat -= m_ptr->threat / 4;
         if(m_ptr->threat <= damroll(1, r_ptr->level))
             m_ptr->hostile = 0;
     }
     if(m_ptr->group == m_list[m_ptr->hostile].group) {
-        m_ptr->threat *= .8;
+        m_ptr->threat -= m_ptr->threat / 4;
         if(m_ptr->threat <= damroll(1, r_ptr->level))
             m_ptr->hostile = 0;
     }
@@ -5047,7 +5146,7 @@ static void process_monster(monster_type * m_ptr)
         m_ptr->hostile = -1;
         
     /* Pets with no target take the player's target, if there is one */
-    if((m_ptr->hostile == 0) && (m_ptr->faction == F_PLAYER) && target_is_set()) {
+    if((m_ptr->hostile <= 0) && (m_ptr->faction == F_PLAYER) && target_is_set()) {
         pet_target(m_ptr);
     }
     
@@ -5331,8 +5430,9 @@ static void process_monster(monster_type * m_ptr)
 	}
 
 	/* Monsters near their leader will take the lead from him/her/it */
-	if (m_ptr->group_leader) {
+	if (m_ptr->group_leader > 0) {
 		monster_type *n_ptr = &m_list[m_ptr->group_leader];
+		assert(m_ptr->group_leader > 0);
 
 		if ((!m_ptr->monfear)
 			&& (distance(m_ptr->fy, m_ptr->fx, n_ptr->fy, n_ptr->fx) <
@@ -5722,6 +5822,62 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 			}
 		}
 	}
+	
+	/* Rcover from root */
+	if (m_ptr->rooted) {
+		int d = randint1(r_ptr->level / 10 + 1);
+		
+		/* Still rooted */
+		if (m_ptr->rooted > d) {
+			/* Reduce the root */
+			m_ptr->rooted -= d;
+		}
+		
+		/* Recovered */
+		else {
+			/* No longer rooted */
+			m_ptr->rooted = 0;
+			
+			/* Message if visible */
+			if (m_ptr->ml) {
+				char m_name[80];
+				
+				/* Acquire the monster name */
+				monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
+
+				/* Dump a message */
+				msg("%s is no longer rooted.", m_name);
+			}
+		}
+	}
+	
+	/* Rcover from challenge */
+	if (m_ptr->challenged ) {
+		int d = randint1(r_ptr->level / 10 + 1);
+		
+		/* Still challenged */
+		if (m_ptr->challenged > d) {
+			/* Reduce the challenge */
+			m_ptr->challenged -= d;
+		}
+		
+		/* Recovered */
+		else {
+			/* No longer rooted */
+			m_ptr->challenged = 0;
+			
+			/* Message if visible */
+			if (m_ptr->ml) {
+				char m_name[80];
+				
+				/* Acquire the monster name */
+				monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
+
+				/* Dump a message */
+				msg("%s is no longer focused on you.", m_name);
+			}
+		}
+	}
 
 
 	/* Return to original shape */
@@ -5867,6 +6023,9 @@ void process_monsters(byte minimum_energy)
 {
 	int i;
 	monster_type *m_ptr;
+	feature_type *f_ptr;
+	monster_race *r_ptr;
+	char *note_dies = " is overcome by the power of the local terrain!"; /* Should never appear, but best to have a default */
 
 	/* Only process some things every so often */
 	bool recover = FALSE;
@@ -5889,6 +6048,7 @@ void process_monsters(byte minimum_energy)
 
 		/* Access the monster */
 		m_ptr = &m_list[i];
+		r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Ignore dead monsters */
 		if (!m_ptr->r_idx)
@@ -5906,7 +6066,11 @@ void process_monsters(byte minimum_energy)
 		m_ptr->moved = TRUE;
 		
 		/* Reduce current threat on their target */
-		m_ptr->threat *= .96;
+		m_ptr->threat /= 16;
+		
+		/* Pets should try to stay by the player */
+		m_ptr->y_terr = p_ptr->py;
+		m_ptr->x_terr = p_ptr->px;
 
 		/* Handle temporary monster attributes every ten game turns */
 		if (recover)
@@ -5918,6 +6082,47 @@ void process_monsters(byte minimum_energy)
 		/* End the turn of monsters without enough energy to move */
 		if (m_ptr->energy < 100)
 			continue;
+			
+		/* Monsters take terrain damage on their own turn due to how
+		 * process_monsters() works */
+	    /* Handle lava */
+	    f_ptr = &f_info[cave_feat[m_ptr->fy][m_ptr->fx]];
+	    if (tf_has(f_ptr->flags, TF_FIERY))
+	    {
+	    	if ((!(rf_has(r_ptr->flags, RF_IM_FIRE)))
+				&& (!(rf_has(r_ptr->flags, RF_FLYING)))) {
+				note_dies = " is burnt up.";
+
+				/* Hurt the monster.  No fear. */
+				mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx],
+							 damroll(2, 10 + m_ptr->maxhp / 20), 0,
+							 note_dies, SOURCE_ENVIRONMENTAL);
+            }
+        }
+        if (tf_has(f_ptr->flags, TF_BURNING))
+        {
+	    	if ((!(rf_has(r_ptr->flags, RF_IM_FIRE)))
+				&& (!(rf_has(r_ptr->flags, RF_FLYING)))) {
+				note_dies = " is burnt up.";
+
+				/* Hurt the monster.  No fear. */
+				mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx],
+							 randint1(5 + m_ptr->maxhp / 30), 0,
+							 note_dies, SOURCE_ENVIRONMENTAL);
+            }
+        }
+        if (tf_has(f_ptr->flags, TF_HARMONY))
+        {
+        	if (rf_has(r_ptr->flags, RF_CHAOS))
+        	{
+        		note_dies = " is consumed by the power of harmony.";
+        		
+        		/* Hurt the monster.  No fear. */
+				mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx],
+							 randint1(5 + m_ptr->maxhp / 30), 0,
+							 note_dies, SOURCE_ENVIRONMENTAL);
+            }
+        }
 
 		/* Use up some energy */
 		m_ptr->energy -= 100;

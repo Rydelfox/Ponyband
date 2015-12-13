@@ -299,6 +299,50 @@ byte adj_int_dis[STAT_RANGE] = {
 	19 /* 18/220+ */
 };
 
+/**
+ * Stat Table (CHA) -- charming ( dam * X / 10)
+ */
+const byte adj_cha_charm[STAT_RANGE] = {
+	2 /* 3 */,
+	3 /* 4 */ ,
+	4 /* 5 */ ,
+	5 /* 6 */ ,
+	5 /* 7 */ ,
+	6 /* 8 */ ,
+	6 /* 9 */ ,
+	7 /* 10 */ ,
+	7 /* 11 */ ,
+	8 /* 12 */ ,
+	8 /* 13 */ ,
+	8 /* 14 */ ,
+	9 /* 15 */ ,
+	9 /* 16 */ ,
+	9 /* 17 */ ,
+	10 /* 18/00-18/09 */ ,
+	10 /* 18/10-18/19 */ ,
+	10 /* 18/20-18/29 */ ,
+	10 /* 18/30-18/39 */ ,
+	10 /* 18/40-18/49 */ ,
+	11 /* 18/50-18/59 */ ,
+	11 /* 18/60-18/69 */ ,
+	11 /* 18/70-18/79 */ ,
+	12 /* 18/80-18/89 */ ,
+	12 /* 18/90-18/99 */ ,
+	12 /* 18/100-18/109 */ ,
+	13 /* 18/110-18/119 */ ,
+	13 /* 18/120-18/129 */ ,
+	14 /* 18/130-18/139 */ ,
+	14 /* 18/140-18/149 */ ,
+	15 /* 18/150-18/159 */ ,
+	15 /* 18/160-18/169 */ ,
+	16 /* 18/170-18/179 */ ,
+	16 /* 18/180-18/189 */ ,
+	17 /* 18/190-18/199 */ ,
+	17 /* 18/200-18/209 */ ,
+	18 /* 18/210-18/219 */ ,
+	18 /* 18/220+ */
+};
+
 
 /**
  * Stat Table (DEX) -- bonus to ac (plus 128)
@@ -2108,8 +2152,9 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	int extra_might = 0;
 
 	bool enhance = FALSE;
-
+	
 	object_type *o_ptr;
+	
 
 	/*** Reset ***/
 
@@ -2255,8 +2300,6 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_CON))
 		state->sustain_con = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CHR))
-		state->sustain_chr = TRUE;
-	if (of_has(cmp_ptr->flags_obj, OF_SUSTAIN_CHR))
 		state->sustain_chr = TRUE;
 	if (of_has(rp_ptr->flags_obj, OF_SLOW_DIGEST))
 		state->slow_digest = TRUE;
@@ -2774,6 +2817,22 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		apply_resist(&state->res_list[P_RES_POIS], bonus);
 		apply_resist(&state->dis_res_list[P_RES_POIS], bonus);
 	}
+	
+	/* Temporary Free Action and sustains */
+	if(p_ptr->timed[TMD_FREEACT])
+		state->free_act = TRUE;
+	if(p_ptr->timed[TMD_SSTR])
+        state->sustain_str = TRUE;
+    if(p_ptr->timed[TMD_SDEX])
+        state->sustain_dex = TRUE;
+    if(p_ptr->timed[TMD_SCON])
+        state->sustain_con = TRUE;
+    if(p_ptr->timed[TMD_SINT])
+        state->sustain_int = TRUE;
+    if(p_ptr->timed[TMD_SWIS])
+        state->sustain_wis = TRUE;
+    if(p_ptr->timed[TMD_SCHA])
+        state->sustain_chr = TRUE;
 
 	/* Apply temporary "stun".  */
 	if (p_ptr->timed[TMD_STUN] > 50) {

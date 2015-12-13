@@ -10,7 +10,7 @@
 
 /* Runes  */
 #define RUNE_HEAD     0x01
-#define RUNE_TAIL     0x07
+#define RUNE_TAIL     0x08
 #define RUNE_ELEMENTS 0x01
 #define RUNE_MAGDEF   0x02
 #define RUNE_QUAKE    0x03
@@ -18,6 +18,7 @@
 #define RUNE_PROTECT  0x05
 #define RUNE_POWER    0x06
 #define RUNE_SPEED    0x07
+#define RUNE_EXPLOSIVE  0x08
 
 /* Other obstructions */
 #define OBST_WEB      0x0A

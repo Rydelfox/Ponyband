@@ -3092,16 +3092,14 @@ void cause_threat(int y, int x, int source, u16b faction, int amount, int target
 		
 		/* Reduce threat on friendly monsters */
 		if((get_reaction(m_ptr->faction, faction) != REACT_HOSTILE) && mid != target && !onlySameFaction) {
-		    /* Multiply by 3/4 */
-			threatIncrease *= 3;
-			threatIncrease /= 4;
+		    /* Decrease by 25% */
+			threatIncrease -= threatIncrease / 4;
 		}
 		
 		/* Further reduction if they are the same faction */
 		if(!onlySameFaction && (m_ptr->faction == faction)) {
-		    /* Multiply by 3/4 */
-			threatIncrease *= 3;
-			threatIncrease /= 4;
+			/* Decrease by 25% */
+			threatIncrease -= threatIncrease / 4;
 		}
 		
 		/* Pets should gain threat on whatever the player attacks */

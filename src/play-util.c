@@ -194,8 +194,6 @@ bool player_can_ability(void)
 /* Alter alignment when hitting an enemy */
 void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, bool killed)
 {
-    int i;
-    
     if(faction == F_GOOD) p_ptr->alignment--;
     if((faction == F_GOOD) && killed) p_ptr->alignment-=2;
     if(evil && killed) p_ptr->alignment++;
@@ -220,3 +218,20 @@ void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, 
         p_ptr->alignment = (-1 * PY_MAX_ALIGN);
 }
 
+/**
+ * Find the player's alignment
+ */
+int get_player_alignment(void)
+{
+	if (p_ptr->alignment == (-1 * PY_MAX_ALIGN))
+	    return ALIGN_CHAOS_PURE;
+    if (p_ptr->alignment < (-1 * PY_ALIGN_CHANGE))
+        return ALIGN_CHAOS;
+    if (p_ptr->alignment == PY_MAX_ALIGN)
+        return ALIGN_HARMONY_PURE;
+    if (p_ptr->alignment > PY_ALIGN_CHANGE)
+        return ALIGN_HARMONY;
+    
+    /* Default */
+    return ALIGN_NEUTRAL;
+}

@@ -34,7 +34,6 @@
 #define PY_MAX_ALIGN    1000    /* Maximum alignment magnetude */
 #define PY_ALIGN_CHANGE 500     /* Point at which you're considered part of an alignment */
 
-
 /*
  * Flags for player_type.spell_flags[]
  */
@@ -163,6 +162,20 @@
 /*** Constants for accessing the player struct ***/
 
 /*
+ * Player alignments
+ */
+enum
+{
+	ALIGN_CHAOS_PURE = 0,
+	ALIGN_CHAOS,
+	ALIGN_NEUTRAL,
+	ALIGN_HARMONY,
+	ALIGN_HARMONY_PURE,
+	
+	ALIGN_MAX
+};
+
+/*
  * Timed effects
  */
 enum
@@ -179,6 +192,7 @@ enum
 	TMD_STUN, 
 	TMD_PROTEVIL,
 	TMD_INVULN, 
+	TMD_STEADFAST,
 	TMD_HERO, 
 	TMD_SHERO, 
 	TMD_SHIELD, 
@@ -187,6 +201,16 @@ enum
 	TMD_SINFRA, 
 	TMD_TELEPATHY, 
 	TMD_SSTEALTH,
+	TMD_MANASHIELD,
+	TMD_FOCUS,
+	TMD_FREEACT,
+	TMD_ROOT,
+	TMD_SSTR,
+	TMD_SDEX,
+	TMD_SCON,
+	TMD_SINT,
+	TMD_SWIS,
+	TMD_SCHA,
 	TMD_OPP_ACID, 
 	TMD_OPP_ELEC, 
 	TMD_OPP_FIRE, 
@@ -258,8 +282,7 @@ enum
     REALM_NONE = 0,
     REALM_SORCERY,		
     REALM_PIETY,		
-    REALM_NATURE,		
-    REALM_NECROMANTIC,
+    REALM_NATURE,
 
     REALM_MAX
 };	
@@ -278,7 +301,7 @@ enum
 
 /* 
  * Special values for the number of turns to rest, these need to be
- * negative numbers, as postive numbers are taken to be a turncount,
+ * negative numbers, as positive numbers are taken to be a turncount,
  * and zero means "not resting". 
  */
 enum 
@@ -461,7 +484,7 @@ typedef struct player_state {
 /**
  * Most of the "player" information goes here.
  *
- * This stucture gives us a large collection of player variables.
+ * This structure gives us a large collection of player variables.
  *
  * This entire structure is wiped when a new character is born.
  *
@@ -487,10 +510,10 @@ typedef struct player {
     byte hitdie;	/**< Hit dice (sides) */
 
     byte schange;	/**< Character's new shape, if any. */
-    s16b age;		/**< Character's age */
-    s16b ht;		/**< Height */
-    s16b wt;		/**< Weight */
-    s16b sc;		/**< Social Class */
+    u16b age;		/**< Character's age */
+    u16b ht;		/**< Height */
+    u16b wt;		/**< Weight */
+    u16b sc;		/**< Social Class */
 
     s32b au;		/**< Current Gold */
 
@@ -530,7 +553,10 @@ typedef struct player {
     
     byte previous_action[ACTION_MAX]; /**< Array of actions of the last several turns */
 
+    /* Black Breath seems to be getting turned on by some overflow */
+    bool null1;
     bool black_breath;
+    bool null2;
 			/**< Major experience draining */
     s16b word_recall;
 			/**< Word of recall counter */
@@ -897,6 +923,7 @@ extern const byte adj_str_hold[STAT_RANGE];
 extern const byte adj_str_blow[STAT_RANGE];
 extern const byte adj_con_fix[STAT_RANGE];
 extern const byte adj_dex_safe[STAT_RANGE];
+extern const byte adj_cha_charm[STAT_RANGE];
 
 extern void apply_resist(int *player_resist, int item_resist);
 void calc_bonuses(object_type inventory[], player_state *state, bool id_only);
@@ -945,5 +972,6 @@ bool player_can_fire(void);
 bool player_can_ability(void);
 extern const char *player_safe_name(struct player *p, bool strip_suffix);
 void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, bool killed);
+int get_player_alignment(void);
 
 #endif /* !PLAYER_PLAYER_H */

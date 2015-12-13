@@ -889,6 +889,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			(void) clear_timed(TMD_IMAGE, TRUE);
 			(void) clear_timed(TMD_STUN, TRUE);
 			(void) clear_timed(TMD_CUT, TRUE);
+			(void) clear_timed(TMD_ROOT, TRUE);
 			(void) do_res_stat(A_STR);
 			(void) do_res_stat(A_CON);
 			(void) do_res_stat(A_DEX);
@@ -1545,6 +1546,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 				*ident = TRUE;
 			if (clear_timed(TMD_CUT, TRUE))
 				*ident = TRUE;
+			if (clear_timed(TMD_ROOT, TRUE))
+			    *ident = TRUE;
 			return TRUE;
 		}
 
@@ -3220,7 +3223,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 					return TRUE;
 
 				/* ...and hit it */
-				project(cur_mon, 1, targ_y, targ_x, damroll(30, 4),
+				project(cur_mon, 1, cur_y, cur_x, targ_y, targ_x, damroll(30, 4),
 						GF_ELEC, flag, 0, 0);
 
 				/* Set current monster (may be dead) */
@@ -3294,6 +3297,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			(void) clear_timed(TMD_IMAGE, TRUE);
 			(void) clear_timed(TMD_STUN, TRUE);
 			(void) clear_timed(TMD_CUT, TRUE);
+			(void) clear_timed(TMD_ROOT, TRUE);
 			(void) do_res_stat(A_STR);
 			(void) do_res_stat(A_CON);
 			(void) do_res_stat(A_DEX);

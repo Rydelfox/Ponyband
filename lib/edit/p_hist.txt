@@ -568,23 +568,23 @@ N:42:43:100:50
 D:You have blue-gray eyes, 
 
 N:43:44:12:50
-D:a long, straight 
+D:long, straight 
 N:43:44:24:50
-D:a short, straight 
+D:short, straight 
 N:43:44:36:50
-D:a long, wavy 
+D:long, wavy 
 N:43:44:48:50
-D:a short, wavy 
+D:short, wavy 
 N:43:44:60:50
-D:a long, curly 
+D:long, curly 
 N:43:44:72:50
-D:a short, curly 
+D:short, curly 
 N:43:44:79:49
-D:a spiked 
+D:spiked 
 N:43:44:87:48
-D:a poofy 
+D:poofy 
 N:43:44:100:45
-D:an unkempt 
+D:unkempt 
 
 N:44:45:30:50
 D:black hair, 
@@ -1164,6 +1164,6 @@ D:and green eyes.
 N:84:0:95:50
 D:and blue eyes.
 N:84:0:98:50
-D:and pink eyes.
-N:84:0:100:50
 D:and gray eyes.
+N:84:0:99:50
+D:and pink eyes.

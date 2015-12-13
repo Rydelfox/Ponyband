@@ -49,6 +49,8 @@ extern const char *window_flag_desc[32];
 extern const char *magic_desc[REALM_MAX][MD_MAX];
 extern const char *feel_text[FEEL_MAX];
 extern byte get_angle_to_grid[41][41];
+extern int my_cos[26];
+extern int my_sin[26];
 
 /* variable.c */
 extern const char *copyright;
@@ -100,8 +102,8 @@ extern s16b o_max;
 extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
-extern s16b trap_max;
-extern s16b trap_cnt;
+extern u16b trap_max;
+extern u16b trap_cnt;
 extern u16b group_id;
 extern u16b feeling;
 extern bool do_feeling;
@@ -127,6 +129,7 @@ extern bitflag (*cave_info)[256][SQUARE_SIZE];
 extern byte (*cave_feat)[DUNGEON_WID];
 extern s16b (*cave_o_idx)[DUNGEON_WID];
 extern s16b (*cave_m_idx)[DUNGEON_WID];
+extern byte cave_temp[MAX_TEMP_GRIDS][2];
 
 extern byte (*cave_cost)[DUNGEON_WID];
 extern byte (*cave_when)[DUNGEON_WID];

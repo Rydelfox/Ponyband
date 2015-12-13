@@ -22,6 +22,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "cmds.h"
 #include "mapmode.h"
 #include "monster.h"
 #include "spells.h"
@@ -544,7 +545,8 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 			 || ((player_has(PF_EDAIN))
 				 && (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST)))
 			&& (randint1(100) <= p_ptr->state.evasion_chance)
-			&& (!p_ptr->timed[TMD_PARALYZED])) {
+			&& (!p_ptr->timed[TMD_PARALYZED])
+			&& (!p_ptr->timed[TMD_ROOT])) {
 			/* Message */
 			msg("You Evade the attack!");
 
@@ -1829,7 +1831,7 @@ static void mon_bolt(int m_idx, int typ, int dam)
 	}
 
 	/* Target the player with a bolt attack */
-	(void) project(m_idx, 0, py, px, dam, typ, flg, 0, 0);
+	(void) project(m_idx, 0, m_ptr->fy, m_ptr->fx, py, px, dam, typ, flg, 0, 0);
 }
 
 /**
@@ -1860,7 +1862,7 @@ static void mon_beam(int m_idx, int typ, int dam, int range)
 			range = 25;
 
 		/* Target the player with a limited-range beam. */
-		(void) project(m_idx, range, py, px, dam, typ, flg, 0,
+		(void) project(m_idx, range, m_ptr->fy, m_ptr->fx, py, px, dam, typ, flg, 0,
 					   (byte) (range * 10));
 	}
 
@@ -1869,7 +1871,7 @@ static void mon_beam(int m_idx, int typ, int dam, int range)
 		flg |= PROJECT_BEAM;
 
 		/* Target the player with a standard beam attack. */
-		(void) project(m_idx, 0, py, px, dam, typ, flg, 0, 0);
+		(void) project(m_idx, 0, m_ptr->fy, m_ptr->fx, py, px, dam, typ, flg, 0, 0);
 
 	}
 }
@@ -1894,7 +1896,7 @@ static void mon_ball(int m_idx, int typ, int dam, int rad)
 	}
 
 	/* Target the player with a ball attack */
-	(void) project(m_idx, rad, py, px, dam, typ, flg, 0, 0);
+	(void) project(m_idx, rad, m_ptr->fy, m_ptr->fx, py, px, dam, typ, flg, 0, 0);
 }
 
 /**
@@ -1949,7 +1951,7 @@ static void mon_arc(int m_idx, int typ, bool noharm, int dam, int rad,
 		diameter_of_source = 250;
 
 	/* Target the player with an arc-shaped attack. */
-	(void) project(m_idx, rad, py, px, dam, typ, flg, degrees_of_arc,
+	(void) project(m_idx, rad, m_ptr->fy, m_ptr->fx, py, px, dam, typ, flg, degrees_of_arc,
 				   (byte) diameter_of_source);
 }
 

@@ -17,6 +17,7 @@
  */
 #include <errno.h>
 #include "angband.h"
+#include "cmds.h"
 #include "savefile.h"
 
 /**
@@ -206,7 +207,6 @@ static void sf_put(byte v)
 
 static byte sf_get(void)
 {
-	assert(buffer != NULL);
 	assert(buffer_size > 0);
 	assert(buffer_pos < buffer_size);
 
@@ -581,7 +581,7 @@ static bool try_load(ang_file * f, const struct blockinfo *loaders)
 		if (!load_block(f, &b, loader)) {
 			note(format
 				 ("Savefile corrupted - Couldn't load block %s", b.name));
-			return FALSE;
+		    return FALSE;
 		}
 	}
 

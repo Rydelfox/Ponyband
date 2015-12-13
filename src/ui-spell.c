@@ -201,7 +201,7 @@ static void spell_menu_display(menu_type * m, int oid, bool cursor,
 	c_put_str(attr_name, format("%-30s", get_spell_name(s_ptr->index)),
 			  row, col);
 	put_str(format
-			("%2d %4d %3d%%", s_ptr->slevel, s_ptr->smana,
+			("%2d %4d %3d%%", s_ptr->slevel, spell_cost(spell),
 			 spell_chance(spell)), row, col + 30);
 	c_put_str(attr_extra, format("%s", comment), row, col + 42);
 }
@@ -232,7 +232,6 @@ static void pet_menu_display(menu_type * m, int oid, bool cursor,
                              int row, int col, int wid)
 {    
     char *comment;
-    logbug("In pet_menu_display\n");
     switch(oid)
     {
     case 0:
@@ -250,12 +249,15 @@ static void pet_menu_display(menu_type * m, int oid, bool cursor,
     case 4:
         comment = "Release pet";
         break;
+    case 5:
+    	comment = "Cancel orders";
+    	break;
     default:
         comment = "Error - Missing option";
     }
     
     /* Dump the command */
-    c_put_str(TERM_WHITE, format("%-30s", *comment), row, col);
+    c_put_str(TERM_WHITE, format("%-30s", comment), row, col);
 }
  
 /**
@@ -429,7 +431,7 @@ static menu_type *pet_menu_new(void)
     
     d->selected_option = -1;
     
-    d->n_choices = 5;
+    d->n_choices = 6;
     
     menu_setpriv(m, d->n_choices, d);
     
@@ -440,7 +442,7 @@ static menu_type *pet_menu_new(void)
     m->browse_hook = pet_menu_browser;
     
     /* Set size */
-    loc.page_rows = 6;
+    loc.page_rows = 7;
     menu_layout(m, &loc);
     
     return m;

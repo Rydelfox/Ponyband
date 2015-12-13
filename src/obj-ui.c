@@ -165,9 +165,9 @@ static void build_obj_list(int first, int last, const int *floor_list,
 						   olist_detail_t mode)
 {
 	int i;
+	int skipped = 0;
 	object_type *o_ptr;
 	bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
-	bool invalid = FALSE;
 
 	need_spacer = FALSE;
 	offset = 0;
@@ -191,8 +191,11 @@ static void build_obj_list(int first, int last, const int *floor_list,
             ((i == INVEN_HIND) && !player_has(PF_QUADRUPED)) ||
             ((i == INVEN_RIGHT) && (rp_ptr->num_rings <= 1)) ||
             ((i == INVEN_LEFT) && (rp_ptr->num_rings <= 0)))
-                // Skip slots this race doesn't have
-                continue;
+        {
+        	// Skip slots this race doesn't have
+        	skipped++;
+        	continue;
+        }
         
         if (floor_list)
 			o_ptr = &o_list[floor_list[i]];
@@ -243,7 +246,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 
 		/* Save the object */
 		items[num_obj].object = o_ptr;
-		items[num_obj].index = i;
+		items[num_obj].index = i - skipped;
 		items[num_obj].key = (items[num_obj].label)[0];
 		num_obj++;
 	}

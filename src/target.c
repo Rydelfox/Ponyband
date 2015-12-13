@@ -726,7 +726,7 @@ static void target_display_help(bool monster, bool free)
  *
  * This function must handle blindness/hallucination.
  */
-static ui_event target_set_interactive_aux(int y, int x, int mode)
+static ui_event target_set_interactive_aux(s16b y, s16b x, int mode)
 {
 	s16b this_o_idx = 0, next_o_idx = 0;
 
@@ -1449,6 +1449,15 @@ bool target_set_interactive(int mode, int x, int y)
 	wchar_t *path_char = malloc(MAX_RANGE * sizeof(*path_char));
 	int *path_attr = malloc(MAX_RANGE * sizeof(*path_attr));
 	struct point_set *targets;
+
+	/* There should never be a case where no mode is passed.
+	 * Sometimes, the mode isn't passing, though.
+	 * Fail permissively, in favor of selecting everything.
+	 */
+	if (mode == 0)
+	{
+		mode = TARGET_LOOK | TARGET_GRID;
+	}
 
 	/* If we haven't been given an initial location, start on the player. */
 	if (x == -1 || y == -1) {

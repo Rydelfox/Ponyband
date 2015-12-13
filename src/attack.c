@@ -1050,7 +1050,7 @@ bool py_attack(int y, int x, bool can_push)
 	r_ptr = &r_info[m_ptr->r_idx];
 	l_ptr = &l_list[m_ptr->r_idx];
 	/* Just push past neutral monsters */
-	if ((m_ptr->hostile != -1) && can_push) {
+	if ((get_reaction(m_ptr->faction, F_PLAYER) != REACT_HOSTILE) && can_push) {
 		/* Get monster name (or "something") */
 		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 

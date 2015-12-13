@@ -91,5 +91,7 @@ extern void sort(void *array, size_t nmemb, size_t smemb,
 /* Mathematical functions */
 int mean(int *nums, int size);
 int variance(int *nums, int size);
+int my_sqrt(int x);
+double my_dblsqrt(double x);
 
 #endif /* INCLUDED_Z_UTIL_H */

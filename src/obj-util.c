@@ -333,25 +333,46 @@ void reset_visuals(bool load_prefs)
 #endif							/* ALLOW_BORG_GRAPHICS */
 }
 
-
-
 /*
  * Convert an inventory index into a one character label.
  *
  * Note that the label does NOT distinguish inven/equip.
+ *
+ * Returns 'Z' on bad entries.
  */
 char index_to_label(int i)
 {
+	int modifier;
+
 	/* Indexes for "inven" are easy */
 	if (i < INVEN_WIELD)
 		return (I2A(i));
 
-	/* Indexes before the Rings are easy */
-    if (i < INVEN_LEFT )
-        return (I2A(i - INVEN_WIELD));
-    
-    /* Indexes after the rings are offset by the number of ring slots */
-    return (I2A(i - INVEN_WIELD - 2 + rp_ptr->num_rings));
+	/* Equipment has to worry about raced based slots */
+	/* Start by tracking how far from 'a' we are */
+	modifier = i - INVEN_WIELD;
+
+	/* Check for bad slots */
+	if (((rp_ptr->num_rings == 0) && (i == INVEN_LEFT))
+		|| ((rp_ptr->num_rings < 2) && (i == INVEN_RIGHT))
+		|| ((player_has(PF_QUADRUPED)) && (i == INVEN_HANDS))
+		|| (!(player_has(PF_QUADRUPED)) && (i == INVEN_HIND)))
+		return 'Z';
+
+	/* Increment and points where the lettering jumps */
+	if (i > INVEN_RIGHT)
+		modifier -= 2 - rp_ptr->num_rings;
+	if ((i > INVEN_HANDS) && (player_has(PF_QUADRUPED)))
+		modifier--;
+
+	/* Fail on bad results */
+	if (modifier < 0)
+		return 'Z';
+	/* Past 'l' */
+	if (modifier > 11)
+		return 'Z';
+
+	return (I2A(modifier));
 }
 
 /*
@@ -386,14 +407,14 @@ s16b label_to_inven(int c)
  */
 s16b label_to_equip(int c)
 {
-	int i;
+	int i = (islower((unsigned char) c) ? A2I(c) : -1) + INVEN_WIELD;
 
-	/* Convert */
-	i = (islower((unsigned char) c) ? A2I(c) : -1) + INVEN_WIELD;
-	
-	/* Convert for items past the rings */
-	if (i >= (INVEN_LEFT + rp_ptr->num_rings))
-		i += (2 - rp_ptr->num_rings);
+	if ((i >= INVEN_LEFT) && (rp_ptr->num_rings == 0))
+		i++;
+	if ((i >= INVEN_RIGHT) && (rp_ptr->num_rings < 2))
+		i++;
+	if ((i >= INVEN_HANDS) && (player_has(PF_QUADRUPED)))
+		i++;
 
 	/* Verify the index */
 	if ((i < INVEN_WIELD) || (i >= ALL_INVEN_TOTAL) || (i == INVEN_TOTAL))
@@ -5181,3 +5202,4 @@ void remove_set(int set_idx)
 	if (bonus_removed)
 		msg("Item set no longer completed.");
 }
+

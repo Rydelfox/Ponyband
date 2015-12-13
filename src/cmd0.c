@@ -805,7 +805,7 @@ static bool textui_process_key(struct keypress kp)
 	int mode =
 		OPT(rogue_like_commands) ? KEYMAP_MODE_ROGUE : KEYMAP_MODE_ORIG;
 
-	/* XXXmacro this needs rewriting */
+	/* XXX macro this needs rewriting */
 	keycode_t c = kp.code;
 
 	if (c == '\0' || c == ESCAPE || c == ' ' || c == '\a')

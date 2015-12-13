@@ -286,6 +286,41 @@ bool los(int y1, int x1, int y2, int x2)
 	return (TRUE);
 }
 
+/*
+ * Get the direction between two points
+ */
+int get_direction (int source_y, int source_x, int target_y, int target_x)
+{
+    if (target_y < source_y) {
+		if (target_x < source_x)
+			return 7;
+		else if (target_x == source_x)
+			return 8;
+		else
+			return 9;
+	}
+	else if (target_y == source_y)
+	{
+		if (target_x < source_x)
+			return 4;
+		else if (target_x == source_x)
+			return 5;
+		else
+			return 6;
+	}
+	else
+	{
+		if (target_x < source_x)
+			return 1;
+		else if (target_x == source_x)
+			return 2;
+		else
+			return 3;
+	}
+	
+	return -1;
+}
+
 
 
 
@@ -2909,16 +2944,34 @@ void illuminate(void)
  */
 void cave_set_feat(int y, int x, int feat)
 {
-	/* Change the feature */
-	cave_feat[y][x] = feat;
+	bool add = TRUE;
+	int index = search_temp_cave(y, x, 0, MAX_TEMP_GRIDS);
+	
+	/* Is the original feature temporary? */
+	if (index != -1)
+	{
+		/* Remove the entry from cave_temp */
+		cave_temp[index][0] = 0;
+		cave_temp[index][1] = 0;
+	}
+	
+	/* Special handling for Temporary features */
+	if ((feat == FEAT_TREE_BURN) || (feat == FEAT_WIND))
+	    add = add_temp_cave(y, x);
+	
+	if (add)
+	{
+	    /* Change the feature */
+		cave_feat[y][x] = feat;
 
-	/* Notice/Redraw */
-	if (character_dungeon) {
-		/* Notice */
-		note_spot(y, x);
+		/* Notice/Redraw */
+		if (character_dungeon) {
+		    /* Notice */
+			note_spot(y, x);
 
-		/* Redraw */
-		light_spot(y, x);
+			/* Redraw */
+			light_spot(y, x);
+	    }
 	}
 }
 
@@ -3274,9 +3327,6 @@ void scatter(int *yp, int *xp, int y, int x, int d, int m)
 {
 	int nx, ny;
 
-	/* Unused */
-	m = m;
-
 	/* Pick a location */
 	while (TRUE) {
 		/* Pick a new location */
@@ -3407,3 +3457,140 @@ void disturb(int stop_search, int unused_flag)
 	/* Flush the input */
 	flush();
 }
+
+static void sort_temp_cave_helper(int left, int right, int cell)
+{
+	/* Quick Sort */
+	int i = left;
+	int j = right;
+	int tmp_x, tmp_y;
+	int pivot = cave_temp[(left + right) / 2][cell];
+	
+	while (i < j)
+	{
+		while (cave_temp[i][cell] != 0)
+		    i++;
+        while (cave_temp[j][cell] == 0)
+            j--;
+        if (cave_temp[i][cell] == cave_temp[j][cell])
+        {
+        	i++;
+        	j--;
+        }
+        else if (((cave_temp[i][cell] == 0) && (cave_temp[j][cell] != 0)) && (i < j))
+        {
+        	tmp_y = cave_temp[i][0];
+        	tmp_x = cave_temp[i][1];
+        	cave_temp[i][0] = cave_temp[j][0];
+        	cave_temp[i][1] = cave_temp[j][1];
+        	cave_temp[j][0] = tmp_y;
+        	cave_temp[j][1] = tmp_x;
+        	i++;
+        	j--;
+        }
+    };
+
+    /* recursion */
+
+    if (left > j)
+        sort_temp_cave_helper(left, j, cell);
+    if (i > right)
+        sort_temp_cave_helper(i, right, cell);
+}
+
+void sort_temp_cave(void)
+{
+	char buf[80];
+	int i;
+	logbug("Sorting cave_Temp\n");
+	/* Sort by x */
+	sort_temp_cave_helper(0, MAX_TEMP_GRIDS, 1);
+	/* Sort by y */
+	sort_temp_cave_helper(0, MAX_TEMP_GRIDS, 0);
+	for (i = 0; i < MAX_TEMP_GRIDS; i++)
+	{
+		strnfmt(buf, 80, "Temp Coord %i: %i,%i\n", i, cave_temp[i][0], cave_temp[i][1]);
+		logbug(buf);
+	}
+}
+
+bool add_temp_cave(int y, int x)
+{
+	bool found = FALSE;
+	int i;
+	
+	for (i = 0; i < MAX_TEMP_GRIDS; i++)
+	{
+		if ((cave_temp[i][0] == 0) && (cave_temp[i][1] == 0))
+		{
+		    found = TRUE;
+		    break;
+		}
+    }
+    
+    if (found)
+    {
+    	cave_temp[i][0] = y;
+    	cave_temp[i][1] = x;
+    	sort_temp_cave();
+    }
+    
+    return (found);
+}
+
+/*
+ * Search for y,x coordiante and return the index
+ */
+int search_temp_cave(int y, int x, int min, int max)
+{
+    /* Temp for emptyness */
+    if (max < min)
+        return -1;
+    
+    else
+    {
+    	/* Calculate the mid point */
+    	int mid = min + ((max - min) / 2);
+    	
+    	if (cave_temp[mid][0] < y)
+    	    return search_temp_cave(y, x, min, mid - 1);
+	    else if (cave_temp[mid][0] > y)
+	        return search_temp_cave(y, x, mid + 1, max);
+        else
+        {
+			/* Y matches, check X */
+			if(cave_temp[mid][1] < x)
+			    return search_temp_cave(y, x, min, mid - 1);
+            else if (cave_temp[mid][1] > x)
+                return search_temp_cave(y, x, mid + 1, max);
+            else
+                return mid;
+        }
+    }
+    return -1;
+}
+
+/**
+ * Remove all temporary features.  Called occasionally if the cave_temp array is empty,
+ * in case there are missed ones
+ */
+void cave_temp_clean(void)
+{
+	int y, x;
+
+	for(y = 0; y < DUNGEON_HGT; y++)
+	{
+		for(x = 0; x < DUNGEON_WID; x++)
+		{
+			if((cave_feat[y][x] == FEAT_WIND) || (cave_feat[y][x] == FEAT_TREE_BURN))
+				cave_set_feat(y, x, FEAT_FLOOR);
+		}
+	}
+
+	for(y = 0; y < MAX_TEMP_GRIDS; y++)
+	{
+		cave_temp[y][0] = 0;
+		cave_temp[y][1] = 0;
+	}
+}
+           

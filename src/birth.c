@@ -553,6 +553,9 @@ void player_init(struct player *p)
 		p->spell_order[i] = 99;
 
 	p->inventory = C_ZNEW(ALL_INVEN_TOTAL, struct object);
+	
+	/* Hack - don't have black breath */
+	p->black_breath = FALSE;
 
 	/* First turn. */
 	turn = 1;
@@ -1059,6 +1062,9 @@ void player_generate(struct player *p, player_sex *s,
 	get_ahw();
 
     get_history();
+    
+    /* Hack - Start without Black Breath */
+    p->black_breath = FALSE;
     
     /* Make sure starting alignmnet is correct */
     get_alignment();

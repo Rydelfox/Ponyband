@@ -377,3 +377,51 @@ void sort(void *base, size_t nmemb, size_t smemb,
 {
 	qsort(base, nmemb, smemb, comp);
 }
+
+/**
+ * Find the square root of an int
+ * Fast. Not very accurate, but close enough for our purposes
+ */
+int my_sqrt(int x)
+{
+	u16b a, b;
+	b = x;
+	a = x = 0x3f;
+	x = b / x;
+	a = x = (x + a) >> 1;
+	x = b / x;
+	a = x = (x + a) >> 1;
+	x = b / x;
+	a = x = (x + a) >> 1;
+	return x;
+}
+		
+/**
+ * Find the square root of a float
+ */
+double my_dblsqrt (double x)
+{
+	const double ACCURACY=0.01;
+	double lower, upper, guess;
+
+		if (x < 1)
+		{
+			lower = x;
+			upper = 1;
+		}
+		else
+		{
+			lower = 1;
+			upper = x;
+		}
+
+		while ((upper-lower) > ACCURACY)
+		{
+			guess = (lower + upper)/2;
+			if(guess*guess > x)
+				upper =guess;
+			else
+				lower = guess;
+		}
+	return (lower + upper)/2;
+}

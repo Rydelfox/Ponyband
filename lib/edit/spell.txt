@@ -34,8 +34,8 @@
 
 V:1.1.6
 
-N:0:Fire Bolt
-D:Fires a bolt of fire.
+N:0:Acid Bolt
+D:Fires a bolt of acid.
 
 N:1:Detect Monsters
 D:Detects nearby monsters that are not invisible.
@@ -62,8 +62,8 @@ D:blindness and confusion.
 N:8:Identify
 D:Standard identification.
 
-N:9:Lightning Bolt
-D:Fires a bolt or beam of lightning.
+N:9:Fire Bolt
+D:Fires a bolt or beam of fire.
 
 N:10:Confuse Monster
 D:Attempts to confuse one monster.
@@ -77,11 +77,11 @@ D:Attempts to put a monster to sleep.
 N:13:Teleport Self
 D:Random major displacement.
 
-N:14:Spear of Light
-D:Fires a line of weak light.  Affects light-hating creatures.
+N:14:Heroism
+D:Temporary heroism.
 
-N:15:Frost Beam
-D:Fires a beam of cold.
+N:15:Heat Beam
+D:Fires a beam of fire.
 
 N:16:Magical Throw
 D:Throws an item using mental strength.
@@ -92,8 +92,8 @@ D:Fully feeds you.
 N:18:Detect Invisible
 D:Detects nearby invisible monsters.
 
-N:19:Magic Disarm
-D:Attempts to disarm a trap adjacent to you.
+N:19:Probing
+D:Learns most attributes of all monsters in line of sight
 
 N:20:Blink Monster
 D:Teleports a monster a short distance.
@@ -135,9 +135,8 @@ N:32:Hold Monsters
 D:Puts target creatures in Stasis.  They are completely paralyzed and 
 D:invulnerable.
 
-N:33:Clear Mind
-D:Recovers mana much more rapidly than normal resting.  Put this spell in a 
-D:keymap for best results.
+N:33:Friendship
+D:Attempt to charm a monster.
 
 N:34:Resist Element
 D:Temporary opposition to an element.  Cumulative with equipment resistances.
@@ -149,15 +148,15 @@ N:36:Resistance
 D:Temporary opposition to the elements and poison.  Cumulative with equipment 
 D:resistances.
 
-N:37:Essence of Speed
-D:Long-duration haste spell.
-
-N:38:Strengthen Defenses
+N:37:Strengthen Defenses
 D:Greatly increases saving throw and armour class.  Perfect protection from 
 D:blindness and confusion.
 
-N:39:Door Creation
+N:38:Door Creation
 D:Creates a barrier of doors around you.
+
+N:39:Shining Armor's Shield
+D:Reduces incoming damage and redirects it to your mana.
 
 N:40:Stair Creation
 D:Creates a staircase nearby.  Random choice between up or down, except on 
@@ -169,57 +168,58 @@ D:Immediately takes you to an adjacent level.
 N:42:Word of Recall
 D:Recalls you to the town, or to one of four recall points.
 
-N:43:Word of Destruction
-D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes 
-D:uniques from the level.
-
-N:44:Dimension Door
+N:43:Dimension Door
 D:Controlled minor displacement.  Hint:  use the 'p' option when you enter 
 D:targeting mode.
 
-N:45:Acid Bolt
-D:Fires a bolt or beam of acid.
+N:44:Hit and Run
+D:Strike an enemy, then blink away.
 
-N:46:Polymorph Other
+N:45:Polymorph Other
 D:Attempts to change a monster.
 
-N:47:Earthquake
+N:46:Earthquake
 D:Shakes the nearby area, randomly scrambling terrain.
 
-N:48:Beguiling
+N:47:Beguiling
 D:Very powerful attempt to confuse, slow, and then sleep all monsters.
 
-N:49:Starburst
-D:Fires a ball of light centered on you.
+N:48:Focus
+D:Gather energy to temporarily increase the level of your spells.
 
-N:50:Major Recharge
+N:49:Major Recharge
 D:Powerful recharging spell.
 
-N:51:Cloud Kill
+N:50:Cloud Kill
 D:Fires a large poison and acid ball.
 
-N:52:Ice Storm
-D:Fires a large ice ball.
+N:51:Force Beam
+D:Fires a beam of unresistable magical energy.
+
+N:52:Word of Destruction
+D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes 
+D:uniques from the level.
 
 N:53:Meteor Swarm
 D:Fires a small but unresistible magic ball.
 
-N:54:Cacophony
+N:54:Royal Canterlot Voice
 D:Hits all monsters in line of sight with a blast of sound.
 
-N:55:Unleash Chaos
-D:Fires a large chaos ball.
-
-N:56:Wall of Force
+N:55:Wall of Force
 D:Fires an arc of force.
 
-N:57:Rune of the Elements
+N:56:Rune of the Elements
 D:Lays a rune which increases (player) or decreases (monster) elemental spells 
 D:cast from it.  Maximum of four runes.
 
-N:58:Rune of Magic Influence
+N:57:Rune of Magic Influence
 D:Lays a rune which increases (player) or decreases (monster) the saving throw 
 D:of one standing on it.  Maximum of four runes.
+
+N:58:Explosive Rune
+D:Lays a rune which exploses, dealing damage to the surrounding area when walked
+D:on by a monster.  Maximum of four runes.
 
 N:59:Rune of Instability
 D:Lays a rune which creates an earthquake when walked on.  Maximum of four 
@@ -242,597 +242,411 @@ N:63:Rune of Speed
 D:Lays a rune which increases (player) or decreases (monster) the speed of one 
 D:standing on it.  One rune only.
 
-N:64:Detect Evil
-D:Detects all nearby evil monsters, even invisible ones.
+N:64:Detect Chaos
+D:Detects all nearby chaotic monsters, even invisible ones.
 
-N:65:Cure Light Wounds
+N:65:Cure Minor Wounds
 D:Reduces cuts and heals you a little.
 
-N:66:Bless
+N:66:Celestia's Blessing
 D:Short-duration bonus to fighting ability and armour class.
 
 N:67:Remove Fear
 D:Removes any fear you currently feel.
 
-N:68:Call Light
-D:Permanently lights up the area lit by your light source or a room.
+N:68:Sunlance
+D:Fires a bolt or beam of light and fire.
 
-N:69:Find Traps
-D:Detects all nearby traps.
+N:69:Purify
+D:Cure poison and cuts.
 
-N:70:Detect Doors/Stairs
-D:Detects all nearby doors and stairs.
+N:70:Resist Fire
+D:Become resistant to fire.
 
-N:71:Slow Poison
-D:Reduces the amount of poison in your system.
+N:71:Heroism
+D:Temporary heroism.
 
-N:72:Cure Serious Wounds
+N:72:Cure Medium Wounds
 D:Reduces cuts and heals you a moderate amount.
 
-N:73:Scare Monster
-D:Attempts to frighten one monster.
+N:73:Absorb Light
+D:Draw in light around you to heal yourself.
 
-N:74:Portal
-D:Random medium-range displacement.
+N:74:Detect Undead
+D:Detects nearby undead monsters.
 
-N:75:Chant
-D:Medium-duration bonus to fighting ability and armour class.
-
-N:76:Sanctuary
-D:Attempts to put all monsters next to you to sleep.
-
-N:77:Satisfy Hunger
+N:75:Satisfy Hunger
 D:Fully feeds you.
+
+N:76:Turn Undead
+D:Scare all undead within sight.
+
+N:77:Sense Minds
+D:Temporarily detect the minds of those around you.
 
 N:78:Remove Curse
 D:Attempts to remove curses from an item.
 
-N:79:Resist Heat and Cold
-D:Temporary opposition to fire and frost.  Cumulative with equipment 
-D:resistances.
+N:79:Eulogy
+D:Damage all undead in sight.
 
-N:80:Neutralize Poison
-D:Removes all poison from your body.
+N:80:Solar Ray
+D:Fire a beam of light and fire.
 
-N:81:Orb of Draining
-D:Fires an orb of holy force that does extra damage to evil creatures.
+N:81:Dispel Night
+D:Inflict damage on Demons and undead, scare chaotic creatures, and light 
+D:the room around you.
 
-N:82:Sense Invisible
-D:Temporary see invisible.
+N:82:Torch
+D:Burn a single enemy and shine a bright light in the surrounding area.
 
-N:83:Protection from Evil
-D:Temporary protection from lesser evil creatures.
+N:83:Brighten
+D:Brightens lit areas with intense light.
 
 N:84:Cure Mortal Wounds
 D:Reduces cuts and heals you a large amount.
 
-N:85:Earthquake
-D:Shakes the nearby area, randomly changing terrain.
+N:85:Solar Flare
+D:Fire off an arc of fire.
 
-N:86:Sense Surroundings
-D:Maps the local area.
+N:86:Judgment
+D:Fires a beam of force that is exceptionally strong again chaotic cratures 
+D:but won't harm harmonious ones.
 
-N:87:Turn Undead
-D:Attempts to make all undead monsters in line of sight turn and run.
+N:87:Final Rest
+D:Destroy a single undead monster, tiring you. Also destroys any corpses.
 
-N:88:Prayer
-D:Long-duration bonus to fighting ability and armour class.
-
-N:89:Dispel Undead
-D:Dispels all undead in line of sight.
-
-N:90:Heal
+N:88:Heal
 D:A large amount of healing, eliminates cuts and stunning.
 
-N:91:Dispel Evil
-D:Dispels all evil monsters in line of sight.
+N:89:Breaking
+D:Destroy a single trap, door, or wall
 
-N:92:Sacred Shield
-D:Temporarily increases armour class by 50.
+N:90:Holding
+D:Attempts to put a monster in stasis or fully bar a door.
 
-N:93:Glyph of Warding
-D:Places a glyph on the floor that monsters cannot pass over or be summoned on 
-D:until broken.  Max of four glyphs on a level; disarm extras.
+N:91:Banishment
+D:DRemoves all evil monsters in line of sight.
 
-N:94:Holy Word
-D:Strong dispel evil, healing, and remove poisoning, fear, stunning, and cuts.
+N:92:Horn of Wrath
+D:Generate a ball of sound around yourself, injuring and scaring monsters.
 
-N:95:Blink
+N:93:Healing
+D:An extremely strong healing spell.  Removes cuts and stuns.
+
+N:94:Renewing Dawn
+D:Lights the area around you, damaging the undead and healing the living, including 
+D:yourself.
+
+N:95:Celestia's Grace
+D:Damage and debilitate monsters, especially those close to you. Also heals you.
+
+N:96:Blink
 D:Minor random displacement.
 
-N:96:Teleport Self
-D:Long-range random displacement.
+N:97:Teleport Self
+D:Long-range displacement.
 
-N:97:Teleport Other
-D:Teleports an opponent away.
-
-N:98:Teleport Level
-D:Immediately takes you to the next level up or down.
+N:98:Portal
+D:Targeted displacement within line of sight.
 
 N:99:Word of Recall
 D:Recalls you to the town, or to one of your recall points.
 
-N:100:Alter Reality
+N:100:Teleport Level
+D:Immediately takes you to the next level up or down.
+
+N:101:Teleport Other
+D:Teleports an opponent away.
+
+N:102:Alter Reality
 D:Regenerates the level.
 
-N:101:Detect Monsters
-D:Detects nearby monsters that are not invisible.
+N:103:Detect Doors and Stairs
+D:Detects all nearby doors and stairs.
 
-N:102:Detection
-D:Detects all nearby monsters, traps, doors, stairs, gold seams, and objects.
-
-N:103:Perception
+N:104:Perception
 D:Learns about a monster's attributes and resistances.
 
-N:104:Probing
+N:105:Probing
 D:Standard identification of an object.
 
-N:105:Clairvoyance
-D:Permanently light up the entire level, except for vaults, and detect everything nearby.
-
-N:106:Banishment
-D:Teleports away all evil monsters in line of sight.
-
-N:107:Healing
-D:An extremely strong healing spell.  Removes cuts and stuns.
-
-N:108:Sacred Knowledge
+N:106:Sacred Knowledge
 D:Full identification of any object, including curses.
 
-N:109:Restoration
+N:107:Detection
+D:Detects all nearby monsters, traps, doors, stairs, gold seams, and objects.
+
+N:108:Clairvoyance
+D:Permanently light up the entire level, except for vaults, and detect everything nearby.
+
+N:109:Sacred Shield
+D:Temporarily increases armour class by 50.
+
+N:110:Righteous Fury
+D:Gain heroism, blessing, and berserk.
+
+N:111:Curing
+D:Cures all stunning, heals all cuts, neutralizes poison, and cures blindness, 
+D:confusion, and fear.
+
+N:112:Steadfast
+D:Stay still and guard yourself from all injury for a moment.
+
+N:113:Sustaining
+D:Sustains some stats.  Sustains more stats as you increase in level.
+
+N:114:Restoration
 D:Restores all stats.
 
-N:110:Remembrance
+N:115:Remembrance
 D:Restores experience level.
 
-N:111:Unbarring Ways
-D:Destroys all doors next to you.
+N:116:Glory
+D:Gain heroism and blessing for an extended time.
 
-N:112:Recharging
-D:Medium strength recharging spell.
+N:117:Resist Heat and Cold
+D:Gain resistance to fire and cold.
 
-N:113:Dispel Curse
-D:Makes multiple attempts to remove curses from one object.
+N:118:Protection from Chaos
+D:Temporary protection from chaotic creatures.
 
-N:114:Disarm Trap
-D:Attempts to disarm an adjacent trap.
+N:119:Glyph of Warding
+D:Places a glyph on the floor that monsters cannot pass over or be summoned on 
+D:until broken.  Max of four glyphs on a level; disarm extras.
 
-N:115:Holding
-D:Attempts to put a monster in stasis or fully bar a door.
+N:120:Rally Ally
+D:Cure a pet of fear, confusion, and injury, or charm a non-unique monster of your 
+D:alignment.
 
-N:116:Enchant Weapon or Armour
-D:Adds plusses to Skill and Deadliness to weapons or plusses to armour class 
-D:to armour.
+N:121:Circle of Harmony
+D:Alter nearby terrain to treat you as aligned with harmony and hurt chaotic 
+D:creatures.
 
-N:117:Light of Manwe
-D:Fires a large ball of light.
+N:122:Sanctify for Battle
+D:Temporary Slay Evil.  Acts like (and can replace) a standard Slay evil weapon.
 
-N:118:Lance of Orome
-D:Fires a beam of holy magic that does extra damage to evil creatures.
+N:123:Challenge
+D:Threaten an enemy, removing its fear and causing it to desire to fight up close.
 
-N:119:Hammer of Aule
-D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes 
-D:uniques from the level.
+N:124:Concentrate Light
+D:Draw all nearby light to a single square, damaging its occupent.
 
-N:120:Strike of Mandos
-D:Strikes at the soul of a living monster.
+N:125:Holy Word
+D:Damage chaotic creatures while healing yourself of damage, poison, and fear
 
-N:121:Call on Varda
+N:126:Radiance
 D:Large ball of light centered on you, healing, and a powerful frighten 
 D:monsters spell.
 
-N:122:Elemental Infusion
-D:Select a temporary elemental brand.  More brands become available as you 
-D:gain levels.  Only one brand is available at a time.  For Paladins, only 
-D:works on melee weapons.
+N:127:Annihilate Undead
+D:Eliminate all nearby undead monsters, exhausting you. Powerful or unique undead 
+D:may resist. Also destroys corpses and skeletons in sight.
 
-N:123:Sanctify for Battle
-D:Temporary Slay Evil.  Acts like (and can replace) a standard Slay evil weapon.
+N:128:Lightning Spark
+D:Strike with a burst of lightning.
 
-N:124:Horn of Wrath
-D:Heroism, frightens monsters, also a little healing and recovery of courage.
+N:129:Nature Awareness
+D:Detect all monsters, objects, special terrain, and traps near trees.
 
-N:125:Hit and Run
-D:The next time you hit or steal from a monster, you will teleport away.
-
-N:126:Day of Misrule
-D:Renders you hasted and berserk.
-
-N:127:Detect Treasure
-D:Detects nearby objects, treasure and gold seams.
-
-N:128:Detect Life
-D:Detects all nearby living monsters, even invisible ones.
-
-N:129:Call Light
-D:Permanently lights up the area lit by your light source or a room.
-
-N:130:Foraging
+N:130:Graze
 D:Fully feeds you.
 
-N:131:Blink
-D:Minor random displacement.
+N:131:Natural Light
+D:Lets random light into the surrounding area.
 
-N:132:Combat Poison
-D:Reduces the amount of poison in your system.
+N:132:Clean Wound
+D:Removes poison from your system and heals cuts.
 
-N:133:Lightning Spark
-D:Short-range beam of lightning.
+N:133:Resist Weather
+D:Gain resistance to cold and lightning.
 
-N:134:Door Destruction
-D:Destroys all doors next to you.
+N:134:Stone to Tree
+D:Turn a wall into a tree or damage a stone creature.
 
-N:135:Turn Stone to Mud
-D:Melts a wall square to floor.
+N:135:Frost Bolt
+D:Fires a bolt or beam of cold.
 
-N:136:Ray of Sunlight
-D:Fires a line of weak light.  Affects light-hating creatures.
+N:136:Resist Burning and Corrosion
+D:Gain resistance to fire and acid.
 
-N:137:Cure Poison
-D:Removes all poison from your body.
+N:137:Forest Creation
+D:Causes trees and grass to grow in the surrounding area.
 
-N:138:Frost Bolt
-D:Fires a bolt or beam of frost.
+N:138:Flood
+D:Fires a ball of water that leaves the surrounding area flooded.
 
-N:139:Sleep Creature
-D:Attempts to put a monster to sleep.
+N:139:Entangle
+D:Attempts to slow all monsters in line of sight.
 
-N:140:Frighten Creature
-D:Attempts to frighten a monster.
+N:140:Herbal Healing
+D:Healing, plus removal of all cuts and poison.
 
-N:141:Detect Traps/Doors
-D:Detects nearby traps, doors, and stairs.
+N:141:Sunbolt
+D:Fires a bolt or beam of harsh light
 
-N:142:Snuff Small Life
+N:142:Crushing Vines
+D:Damage enemies whose movement is impared.
+
+N:143:Ice Beam
+D:Fire a beam of cold that leaves behind patches of ice.
+
+N:144:Frighten Creature
+D:Attempt to scare a single monster.
+
+N:145:Root
+D:Attempt to root a monster.
+
+N:146:Freedom of Movement
+D:Temporarily grants free action.
+
+N:147:Camouflage
+D:Temporary increase to stealth.
+
+N:148:Barkskin
+D:Temporarily increases armour class by 50.
+
+N:149:Wood Wall
+D:Turn nearby trees into walls.
+
+N:150:Heroism
+D:Temporary heroism.
+
+N:151:Nature Lore
+D:Identify all potions, scrolls, and staves you are holding.
+
+N:152:Speed of the Cheetah
+D:Temporarily hasten yourself.
+
+N:153:Wall of Stone
+D:Create a single stone wall next to you.
+
+N:154:Snuff Small Life
 D:Kills all weak monsters in line of sight; spell has no effect on stronger 
 D:creatures.
 
-N:143:Fire Bolt
-D:Fires a bolt or beam of fire.
+N:155:Calm Animals
+D:Put all animals in line of sight to sleep.
 
-N:144:Heroism
-D:Temporary heroism.
+N:156:Ice Patch
+D:Cover the surrounding ground in ice.
 
-N:145:Remove Curse
-D:Attempts to remove curses from an item.
+N:157:Starburst
+D:Fires a large ball of light centered on yourself.
 
-N:146:Acid Bolt
-D:Fires a bolt or beam of acid.
+N:158:Sleep Pollen
+D:Stur up a cloud of pollen, putting creatures to sleep.
 
-N:147:Teleport Monster
-D:Teleports a monster away.
+N:159:Thorns
+D:Damage creatures standing on trees or grass.
 
-N:148:Gravity Bolt
-D:Fires a bolt or beam of gravity.
+N:160:Cyclone
+D:Strong winds damage and knock about enemies. Strong winds are left in the 
+D:area, deflecting projectiles.
 
-N:149:Resist Poison
-D:Temporary opposition to poison.  Cumulative with equipment resistances.
-
-N:150:Earthquake
-D:Shakes the nearby area, randomly changing terrain.
-
-N:151:Resist Fire & Cold
-D:Temporary opposition to fire and cold.  Cumulative with equipment resistances.
-
-N:152:Detect All
-D:Detects all nearby monsters, traps, doors, stairs, gold seams, and objects.
-
-N:153:Natural Vitality
-D:Recovers from wounds, poison and physical damage far more rapidly than 
-D:normal resting.  This is a good spell to assign to a keymap.
-
-N:154:Resist Acid & Lightning
-D:Temporary opposition to acid and electricity.  Cumulative with equipment 
-D:resistances.
-
-N:155:Wither Foe
-D:Hurts a monster, then attempts to slow and confuse it.
-
-N:156:Disarm Trap
-D:Attempts to disarm an adjacent trap.
-
-N:157:Identify
-D:Standard identification of an object.
-
-N:158:Create Athelas
-D:Creates Athelas.
-
-N:159:Raging Storm
-D:Fires a large lightning ball.
-
-N:160:Thunderclap
-D:Fires a very large sound ball.
-
-N:161:Become Mouse
+N:161:Polymorph Mouse
 D:Turns you into a silent mouse.
 
-N:162:Become Ferret
+N:162:Polymorph Ferret
 D:Turns you into a ferret, most crafty of animals.
 
-N:163:Become Hound
+N:163:Polymorph Hound
 D:Turns you into a hound always aware of its surroundings.
 
-N:164:Become Gazelle
+N:164:Polymorph Gazelle
 D:Turns you into a speedy gazelle.
 
-N:165:Become Lion
+N:165:Polymorph Lion
 D:Turns you into a dauntless lion.
 
-N:166:Detect Evil
-D:Detects all nearby evil monsters, even invisible ones.
+N:166:Polymorph Tree
+D:Turns you into an unyeilding tree.
 
-N:167:Song of Frightening
-D:Attempts (strongly) to frighten all monsters in line of sight.
+N:167:Infravision
+D:Increases the range at which you can see warm-blooded creatures by 3.
 
-N:168:Sense Surroundings
-D:Maps the local area.
+N:168:Call Light
+D:Permanently lights up the area lit by your light source or a room.
 
-N:169:Sight beyond Sight
+N:169:Detect Life
+D:Detects all nearby living monsters, even invisible ones.
+
+N:170:Detect Traps and Doors
+D:Detects nearby traps and doors.
+
+N:171:Creature Knowledge
+D:Learns most attributes of all monsters in line of sight.
+
+N:172:Sight Beyond Sight
 D:Detects all nearby monsters, traps, doors, and stairs, and grants temporary 
 D:see invisible.
 
-N:170:Herbal Healing
-D:Healing, plus removal of all cuts and poison.	/* 170 - herbal healing */
-
-N:171:Blizzard
-D:Fires a very large cold ball.
-
-N:172:Trigger Tsunami
-D:Hurls water outwards from yourself in all directions.
-
-N:173:Volcanic Eruption
-D:Fires a very large fire ball and trigger an earthquake.
-
-N:174:Molten Lightning
-D:Fires a small, intense plasma ball.
-
-N:175:Starburst
-D:Fires a large ball of light centered on yourself.
-
-N:176:Song of Lulling
-D:Attempts to slow and sleep all monsters in line of sight.
-
-N:177:Song of Protection
-D:Temporarily increases armour class by 50.
-
-N:178:Song of Dispelling
-D:Dispels all monsters in line of sight.  Extra damage to evil creatures.
-
-N:179:Song of Warding
-D:Places a glyph on the floor that monsters cannot pass over or be summoned on 
-D:until broken.
-
-N:180:Song of Renewal
-D:Restores all your stats.
-
-N:181:Web of Vairë
-D:Fires a bolt or beam of time.
-
-N:182:Speed of Nessa
-D:Temporarily hastens you.
-
-N:183:Renewal of Vána
-D:Recharges a magical item.
-
-N:184:Servant of Yavanna
-D:Turns you into a wise and powerful Elder Ent.   Use potions or spells to 
-D:protect yourself from fire!
-
-N:185:Tears of Nienna
-D:Restores your experience.
-
-N:186:Healing of Este
-D:Dispels evil monsters, heals you, blesses you, and removes fear, poisoning, 
-D:stunning, and cuts.
-
-N:187:Creature Knowledge
-D:Low-level probing spell that lets you learn about racial type and basic 
-D:resistances.
-
-N:188:Nature's Vengeance
-D:Hurts any monster on grass or near trees.  Animals take less damage.
-
-N:189:Song of Growth
-D:Encourages trees and grass grow in your line of sight.
-
-N:190:Song of Preservation
-D:Makes one object proof against acid and fire attacks.	
-
-N:191:Tremor
+N:173:Tremor
 D:Creates a small, targetable earthquake.
 
-N:192:Nether Bolt
-D:Fires a bolt of nether force.
+N:174:Elemental Branding
+D:Select a temporary elemental brand.  More brands become available as you 
+D:gain levels.  Only one brand is available at a time.
 
-N:193:Detect Evil
-D:Detects all nearby evil monsters, even invisible ones.
+N:175:Chain Lightning
+D:Fires a bolt of lightning that bounces off enemies.
 
-N:194:Enhanced Infravision
-D:Increases the range at which you can see warm-blooded creatures by 3.
+N:176:Earthquake
+D:Shakes the nearby area, randomly changing terrain.
 
-N:195:Break Curse
-D:Attempts to remove curses from one object.
+N:177:Blizzard
+D:Fires a very large cold ball.
 
-N:196:Slow Monster
-D:Attempts to slow a monster.
+N:178:Trigger Tsunami
+D:Hurls water outwards from yourself in all directions.
 
-N:197:Sleep Monster
+N:179:Sleep Creature
 D:Attempts to put a monster to sleep.
 
-N:198:Horrify
-D:Attempts to frighten a monster.
+N:180:Nature Friend
+D:Summons animals to serve as your pets.
 
-N:199:Become Bat
-D:Turns you into a fast-fluttering bat.
+N:181:Animal Taming
+D:Entice and animal to become your pet.
 
-N:200:Door Destruction
-D:Destroys all doors next to you.
+N:182:Heal Animals
+D:Heals all animals within sight.
 
-N:201:Dark Bolt
-D:Fires a bolt or beam of darkness.
+N:183:Stare
+D:Stare down an enemy, attempting to charm, stun, or scare it.
 
-N:202:Noxious Fumes
-D:Covers the immediate area with a cloud of poison.  Does not quickly lose 
-D:strength with distance from the center.
+N:184:Natural Renewal
+D:Restores all your stats.
 
-N:203:Turn Undead
-D:Attempts to make all undead monsters in line of sight flee.
+N:185:Natural Vitality
+D:Recovers from wounds, poison and physical damage far more rapidly than 
+D:normal resting.  This is a good spell to assign to a keymap.
 
-N:204:Turn Evil
-D:Attempts to make all evil monsters in line of sight flee.
+N:186:Wither Foe
+D:Hurts a monster, then attempts to slow and confuse it.
 
-N:205:Cure Poison
-D:Removes all poison from your system.
+N:187:Teleport Monster
+D:Teleports an opponent away.	
 
-N:206:Dispel Undead
-D:Attacks all undead creatures in line of sight.
+N:188:Wood Walk
+D:Teleport to any tree or body of water.
 
-N:207:Dispel Evil
-D:Attacks all evil creatures in line of sight.
+N:189:Volcano
+D:Shakes the area, shifting the terrain and releasing lava.
 
-N:208:See Invisible
-D:Grants temporary see invisible.
+N:190:Nature's Wrath
+D:Damages any monster on or by a tree, then creates additional trees.
 
-N:209:Shadow Shifting
-D:Random minor displacement.
+N:191:Detect Treasure
+D:Detects nearby objects, treasure and gold seams.
 
-N:210:Detect Traps
-D:Detects all nearby traps.
-
-N:211:Detect Doors/Stairs
-D:Detects all nearby doors.
-
-N:212:Sleep Monsters
-D:Attempts to put all monsters in line of sight to sleep.
-
-N:213:Slow Monsters
-D:Attempts to slow all monsters in line of sight.
-
-N:214:Detect Magic
-D:Detects nearby magical objects.
-
-N:215:Death Bolt
-D:Fires a bolt or beam of life-draining magic.
-
-N:216:Resist Poison
-D:Temporary opposition to poison.  Cumulative with equipment resistances.
-
-N:217:Exorcise Demons
-D:Attacks all demons in line of sight.
-
-N:218:Dark Spear
-D:Fires a beam of darkness.
-
-N:219:Chaos Strike
-D:Fires a heavy bolt of chaos.
-
-N:220:Genocide
-D:Deletes all monsters of the symbol you choose from the level. 
-
-N:221:Dark Ball
-D:Fires a large ball of darkness.
-
-N:222:Stench of Death
-D:Dispels living creatures, attempts to confuse all survivors, and then 
-D:blankets everything in a cloud of poison.
-
-N:223:Probing
-D:Learns most attributes of all monsters in line of sight.
-
-N:224:Shadow Mapping
-D:Maps the immediate area.
-
-N:225:Identify
-D:Normal identify spell.
-
-N:226:Shadow Warping
-D:Random large-range displacement.
-
-N:227:Poison Ammo
-D:Coats any non-ego missile or stack of missiles in deadly poison.
-
-N:228:Resist Acid and Cold
-D:Temporary opposition to cold and acid.  Cumulative with equipment resistances.
-
-N:229:Cure Any Wound
-D:Removes all cuts and stunning.
-
-N:230:Protection From Evil
-D:Grants temporary protection from evil.
-
-N:231:Black Blessing
-D:Temporary increase to armour class and fighting ability.
-
-N:232:Banish Evil
-D:Teleports away all evil monsters in line of sight.
-
-N:233:Shadow Barrier
-D:Increases armour class by 35 temporarily.
-
-N:234:Detect All Monsters
-D:Detects all nearby monsters.
-
-N:235:Strike at Life
-D:Fires a nether bolt.
-
-N:236:Orb of Death
-D:Fires a life-draining orb.
-
-N:237:Dispel Life
-D:Attacks all living creatures in line of sight.
-
-N:238:Vampiric Drain
-D:Fires a life-draining bolt, heals you, and increases your food by a set 
-D:amount.
-
-N:239:Recharging
-D:Medium-strength recharging spell.
-
-N:240:Become Werewolf
-D:Turns you into a raging werewolf.
-
-N:241:Dispel Curse
-D:Makes multiple attempts to remove curses from one item.
-
-N:242:Become Vampire
-D:Turns you into a fell vampire.
-
-N:243:Haste Self
-D:Hastens you temporarily.
-
-N:244:Prepare Black Breath
-D:Allows you to infect a monster with the Black Breath, which prevents 
-D:regeneration.
-
-N:245:Word of Destruction
-D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes 
-D:uniques from the level.
-
-N:246:Teleport Other
-D:Teleports a monster away.
-
-N:247:Smash Undead
-D:Attacks all undead in line of sight.
-
-N:248:Bind Undead
-D:Places all undead in a powerful Statis.
-
-N:249:Darkness Storm
-D:Fires a large darkness ball.
-
-N:250:Mental Awareness
-D:Grants temporary telepathy.
-
-N:251:Slip into the Shadows
+N:192:Slip Into Shadows
 D:Renders you almost imperceptible to sleeping monsters and those not normally 
 D:found deeper than twice your depth.  You become fully visible as soon as you 
 D:inflict any damage on or steal from a monster.
 
-N:252:Bloodwrath
-D:Hastens you and drives you into a berserk rage.
+N:193:Sense Invisible
+D:Temporary see invisible.
 
-N:253:Rebalance Weapon
-D:Grants any non-artifact throwing weapon perfect balance. 
-
-N:254:Dark Power
-D:Turns 75 hitpoints into mana.
+N:194:Magic Mapping
+D:Maps the immediate area.

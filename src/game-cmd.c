@@ -652,7 +652,6 @@ void process_command(cmd_context ctx, bool no_request)
             {
                 bool get_target = FALSE;
                 
-                logbug("Received CMD_PET\n");
                 if(pet_command_needs_aim(cmd->arg[0].choice)) {
                     if (!cmd->arg_present[1])
                         get_target = TRUE;
@@ -668,7 +667,6 @@ void process_command(cmd_context ctx, bool no_request)
                 if(get_target && !get_aim_dir(&cmd->arg[1].direction))
                     return;
                 
-                logbug("No aim\n");
                 cmd->arg_present[1] = TRUE;
                 
                 break;
