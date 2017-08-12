@@ -534,8 +534,8 @@ B:37:165:28:20:75:28	# Polymorph Lion
 B:38:166:40:24:85:32	# Polymorph Tree
 # Book 5
 B:39:167:20:2:20:16		# Infravision
-B:40:168:24:4:40:20		# Call Light
-B:41:169:20:5:50:20		# Detect Life
+B:40:168:23:4:40:20		# Call Light
+B:41:169:24:5:50:20		# Detect Life
 B:42:170:25:6:60:25		# Detect Traps & Doors
 B:43:171:28:20:60:60	# Creature Knowledge
 B:44:172:31:18:50:15	# Sight Beyond Sight

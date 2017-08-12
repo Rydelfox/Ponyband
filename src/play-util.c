@@ -235,3 +235,86 @@ int get_player_alignment(void)
     /* Default */
     return ALIGN_NEUTRAL;
 }
+
+/*
+ * Add a new pet
+ */
+bool add_pet(monster_type *m_ptr)
+{
+	int i;
+	int max_pet = adj_cha_max_pet[p_ptr->stat_cur[A_CHR]]
+
+	/* Determine if you are over your limit */
+	if (p_ptr->curr_pets >= max_pet)
+	{
+		return FALSE;
+	}
+	if (p_ptr->curr_pets >= MAX_NUM_PETS)
+	{
+		return FALSE;
+	}
+
+	/* Add the pet to the list */
+	for (i = 0; i < max_pet; i++)
+	{
+		if (p_ptr->pet_list[i] != 0)
+			continue;
+		p_ptr->pet_list[i] = m_ptr;
+		m_ptr->pet_num = i;
+
+		m_ptr->faction = F_PLAYER;
+		m_ptr->hostile = 0;
+		m_ptr->group = 0;
+		m_ptr->group_leader = -1;
+		m_ptr->y_terr = p_ptr->py;
+		m_ptr->x_tess = p_ptr->px;
+		target_get(m_ptr->ty, m_ptr->tx);
+		p_ptr->curr_pets++;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/* Helper function for compact_pets to sort the list */
+static void compact_pets_aux(monster_type* arr[], int left, int right)
+{
+	int i = left, j = right;
+	monster_type *tmp_ptr;
+	int pivot = left + right / 2;
+
+	/* Partition */
+	while (i <= j)
+	{
+		while (arr[i] > 0)
+			i++;
+		while (arr[j] <= 0)
+			j++;
+		if ((i <= j))
+		{
+			tmp_ptr = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tmp_ptr;
+			i++;
+			j--;
+		}
+	}
+
+	if (left < j)
+		compact_pets_aux(arr, left, j);
+	if (i < right)
+		compact_pets_aux(arr, i, right);
+}
+
+void compact_pets(void)
+{
+	int i;
+
+	/* Compact the list by moving all non-blank entries to the left */
+	compact_pets_aux(p_ptr->pet_list, 0, MAX_NUM_PETS);
+
+	/* Update the indexes of all pets */
+	for (i = 0; i < MAX_NUM_PETS; i++)
+	{
+		p_ptr->pet_list[i]->pet_num = i;
+	}
+}

@@ -543,6 +543,7 @@ typedef struct monster {
     s16b target;   /**< The id of the monster's target, 0 for none, or -1 for the player */
     u16b threat;   /**< Amount of threat on the current target */
     u16b faction; /**< The faction the monster is part of */
+    s16b pet_num; /**< Index is player's pet list. -1 for non-pet */
 
 } monster_type;
 

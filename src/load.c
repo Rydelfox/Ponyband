@@ -260,6 +260,7 @@ static int rd_monster(monster_type * m_ptr)
 	rd_u16b(&m_ptr->group_leader);
 	rd_u16b(&m_ptr->faction);
 	rd_u16b(&m_ptr->threat);
+	rd_s16b(&m_ptr->pet_num);
 
 	/* Territorial info */
 	rd_u16b(&m_ptr->y_terr);
@@ -1161,6 +1162,19 @@ int rd_player_1(void)
 	rd_s16b(&p_ptr->energy);
 	rd_s16b(&p_ptr->word_recall);
 	rd_s16b(&p_ptr->state.see_infra);
+
+	/* Pet info */
+	rd_u16b(&p_ptr->max_pets);
+	rd_u16b(&p_ptr->curr_pets);
+	for(i = 0; i < MAX_NUM_PETS; i++)
+	{
+		s16b m_idx;
+		rd_s16b(m_idx);
+		if(m_idx < 0)
+			p_ptr->pet_list[i] = 0;
+		else
+			p_ptr->pet_list[i] = &m_list[m_idx];
+	}
 
 	/* Find the number of timed effects */
 	rd_byte(&tmd_max);

@@ -45,7 +45,7 @@ M:P:13
 # Maximum number of player classes
 M:C:7
 # Maximum number of player history lines
-M:H:507
+M:H:508
 
 # Maximum number of owners per store
 M:B:14

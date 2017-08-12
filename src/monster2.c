@@ -59,6 +59,13 @@ void delete_monster_idx(int i)
 	/* Hack -- Reduce the racial counter */
 	r_ptr->cur_num--;
 
+	/* Remove as pet */
+	if (m_ptr->pet_num >= 0)
+	{
+		p_ptr->pet_list[pet_num] = -1;
+		compact_pets();
+	}
+
 	/* Hack -- count the number of "reproducers" */
 	if (rf_has(r_ptr->flags, RF_MULTIPLY))
 		num_repro--;
@@ -344,6 +351,11 @@ void wipe_m_list(void)
 
 	/* Hack -- reset "reproducer" count */
 	num_repro = 0;
+
+	/* Reset all pet information */
+	for (i = 0; i < MAX_NUM_PETS; i++)
+		p_ptr->pet_list[i] = -1;
+	p_ptr->curr_pets = 0;
 
 	/* Hack -- no more target */
 	target_set_monster(0);
@@ -2435,8 +2447,16 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp, u16b summon_fac
 	/* Set the group leader, if there is one */
 	n_ptr->group_leader = group_leader;
 	
-	/* Set the group faction */
+	/* Set the group faction and pet status */
 	n_ptr->faction = summon_faction;
+	if (summon_faction == F_PLAYER)
+	{
+		if (!add_pet(n_ptr))
+		{
+			/* Cannot add a new pet */
+			return (FALSE);
+		}
+	}
 
 	/* Initialize racial monster */
 	if (rf_has(r_ptr->flags, RF_RACIAL)) {

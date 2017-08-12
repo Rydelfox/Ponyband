@@ -33,6 +33,7 @@
 #include "mapmode.h"
 #include "monster.h"
 #include "tvalsval.h"
+#include "player.h"
 #include "prefs.h"
 #include "quest.h"
 #include "savefile.h"
@@ -584,6 +585,12 @@ static void process_world(void)
 	 * challenge */
 	if ((bones_selector) && (!(was_ghost)))
 		ghost_challenge();
+
+	/* Free any over-limit pets */
+	reduce_pets();
+
+	/* Compact the pet list */
+	compact_pets();
 
 	/*** Damage over Time ***/
 

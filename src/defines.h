@@ -136,6 +136,11 @@
 #define DETECT_RAD_DEFAULT      30
 #define DETECT_RAD_MAP          255
 
+/*
+ * Maximum number of pets
+ */
+#define MAX_NUM_PETS			24
+
 /**
  * Maximum amount of Angband windows.
  */

@@ -191,6 +191,7 @@ static void wr_monster(monster_type * m_ptr)
 	wr_u16b(m_ptr->group_leader);
 	wr_u16b(m_ptr->faction);
 	wr_u16b(m_ptr->threat);
+	wr_s16b(m_ptr->pet_num);
 
 	/* Territorial info */
 	wr_u16b(m_ptr->y_terr);
@@ -631,6 +632,17 @@ void wr_player(void)
 	wr_s16b(p_ptr->energy);
 	wr_s16b(p_ptr->word_recall);
 	wr_s16b(p_ptr->state.see_infra);
+
+	/* Pet info */
+	wr_u16b(p_ptr->max_pets);
+	wr_u16b(p_ptr->curr_pets);
+	for (i = 0; i < MAX_NUM_PETS; i++)
+	{
+		if(p_ptr->pet_list[i] == 0)
+			wr_s16b(-1);
+		else
+			wr_s16b(cave_m_idx[p_ptr->pet_list[i]->fy][p_ptr->pet_list[i]->fx]);
+	}
 
 	/* Find the number of timed effects */
 	wr_byte(TMD_MAX);

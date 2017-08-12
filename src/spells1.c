@@ -5540,27 +5540,41 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
     	    	/* We've succeeded. Charm the monster */
     	    	else
     	    	{
-    	    	   	/* Announce */
-    	    	   	note = " shifts its loyalty.";
-						
-					/* Put the monster in the player's faction */
-    	    	   	m_ptr->faction = F_PLAYER;
-    	    	    	
-    	    	   	/* Take the player's target */
-    	    	   	if (target_is_set())
-    	    	   	    pet_target(m_ptr);
-	    	        else
-	    	            m_ptr->target = 0;
-	    	    	        
- 	    	        /* Adjust group membership */
- 	    	        m_ptr->group = -1;
- 	    	        m_ptr->group_leader = -1;
- 	    	            
- 	    	        /* Clear threat */
- 	    	        m_ptr->threat = 0;
- 	    	            
- 	    	        /* Reset hostility */
- 	    	        m_ptr->hostile = 0;
+    	    	   	/* Attempt to make pet */
+    	    		if (add_pet(m_ptr))
+    	    		{
+						/* Announce */
+    	    			if (rf_has(r_ptr->flags, RF_FEMALE))
+							note = " shifts her loyalty.";
+						else if (rf_has(r_ptr->flags, RF_MALE))
+							note = " shifts his loyalty.";
+						else
+							note = " shifts its loyalty.";
+
+						/* Put the monster in the player's faction */
+						m_ptr->faction = F_PLAYER;
+
+						/* Take the player's target */
+						if (target_is_set())
+							pet_target(m_ptr);
+						else
+							m_ptr->target = 0;
+
+						/* Adjust group membership */
+						m_ptr->group = -1;
+						m_ptr->group_leader = -1;
+
+						/* Clear threat */
+						m_ptr->threat = 0;
+
+						/* Reset hostility */
+						m_ptr->hostile = 0;
+    	    		}
+    	    		else
+    	    		{
+    	    			/* You can't control an additional monster */
+    	    			note = " hesitates for a moment, but keeps fighting."
+    	    		}
  	    	    }
  	    	        
 	        }
@@ -6131,32 +6145,40 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
             /* We've succeeded. Charm the monster. */
             else
             {
-        	    /* Announce */
-        	    if (rf_has(r_ptr->flags, RF_FEMALE))
-			        note = " shifts her loyalty.";
-		        else if (rf_has(r_ptr->flags, RF_MALE))
-		            note = " shifts his loyalty.";
-                else
-                    note = " shifts its loyalty.";
-                
-                /* Put the monster in the player's faction */
-                m_ptr->faction = F_PLAYER;
-            
-                /* Take the layer's target */
-            	if (target_is_set())
-                    pet_target(m_ptr);
-                else
-                    m_ptr->target = 0;
-                
-                /* Adjust group membership */
-         	    m_ptr->group = 0;
-            	m_ptr->group_leader = 0;
-            
-				/* Clear target */
-                m_ptr->threat = 0;
-            
-                /* Reset hostility */
-                m_ptr->hostile = 0;
+        	    if(add_pet(m_ptr))
+        	    {
+					/* Announce */
+					if (rf_has(r_ptr->flags, RF_FEMALE))
+						note = " shifts her loyalty.";
+					else if (rf_has(r_ptr->flags, RF_MALE))
+						note = " shifts his loyalty.";
+					else
+						note = " shifts its loyalty.";
+
+					/* Put the monster in the player's faction */
+					m_ptr->faction = F_PLAYER;
+
+					/* Take the layer's target */
+					if (target_is_set())
+						pet_target(m_ptr);
+					else
+						m_ptr->target = 0;
+
+					/* Adjust group membership */
+					m_ptr->group = 0;
+					m_ptr->group_leader = 0;
+
+					/* Clear target */
+					m_ptr->threat = 0;
+
+					/* Reset hostility */
+					m_ptr->hostile = 0;
+        	    }
+        	    else
+        	    {
+        	    	/* We can't control another pet */
+        	    	note = " hesitates for a moment, but keeps fighting.";
+        	    }
             
             }
         
@@ -6214,6 +6236,12 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
 	        	    note = " is unaffected.";
 	        	    obvious = FALSE;
 	            }
+
+	        	else if(!add_pet(m_ptr))
+	        	{
+	        		note = " hesitates for a moment, but continues fighting.";
+	        		obvious = FALSE;
+	        	}
 	        
 	            /* We've succeeded. Charm the monster. */
 	            else
@@ -6304,6 +6332,12 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
 	        	    note = " is unaffected.";
 	        	    obvious = FALSE;
 	            }
+
+	        	else if (!add_pet(m_ptr))
+	        	{
+	        		note = " hesitates for a moment, but continues fighting.";
+	        		obvious = FALSE;
+	        	}
 	        
 	            /* We've succeeded. Charm the monster. */
 	            else
@@ -7220,7 +7254,7 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
         m_ptr->rooted = (tmp < 200) ? tmp : 200;
     }
     
-    /* Challenge mosnter.  Does not work on creatures that only cast */
+    /* Challenge monster.  Does not work on creatures that only cast */
     else if ((do_challenge) && (!(r_ptr->freq_ranged == 100)))
     {
     	if (seen)

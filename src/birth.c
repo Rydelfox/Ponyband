@@ -469,8 +469,6 @@ static void get_alignment(void)
 {
     int alignment = cp_ptr->alignment;
     
-    // TODO: Alignment changes for starting realms
-    
     //TODO: Alignment changes for Avatar Pacts
     
     /* Check for range */
@@ -556,6 +554,14 @@ void player_init(struct player *p)
 	
 	/* Hack - don't have black breath */
 	p->black_breath = FALSE;
+
+	/* Set up pet information */
+	p_ptr->curr_pets = 0;
+	for(i = 0; i < MAX_NUM_PETS; i++)
+	{
+		p_ptr->pet_list[i] = 0;
+	}
+	p_ptr->max_pets = adj_cha_max_pet[p_ptr->stat_cur[A_CHR]];
 
 	/* First turn. */
 	turn = 1;

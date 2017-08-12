@@ -592,6 +592,11 @@ typedef struct player {
     byte map;           /**< Which stage_map to use */
     bool game_mode[GAME_MODE_MAX];  /**< Game mode (thrall, ironman, etc) */
 
+  /*** Pet information ***/
+    u16b max_pets;
+    u16b curr_pets;
+    monster_type *pet_list[MAX_NUM_PETS];
+
   /*** Temporary fields ***/
 
     bool playing;	/**< True if player is playing */
@@ -924,6 +929,7 @@ extern const byte adj_str_blow[STAT_RANGE];
 extern const byte adj_con_fix[STAT_RANGE];
 extern const byte adj_dex_safe[STAT_RANGE];
 extern const byte adj_cha_charm[STAT_RANGE];
+extern const byte adj_cha_max_pet[STAT_RANGE];
 
 extern void apply_resist(int *player_resist, int item_resist);
 void calc_bonuses(object_type inventory[], player_state *state, bool id_only);
@@ -973,5 +979,8 @@ bool player_can_ability(void);
 extern const char *player_safe_name(struct player *p, bool strip_suffix);
 void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, bool killed);
 int get_player_alignment(void);
+bool add_pet(monster_type *m_ptr);
+bool reduce_pets(void);
+bool compact_pets(void);
 
 #endif /* !PLAYER_PLAYER_H */
