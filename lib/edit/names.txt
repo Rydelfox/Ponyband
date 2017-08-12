@@ -1271,6 +1271,7 @@ D:Blue
 D:Blueberry
 D:Born
 D:Buck
+D:Burn
 D:Butter
 D:Braeburn
 D:Bread
@@ -1292,6 +1293,7 @@ D:Cinnamon
 D:Classy
 D:Cloudy
 D:Cobalt
+D:Coconut
 D:Corn
 D:Cornflower
 D:Cream
@@ -1313,6 +1315,7 @@ D:Forest
 D:Fruit
 D:Gala
 D:Ginger
+D:Grand
 D:Grape
 D:Green
 D:Golden
@@ -1323,6 +1326,7 @@ D:Heart
 D:Honey
 D:Icy
 D:Igneous
+D:Inky
 D:Lady
 D:Lavender
 D:Lemon
@@ -1340,6 +1344,7 @@ D:Meadow
 D:Oak
 D:Octavia
 D:Peachy
+D:Pear
 D:Peppermint
 D:Perfect
 D:Petal
@@ -1357,6 +1362,7 @@ D:Royal
 D:Sad
 D:Sapphire
 D:Silver
+D:Snooty
 D:Spring
 D:Squash
 D:Steel
@@ -1400,6 +1406,7 @@ D:Bubbles
 D:Bud
 D:Bumpkin
 D:Bushel
+D:Butter
 D:Butterscotch
 D:Cake
 D:Caramel
@@ -1411,6 +1418,7 @@ D:Clover
 D:Cobbler
 D:Coffee
 D:Cookie
+D:Corn
 D:Coronet
 D:Cream
 D:Crisp
@@ -1463,7 +1471,9 @@ D:Melody
 D:Mint
 D:Munchies
 D:Oaks
+D:Oat
 D:Orange
+D:Pear
 D:Pie
 D:Pinch
 D:Pommel
@@ -1544,6 +1554,7 @@ D:Clever
 D:Comet
 D:Crystal
 D:Dainty
+D:Dandy
 D:Dark
 D:Dashing
 D:Diamond
@@ -1567,6 +1578,7 @@ D:Jeweled
 D:Lavender
 D:Lemon
 D:Light
+D:Lily
 D:Magnum
 D:Marble
 D:Midnight
@@ -1597,6 +1609,7 @@ D:Snooty
 D:Sparkling
 D:Star
 D:Sun
+D:Sunburst
 D:Sunny
 D:Sunset
 D:Sweet
@@ -1637,6 +1650,7 @@ D:Glimmer
 D:Glory
 D:Glow
 D:Gold
+D:Grandeur
 D:Heart
 D:Hearts
 D:Helm
@@ -1665,6 +1679,7 @@ D:Silver
 D:Singer
 D:Sky
 D:Slipper
+D:Snout
 D:Song
 D:Sparkle
 D:Spear
@@ -1691,6 +1706,7 @@ D:Arrow
 D:Autumn
 D:Blaze
 D:Blue
+D:Bright
 D:Cerulean
 D:Cheery
 D:Cirrus
@@ -1767,6 +1783,7 @@ D:Thunder
 D:Tornado
 D:Tropical
 D:Wild
+D:Windy
 D:Winter
 
 # Pegasus Last Names
@@ -1799,6 +1816,7 @@ D:Drizzle
 D:Drop
 D:Dust
 D:Eyes
+D:Fall
 D:Falls
 D:Feather
 D:Fire
@@ -1858,6 +1876,7 @@ D:Twister
 D:Water
 D:Waters
 D:Weather
+D:Whistles
 D:Winds
 D:Wing
 D:Wings
@@ -1869,6 +1888,7 @@ D:Angel
 D:Austere
 D:Black
 D:Bright
+D:Burnt
 D:Cave
 D:Cloudy
 D:Comet
@@ -5495,6 +5515,7 @@ D:akatosh
 D:akulatraxas
 D:alduin
 D:alexstraza
+D:amarant
 D:amaru
 D:anachronos
 D:angelus
@@ -5507,10 +5528,14 @@ D:ash
 D:ashenback
 D:azazel
 D:azuregos
+D:baff
 D:bahamut
+D:ballista
 D:banutu
 D:barroth
+D:barry
 D:basil
+D:billy
 D:bolla
 D:bonetail
 D:bullar
@@ -5518,6 +5543,7 @@ D:charazard
 D:chronormu
 D:chrysophylax
 D:cinder
+D:clump
 D:cordelia
 D:cornwall
 D:crackle
@@ -5540,6 +5566,7 @@ D:drax
 D:druk
 D:dulcy
 D:ellicott
+D:eber
 D:enderdragon
 D:enywas
 D:eranikus
@@ -5554,9 +5581,11 @@ D:falkor
 D:feyrbrand
 D:finfangfoom
 D:firnen
+D:fizzle
 D:flygon
 D:fracktail
 D:fraxure
+D:fume
 D:fyrlakith
 D:galakrond
 D:garble
@@ -5616,6 +5645,7 @@ D:maleficent
 D:malygos
 D:metz
 D:mezzidrel
+D:mina
 D:mnementh
 D:moon
 D:mordiford
@@ -5644,12 +5674,14 @@ D:paarthurnax
 D:palkia
 D:pejorative
 D:porunga
+D:prominence
 D:pyra
 D:python
 D:quark
 D:ramoth
 D:rathalos
 D:rayquaza
+D:reginald
 D:rex
 D:rhindle
 D:ridley
@@ -5663,6 +5695,7 @@ D:sarkany
 D:scorch
 D:scorchio
 D:seath
+D:sergio
 D:shaza
 D:shenlong
 D:shenron
@@ -5670,6 +5703,7 @@ D:shoryu
 D:sindragosa
 D:singe
 D:smaug
+D:snake
 D:soridormi
 D:spike
 D:spyro
@@ -5682,10 +5716,12 @@ D:teju
 D:temeraire
 D:tempest
 D:thevetat
+D:thod
 D:thorn
 D:tiamat
 D:tintaglia
 D:toothless
+D:torch
 D:trakanon
 D:trogdor
 D:typhon
@@ -5696,12 +5732,15 @@ D:valoo
 D:velious
 D:vermatrix
 D:vermithrax
+D:vex
 D:visziaj
+D:viverno
 D:volvagia
 D:vox
 D:vritra
 D:wawelski
 D:werokh
+D:whip
 D:wracktail
 D:wrathion
 D:wyvern
@@ -6143,6 +6182,7 @@ D:kasper
 D:kees
 D:kerneels
 D:klaas
+D:klaus
 D:kobe
 D:koen
 D:koenraad
@@ -6507,6 +6547,7 @@ D:birch
 D:bismark
 D:blackbead
 D:blackhaw
+D:blackthorn
 D:bloodwood
 D:boab
 D:boaboa
@@ -6518,6 +6559,7 @@ D:bottletree
 D:boxtree
 D:boxwood
 D:brazil
+D:bramble
 D:breadnut
 D:brejo
 D:bristlecone
