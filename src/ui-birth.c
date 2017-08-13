@@ -1390,8 +1390,9 @@ errr get_birth_command(bool wait)
 				    command = CMD_CHOOSE_MARK;
 				}
                 else {
-                    menu = &roller_menu;
-				    command = CMD_NULL;
+                    /*menu = &roller_menu;
+				    command = CMD_NULL;*/
+				    current_stage++;
 				}
 			}
 			
