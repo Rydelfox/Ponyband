@@ -1013,8 +1013,8 @@ void move_player(int dir, bool no_options)
 			
 			can_move = TRUE;
 			
-			/* Slide is less likely with Cold Resist */
-			if ((!p_immune(P_RES_COLD)) && (randint1((p_resist_pos(P_RES_COLD) || p_resist_strong(P_RES_COLD)) ? 2 : 4) != 1))
+			/* Slide is less likely with Cold Resist. Never slide with Levitation */
+			if (!p_ptr->state.ffall && ((!p_immune(P_RES_COLD)) && (randint1((p_resist_pos(P_RES_COLD) || p_resist_strong(P_RES_COLD)) ? 2 : 4) != 1)))
 			    icy_slide = TRUE;
 			
 			/* Speed will need updating */
