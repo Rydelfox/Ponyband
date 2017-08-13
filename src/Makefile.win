@@ -64,6 +64,8 @@ WRES = $(CROSS)windres
 WARNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
 CFLAGS += $(WARNINGS) -std=c99 -Wdeclaration-after-statement -I.
 
+CFLAGS += -m32
+
 ifdef DEBUG
   CFLAGS += -O0 -ggdb
 else

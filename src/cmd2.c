@@ -3409,7 +3409,7 @@ void do_cmd_pet(cmd_code code, cmd_arg args[])
             msg("This can only be used on your pets.");
             return;
         }
-        m_list[target].faction = F_RELEASED_PET;
+        release_pet(&m_list[target]);
         msg("%s has been released", r_info[m_list[target].r_idx].name);
         break;
     case 5:

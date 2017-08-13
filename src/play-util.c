@@ -13,6 +13,7 @@
  */
 
 #include "cave.h"
+#include "target.h"
 
 s16b modify_stat_value(int value, int amount)
 {
@@ -236,13 +237,22 @@ int get_player_alignment(void)
     return ALIGN_NEUTRAL;
 }
 
+static int get_max_pets(void)
+{
+    int max_pet = adj_cha_max_pet[p_ptr->stat_cur[A_CHR]];
+    
+    /* When abilities increase your maximum number of pets, add code here */
+    
+    return max_pet;
+}
+
 /*
  * Add a new pet
  */
 bool add_pet(monster_type *m_ptr)
 {
 	int i;
-	int max_pet = adj_cha_max_pet[p_ptr->stat_cur[A_CHR]]
+	int max_pet = get_max_pets();
 
 	/* Determine if you are over your limit */
 	if (p_ptr->curr_pets >= max_pet)
@@ -267,8 +277,8 @@ bool add_pet(monster_type *m_ptr)
 		m_ptr->group = 0;
 		m_ptr->group_leader = -1;
 		m_ptr->y_terr = p_ptr->py;
-		m_ptr->x_tess = p_ptr->px;
-		target_get(m_ptr->ty, m_ptr->tx);
+		m_ptr->x_terr = p_ptr->px;
+		target_get((s16b *) & m_ptr->ty, (s16b *) & m_ptr->tx);
 		p_ptr->curr_pets++;
 		return TRUE;
 	}
@@ -276,14 +286,14 @@ bool add_pet(monster_type *m_ptr)
 }
 
 /* Helper function for compact_pets to sort the list */
-static void compact_pets_aux(monster_type* arr[], int left, int right)
+/*static void compact_pets_aux(monster_type* arr[], int left, int right)
 {
 	int i = left, j = right;
 	monster_type *tmp_ptr;
 	int pivot = left + right / 2;
-
+*/
 	/* Partition */
-	while (i <= j)
+/*	while (i <= j)
 	{
 		while (arr[i] > 0)
 			i++;
@@ -303,18 +313,117 @@ static void compact_pets_aux(monster_type* arr[], int left, int right)
 		compact_pets_aux(arr, left, j);
 	if (i < right)
 		compact_pets_aux(arr, i, right);
-}
+}*/
 
 void compact_pets(void)
 {
-	int i;
+	int i, curr, last;
+	monster_type* tmp_ptr;
 
 	/* Compact the list by moving all non-blank entries to the left */
-	compact_pets_aux(p_ptr->pet_list, 0, MAX_NUM_PETS);
+	/* compact_pets_aux(p_ptr->pet_list, 0, MAX_NUM_PETS); */
+	curr = 0;
+	last = MAX_NUM_PETS;
+	while (curr < last)
+	{
+	    while (p_ptr->pet_list[last] == 0)
+	        last--;
+        while (p_ptr->pet_list[curr] != 0)
+            curr++;
+        if (curr < last)
+        {
+            tmp_ptr = p_ptr->pet_list[last];
+            p_ptr->pet_list[last] = p_ptr->pet_list[curr];
+            p_ptr->pet_list[curr] = tmp_ptr;
+        }
+    }
 
 	/* Update the indexes of all pets */
 	for (i = 0; i < MAX_NUM_PETS; i++)
 	{
 		p_ptr->pet_list[i]->pet_num = i;
 	}
+}
+
+/* Helper function to determine which pet to release */
+static int reduce_pets_helper(monster_type* pet)
+{
+    
+    monster_race* pet_race = &r_info[pet->r_idx];
+    int score = 0;
+    
+    /* Favor low level pets */
+    score += 100 - pet_race->level;
+    
+    /* Favor injured pets */
+    score += 100 - (100 * pet->hp / pet->maxhp);
+    
+    /* Favor distant pets */
+    score += pet->cdis;
+    
+    /* Scared pets will abandon you */
+    if (pet->monfear)
+       score += 30;
+    
+    return score;
+}
+
+
+/* Free pets if over the pet limit */
+bool reduce_pets(void)
+{
+    bool reduced = FALSE;
+    int max_pet = get_max_pets();
+    
+    while (p_ptr->curr_pets > max_pet)
+    {
+        /* Determine the best pet to get rid of */
+        int this_pet = 0;
+        int this_score = reduce_pets_helper(p_ptr->pet_list[this_pet]);
+        int compare_score = 0;
+        
+        for (int i = 1; i < MAX_NUM_PETS; i++)
+        {
+            /* Skip null pets */
+            if (p_ptr->pet_list[i])
+            {
+                compare_score = reduce_pets_helper(p_ptr->pet_list[i]);
+                if (compare_score > this_score)
+                {
+                    this_pet = i;
+                    this_score = compare_score;
+                }
+            }
+        }
+        
+        /* Alert the player */
+        msg("%s is no longer under your command", r_info[p_ptr->pet_list[this_pet]->r_idx].name);
+        
+        /* We found our candidate - now release them */
+        release_pet(p_ptr->pet_list[this_pet]);
+        reduced = TRUE;
+    }
+    
+    return reduced;
+}
+
+/* Release a listed pet from your control */
+void release_pet(monster_type *m_ptr)
+{
+    /* Remove from the pet list */
+    p_ptr->pet_list[m_ptr->pet_num] = 0;
+    m_ptr->pet_num = -1;
+    
+    /* Set to non-hostile "released pet" faction */
+    m_ptr->faction = F_RELEASED_PET;
+    m_ptr->hostile = 0;
+    
+    /* Clear various data for the monster */
+    m_ptr->group = 0;
+	m_ptr->group_leader = 0;
+	m_ptr->y_terr = m_ptr->fy;
+	m_ptr->x_terr = m_ptr->fx;
+	
+	/* Reduce the pet count */
+	p_ptr->curr_pets--;
 }

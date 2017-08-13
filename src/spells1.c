@@ -5573,7 +5573,7 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
     	    		else
     	    		{
     	    			/* You can't control an additional monster */
-    	    			note = " hesitates for a moment, but keeps fighting."
+    	    			note = " hesitates for a moment, but keeps fighting.";
     	    		}
  	    	    }
  	    	        

@@ -62,7 +62,7 @@ void delete_monster_idx(int i)
 	/* Remove as pet */
 	if (m_ptr->pet_num >= 0)
 	{
-		p_ptr->pet_list[pet_num] = -1;
+		p_ptr->pet_list[m_ptr->pet_num] = 0;
 		compact_pets();
 	}
 
@@ -354,7 +354,7 @@ void wipe_m_list(void)
 
 	/* Reset all pet information */
 	for (i = 0; i < MAX_NUM_PETS; i++)
-		p_ptr->pet_list[i] = -1;
+		p_ptr->pet_list[i] = 0;
 	p_ptr->curr_pets = 0;
 
 	/* Hack -- no more target */
