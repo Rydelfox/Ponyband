@@ -7076,6 +7076,10 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
 		/* Extract method of death */
 		note = note_dies;
 		killed = TRUE;
+		
+		/* Note if it was a pet */
+		if (m_ptr->pet_num >= 0)
+		   pet_killed = TRUE;
 	}
 
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
@@ -7368,6 +7372,10 @@ static bool project_m(int who, int y, int x, u32b dam, int typ, int flg)
 		if (mon_take_hit(cave_m_idx[y][x], dam, &fear, note_dies, SOURCE_PLAYER)) {
 			/* Dead monster */
 			killed = TRUE;
+			
+			/* Note if it was a pet */
+			if (m_ptr->pet_num >= 0)
+			   pet_killed = TRUE;
 		}
 
 		/* Damaged monster */

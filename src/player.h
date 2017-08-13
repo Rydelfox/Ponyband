@@ -981,7 +981,7 @@ void hit_alignment(u16b faction, int depth, bool evil, bool unique, s16b sleep, 
 int get_player_alignment(void);
 bool add_pet(monster_type *m_ptr);
 bool reduce_pets(void);
-void compact_pets(void);
+int compact_pets(void);
 void release_pet(monster_type *m_ptr);
 
 #endif /* !PLAYER_PLAYER_H */

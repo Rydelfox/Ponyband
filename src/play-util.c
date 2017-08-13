@@ -285,37 +285,10 @@ bool add_pet(monster_type *m_ptr)
 	return FALSE;
 }
 
-/* Helper function for compact_pets to sort the list */
-/*static void compact_pets_aux(monster_type* arr[], int left, int right)
-{
-	int i = left, j = right;
-	monster_type *tmp_ptr;
-	int pivot = left + right / 2;
-*/
-	/* Partition */
-/*	while (i <= j)
-	{
-		while (arr[i] > 0)
-			i++;
-		while (arr[j] <= 0)
-			j++;
-		if ((i <= j))
-		{
-			tmp_ptr = arr[i];
-			arr[i] = arr[j];
-			arr[j] = tmp_ptr;
-			i++;
-			j--;
-		}
-	}
+/* Move all valid pets to the left of pet_list.  Once you hit one null, the
+   rest are null too.  Returns the number of valid pets. */
 
-	if (left < j)
-		compact_pets_aux(arr, left, j);
-	if (i < right)
-		compact_pets_aux(arr, i, right);
-}*/
-
-void compact_pets(void)
+int compact_pets(void)
 {
 	int i, curr, last;
 	monster_type* tmp_ptr;
@@ -343,6 +316,8 @@ void compact_pets(void)
 	{
 		p_ptr->pet_list[i]->pet_num = i;
 	}
+	
+	return curr;
 }
 
 /* Helper function to determine which pet to release */
