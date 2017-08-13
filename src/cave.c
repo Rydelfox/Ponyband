@@ -3502,16 +3502,10 @@ void sort_temp_cave(void)
 {
 	char buf[80];
 	int i;
-	logbug("Sorting cave_Temp\n");
 	/* Sort by x */
 	sort_temp_cave_helper(0, MAX_TEMP_GRIDS, 1);
 	/* Sort by y */
 	sort_temp_cave_helper(0, MAX_TEMP_GRIDS, 0);
-	for (i = 0; i < MAX_TEMP_GRIDS; i++)
-	{
-		strnfmt(buf, 80, "Temp Coord %i: %i,%i\n", i, cave_temp[i][0], cave_temp[i][1]);
-		logbug(buf);
-	}
 }
 
 bool add_temp_cave(int y, int x)
